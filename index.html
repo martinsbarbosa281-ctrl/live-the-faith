@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live the Faith</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif; scroll-behavior:smooth; }
+    body { background: #f8fafc; }
+    header { position:fixed; top:0; width:100%; background: rgba(15,224,42,0.95); color:white; padding:18px 40px; display:flex; justify-content:space-between; align-items:center; z-index:1000; }
+    nav a { color:#facc15; margin-left:25px; text-decoration:none; font-weight:500; }
+    .hero { height:100vh; background: linear-gradient(rgba(15,23,42,0.75), rgba(15,23,42,0.75)), url('https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d'); background-size:cover; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; }
+    .btn { background:#facc15; padding:12px 30px; border-radius:50px; text-decoration:none; color:#000; }
+    .container { background:white; padding:30px; margin:40px auto; width:300px; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); text-align:center; }
+    input { width:100%; padding:10px; margin:10px 0; }
+    button { width:100%; padding:10px; background:#4CAF50; color:white; border:none; cursor:pointer; }
+    .logged-in { display:none; text-align:center; padding:20px; }
+    footer { background:black; color:white; text-align:center; padding:10px; }
+    .message { margin-top:10px; font-size:14px; text-align:center; }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Live the Faith</h1>
+  <nav>
+    <a href="#">Início</a>
+    <a href="#produtos">Produtos</a>
+    <a href="#contato">Contato</a>
+    <a href="usuario.html">Usuário</a> <!-- abre página de cadastro/login -->
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>Vista sua fé ✨</h2>
+  <a href="#login" class="btn">Explorar coleção</a>
+</section>
+
+<!-- LOGIN -->
+<section id="login" class="container">
+  <h2>Login</h2>
+  <div id="erro" class="message" style="color:red; display:none;">Erro no login</div>
+  <form id="loginForm">
+    <input type="email" id="loginEmail" placeholder="E-mail" required>
+    <input type="password" id="loginSenha" placeholder="Senha" required>
+    <button type="submit">Entrar</button>
+  </form>
+</section>
+
+<!-- LOGADO -->
+<section id="loggedInSection" class="logged-in">
+  <h3>Bem-vindo, <span id="userNameDisplay"></span></h3>
+  <button id="logoutButton">Sair</button>
+</section>
+
+<footer>© 2026 Live the Faith</footer>
+
+<script>
+  const loginForm = document.getElementById("loginForm");
+  const loggedInSection = document.getElementById("loggedInSection");
+  const loginEmail = document.getElementById("loginEmail");
+  const loginSenha = document.getElementById("loginSenha");
+  const userNameDisplay = document.getElementById("userNameDisplay");
+  const logoutButton = document.getElementById("logoutButton");
+  const erroDiv = document.getElementById("erro");
+
+  loginForm.addEventListener("submit", e => {
+    e.preventDefault();
+
+    // Envia dados para PHP (login.php)
+    const email = loginEmail.value;
+    const senha = loginSenha.value;
+
+    fetch('login.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.status === "ok"){
+        userNameDisplay.textContent = data.nome; // nome do usuário
+        loginForm.style.display = "none";
+        loggedInSection.style.display = "block";
+      } else {
+        erroDiv.style.display = "block";
+        erroDiv.textContent = data.mensagem;
+      }
+    });
+  });
+
+  logoutButton.onclick = () => {
+    // logout simples: recarrega página
+    location.reload();
+  }
+</script>
+
+</body>
+</html>
