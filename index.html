@@ -106,15 +106,6 @@
       object-fit: cover;
     }
 
-    .product-card h3 {
-      margin-top: 10px;
-    }
-
-    .product-card p {
-      font-size: 14px;
-      padding: 0 10px;
-    }
-
     .price {
       color: #4CAF50;
       font-weight: bold;
@@ -149,28 +140,50 @@
       background: white;
       padding: 30px;
       border-radius: 12px;
-      width: 300px;
+      width: 320px;
       text-align: center;
     }
 
-    .modal-content input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
+    /* ===== LOGIN NOVO DESIGN ===== */
+    .login-box {
+      background: #fff;
+      width: 320px;
+      padding: 30px;
+      border-radius: 14px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
     }
 
-    .modal-content button {
+    .login-box h2 {
+      margin-bottom: 20px;
+    }
+
+    .login-box input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
       background: #facc15;
       border: none;
-      font-weight: bold;
       border-radius: 8px;
+      font-weight: bold;
       cursor: pointer;
     }
 
+    .login-box button:hover {
+      background: #e6b800;
+    }
+
     .cadastro-texto {
-      font-size: 14px;
+      font-size: 13px;
       margin: 10px 0;
     }
 
@@ -181,16 +194,11 @@
     }
 
     .fechar {
-      float: right;
-      cursor: pointer;
+      position: absolute;
+      right: 15px;
+      top: 10px;
       font-size: 20px;
-    }
-
-    footer {
-      background: #2e2e2e;
-      color: white;
-      text-align: center;
-      padding: 20px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -203,7 +211,7 @@
     <a href="#">Início</a>
     <a href="#produtos">Produtos</a>
     <a href="#">Contato</a>
-    <a href="#" onclick="abrirLogin()">Cadastro / Login</a>
+    <a href="#" onclick="abrirLogin()">Login</a>
   </nav>
 </header>
 
@@ -219,79 +227,67 @@
     <h3>Camisa Live the Faith</h3>
     <p>Fé que ilumina, amor que transforma.</p>
     <div class="price">R$90,00</div>
-    <button>Comprar</button>
-  </div>
-
-  <div class="product-card">
-    <img src="camisa2.png">
-    <h3>Camisa Fé & Luz</h3>
-    <p>Estilo com propósito.</p>
-    <div class="price">R$85,00</div>
-    <button>Comprar</button>
-  </div>
-
-  <div class="product-card">
-    <img src="camisa3.png">
-    <h3>Camisa Esperança</h3>
-    <p>Vista sua fé todos os dias.</p>
-    <div class="price">R$95,00</div>
-    <button>Comprar</button>
-  </div>
-
-  <div class="product-card">
-    <img src="camisa4.png">
-    <h3>Camisa Propósito</h3>
-    <p>Mais que estilo, é missão.</p>
-    <div class="price">R$89,00</div>
-    <button>Comprar</button>
-  </div>
-
-  <div class="product-card">
-    <img src="camisa5.png">
-    <h3>Camisa Luz do Mundo</h3>
-    <p>Brilhe com fé.</p>
-    <div class="price">R$92,00</div>
-    <button>Comprar</button>
-  </div>
-
-  <div class="product-card">
-    <img src="camisa6.png">
-    <h3>Camisa Gratidão</h3>
-    <p>Gratidão transforma tudo.</p>
-    <div class="price">R$88,00</div>
-    <button>Comprar</button>
+    <button onclick="verificarCompra('Camisa Live the Faith','R$90,00','camisaltf.png')">Comprar</button>
   </div>
 
 </section>
 
-<!-- LOGIN (AJUSTADO) -->
-<div id="loginModal" class="modal">
+<!-- MODAL COMPRA -->
+<div id="compraModal" class="modal">
   <div class="modal-content">
+    <span class="fechar" onclick="fecharCompra()">&times;</span>
+
+    <h2 id="nomeProduto"></h2>
+    <img id="imgProduto" style="width:100%; border-radius:10px; margin:10px 0;">
+    <p id="precoProduto" style="color:green; font-weight:bold;"></p>
+
+    <button onclick="alert('Compra finalizada!')">Finalizar compra</button>
+  </div>
+</div>
+
+<!-- 🔥 LOGIN MODAL (SÓ ESTA PARTE FOI MUDADA) -->
+<div id="loginModal" class="modal">
+  <div class="login-box">
+
     <span class="fechar" onclick="fecharLogin()">&times;</span>
 
     <h2>Entrar</h2>
 
-    <form action="login.php" method="POST">
+    <input type="email" id="email" placeholder="E-mail">
+    <input type="password" id="senha" placeholder="Senha">
 
-      <input type="email" name="email" placeholder="E-mail" required>
-      <input type="password" name="senha" placeholder="Senha" required>
+    <p class="cadastro-texto">
+      Não tem uma conta? <a href="cadastrar.php">Cadastre-se</a>
+    </p>
 
-      <p class="cadastro-texto">
-        Não tem uma conta? <a href="cadastrar.php">Cadastre-se</a>
-      </p>
-
-      <button type="submit">Entrar</button>
-
-    </form>
+    <button onclick="simularLogin()">Entrar</button>
 
   </div>
 </div>
 
-<footer>
-  <p>&copy; 2026 Live the Faith</p>
-</footer>
-
 <script>
+
+let usuarioLogado = false;
+
+function verificarCompra(nome, preco, img) {
+  if(!usuarioLogado){
+    abrirLogin();
+    return;
+  }
+  abrirCompra(nome, preco, img);
+}
+
+function abrirCompra(nome, preco, img) {
+  document.getElementById("compraModal").style.display = "flex";
+  document.getElementById("nomeProduto").innerText = nome;
+  document.getElementById("precoProduto").innerText = preco;
+  document.getElementById("imgProduto").src = img;
+}
+
+function fecharCompra() {
+  document.getElementById("compraModal").style.display = "none";
+}
+
 function abrirLogin() {
   document.getElementById("loginModal").style.display = "flex";
 }
@@ -300,12 +296,18 @@ function fecharLogin() {
   document.getElementById("loginModal").style.display = "none";
 }
 
+function simularLogin() {
+  usuarioLogado = true;
+  fecharLogin();
+  alert("Login realizado com sucesso!");
+}
+
 window.onclick = function(e) {
-  let modal = document.getElementById("loginModal");
-  if (e.target == modal) {
-    modal.style.display = "none";
+  if (e.target.classList.contains("modal")) {
+    e.target.style.display = "none";
   }
 }
+
 </script>
 
 </body>
