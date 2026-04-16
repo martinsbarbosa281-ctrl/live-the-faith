@@ -264,20 +264,26 @@
 
 </section>
 
-<!-- LOGIN -->
+<!-- LOGIN (AJUSTADO) -->
 <div id="loginModal" class="modal">
   <div class="modal-content">
     <span class="fechar" onclick="fecharLogin()">&times;</span>
+
     <h2>Entrar</h2>
 
-    <input type="email" placeholder="E-mail">
-    <input type="password" placeholder="Senha">
+    <form action="login.php" method="POST">
 
-    <p class="cadastro-texto">
-      Não tem uma conta? <a href="cadastro.php">Cadastre-se</a>
-    </p>
+      <input type="email" name="email" placeholder="E-mail" required>
+      <input type="password" name="senha" placeholder="Senha" required>
 
-    <button>Entrar</button>
+      <p class="cadastro-texto">
+        Não tem uma conta? <a href="cadastrar.php">Cadastre-se</a>
+      </p>
+
+      <button type="submit">Entrar</button>
+
+    </form>
+
   </div>
 </div>
 
