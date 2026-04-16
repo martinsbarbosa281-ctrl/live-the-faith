@@ -122,7 +122,6 @@
       font-weight: bold;
     }
 
-    /* MODAL */
     .modal {
       display: none;
       position: fixed;
@@ -136,15 +135,6 @@
       align-items: center;
     }
 
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      width: 320px;
-      text-align: center;
-    }
-
-    /* ===== LOGIN NOVO DESIGN ===== */
     .login-box {
       background: #fff;
       width: 320px;
@@ -152,11 +142,6 @@
       border-radius: 14px;
       text-align: center;
       position: relative;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    }
-
-    .login-box h2 {
-      margin-bottom: 20px;
     }
 
     .login-box input {
@@ -165,7 +150,6 @@
       margin: 10px 0;
       border: 1px solid #ddd;
       border-radius: 8px;
-      outline: none;
     }
 
     .login-box button {
@@ -178,26 +162,23 @@
       cursor: pointer;
     }
 
-    .login-box button:hover {
-      background: #e6b800;
-    }
-
-    .cadastro-texto {
-      font-size: 13px;
-      margin: 10px 0;
-    }
-
-    .cadastro-texto a {
-      color: #facc15;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
     .fechar {
       position: absolute;
       right: 15px;
       top: 10px;
       font-size: 20px;
+      cursor: pointer;
+    }
+
+    .link {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .link a {
+      color: #facc15;
+      font-weight: bold;
+      text-decoration: none;
       cursor: pointer;
     }
   </style>
@@ -211,7 +192,10 @@
     <a href="#">Início</a>
     <a href="#produtos">Produtos</a>
     <a href="#">Contato</a>
-    <a href="#" onclick="abrirLogin()">Login</a>
+
+    <span id="areaUsuario">
+      <a href="#" onclick="abrirLogin()">Login</a>
+    </span>
   </nav>
 </header>
 
@@ -221,34 +205,18 @@
 </section>
 
 <section id="produtos" class="products">
-
   <div class="product-card">
     <img src="camisaltf.png">
     <h3>Camisa Live the Faith</h3>
     <p>Fé que ilumina, amor que transforma.</p>
     <div class="price">R$90,00</div>
-    <button onclick="verificarCompra('Camisa Live the Faith','R$90,00','camisaltf.png')">Comprar</button>
+    <button onclick="verificarCompra()">Comprar</button>
   </div>
-
 </section>
 
-<!-- MODAL COMPRA -->
-<div id="compraModal" class="modal">
-  <div class="modal-content">
-    <span class="fechar" onclick="fecharCompra()">&times;</span>
-
-    <h2 id="nomeProduto"></h2>
-    <img id="imgProduto" style="width:100%; border-radius:10px; margin:10px 0;">
-    <p id="precoProduto" style="color:green; font-weight:bold;"></p>
-
-    <button onclick="alert('Compra finalizada!')">Finalizar compra</button>
-  </div>
-</div>
-
-<!-- 🔥 LOGIN MODAL (SÓ ESTA PARTE FOI MUDADA) -->
+<!-- LOGIN -->
 <div id="loginModal" class="modal">
   <div class="login-box">
-
     <span class="fechar" onclick="fecharLogin()">&times;</span>
 
     <h2>Entrar</h2>
@@ -256,12 +224,27 @@
     <input type="email" id="email" placeholder="E-mail">
     <input type="password" id="senha" placeholder="Senha">
 
-    <p class="cadastro-texto">
-      Não tem uma conta? <a href="cadastrar.php">Cadastre-se</a>
-    </p>
-
     <button onclick="simularLogin()">Entrar</button>
 
+    <div class="link">
+      Não tem conta? <a onclick="abrirCadastro()">Cadastre-se</a>
+    </div>
+  </div>
+</div>
+
+<!-- CADASTRO -->
+<div id="cadastroModal" class="modal">
+  <div class="login-box">
+    <span class="fechar" onclick="fecharCadastro()">&times;</span>
+
+    <h2>Cadastrar</h2>
+
+    <input type="text" id="nomeCadastro" placeholder="Nome">
+    <input type="tel" id="telefoneCadastro" placeholder="Telefone">
+    <input type="email" id="emailCadastro" placeholder="E-mail">
+    <input type="password" id="senhaCadastro" placeholder="Senha">
+
+    <button onclick="simularCadastro()">Criar conta</button>
   </div>
 </div>
 
@@ -269,23 +252,12 @@
 
 let usuarioLogado = false;
 
-function verificarCompra(nome, preco, img) {
+function verificarCompra() {
   if(!usuarioLogado){
     abrirLogin();
     return;
   }
-  abrirCompra(nome, preco, img);
-}
-
-function abrirCompra(nome, preco, img) {
-  document.getElementById("compraModal").style.display = "flex";
-  document.getElementById("nomeProduto").innerText = nome;
-  document.getElementById("precoProduto").innerText = preco;
-  document.getElementById("imgProduto").src = img;
-}
-
-function fecharCompra() {
-  document.getElementById("compraModal").style.display = "none";
+  alert("Compra liberada!");
 }
 
 function abrirLogin() {
@@ -296,17 +268,146 @@ function fecharLogin() {
   document.getElementById("loginModal").style.display = "none";
 }
 
-function simularLogin() {
-  usuarioLogado = true;
+function abrirCadastro() {
   fecharLogin();
-  alert("Login realizado com sucesso!");
+  document.getElementById("cadastroModal").style.display = "flex";
 }
 
-window.onclick = function(e) {
-  if (e.target.classList.contains("modal")) {
-    e.target.style.display = "none";
-  }
+function fecharCadastro() {
+  document.getElementById("cadastroModal").style.display = "none";
 }
+
+/* LOGIN */
+function simularLogin() {
+
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
+
+  fetch("login.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    if(data.status === "ok"){
+      usuarioLogado = true;
+      fecharLogin();
+
+      alert("Bem-vindo " + data.nome);
+
+      document.getElementById("areaUsuario").innerHTML = `
+        <div style="position:relative; display:inline-block; margin-left:20px;">
+
+          <span onclick="toggleMenu()" style="color:white; font-weight:bold; cursor:pointer;">
+            👤 ${data.nome}
+          </span>
+
+          <div id="menuPerfil" style="
+            display:none;
+            position:absolute;
+            right:0;
+            background:#fff;
+            color:#000;
+            border-radius:8px;
+            padding:10px;
+            margin-top:10px;
+            min-width:120px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.2);
+          ">
+            <div onclick="logout()" style="cursor:pointer; padding:5px;">
+               Sair
+            </div>
+          </div>
+
+        </div>
+      `;
+
+    } else {
+      usuarioLogado = false;
+      alert(data.mensagem);
+    }
+
+  })
+  .catch(() => {
+    alert("Erro ao conectar com servidor");
+  });
+
+}
+
+/* LOGOUT */
+function logout() {
+  usuarioLogado = false;
+
+  alert("Você saiu da conta");
+
+  document.getElementById("areaUsuario").innerHTML = `
+    <a href="#" onclick="abrirLogin()">Login</a>
+  `;
+}
+
+/* MENU PERFIL */
+function toggleMenu() {
+  const menu = document.getElementById("menuPerfil");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* CADASTRO */
+function simularCadastro() {
+
+  const nome = document.getElementById("nomeCadastro").value;
+  const telefone = document.getElementById("telefoneCadastro").value;
+  const email = document.getElementById("emailCadastro").value;
+  const senha = document.getElementById("senhaCadastro").value;
+
+  fetch("cadastrar.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `nome=${encodeURIComponent(nome)}&telefone=${encodeURIComponent(telefone)}&email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    if(data.status === "ok"){
+      alert("Conta criada com sucesso!");
+      fecharCadastro();
+      abrirLogin();
+    } else {
+      alert(data.mensagem);
+    }
+
+  })
+  .catch(() => {
+    alert("Erro ao cadastrar");
+  });
+
+}
+
+/* ✅ MODAL CORRIGIDO */
+window.addEventListener("click", function(e){
+
+  const login = document.getElementById("loginModal");
+  const cadastro = document.getElementById("cadastroModal");
+
+  if(e.target === login){
+    login.style.display = "none";
+  }
+
+  if(e.target === cadastro){
+    cadastro.style.display = "none";
+  }
+
+  if (!e.target.closest('#menuPerfil') && !e.target.closest('#areaUsuario')) {
+    const menu = document.getElementById("menuPerfil");
+    if(menu) menu.style.display = "none";
+  }
+
+});
 
 </script>
 
