@@ -252,32 +252,7 @@
 
 let usuarioLogado = false;
 
-function verificarCompra() {
-  if(!usuarioLogado){
-    abrirLogin();
-    return;
-  }
-  alert("Compra liberada!");
-}
-
-function abrirLogin() {
-  document.getElementById("loginModal").style.display = "flex";
-}
-
-function fecharLogin() {
-  document.getElementById("loginModal").style.display = "none";
-}
-
-function abrirCadastro() {
-  fecharLogin();
-  document.getElementById("cadastroModal").style.display = "flex";
-}
-
-function fecharCadastro() {
-  document.getElementById("cadastroModal").style.display = "none";
-}
-
-/* LOGIN */
+/* LOGIN COM ADMIN */
 function simularLogin() {
 
   const email = document.getElementById("email").value;
@@ -294,35 +269,54 @@ function simularLogin() {
   .then(data => {
 
     if(data.status === "ok"){
+
       usuarioLogado = true;
       fecharLogin();
+
+      const isAdmin = data.admin == 1;
+
+      if(isAdmin){
+        window.location.href = "admin.html";
+        return;
+      }
 
       alert("Bem-vindo " + data.nome);
 
       document.getElementById("areaUsuario").innerHTML = `
         <div style="position:relative; display:inline-block; margin-left:20px;">
 
-          <span onclick="toggleMenu()" style="color:white; font-weight:bold; cursor:pointer;">
+          <div onclick="toggleMenu()" style="
+            display:flex;
+            align-items:center;
+            gap:10px;
+            cursor:pointer;
+            color:white;
+            font-weight:600;
+          ">
             👤 ${data.nome}
-          </span>
+          </div>
 
           <div id="menuPerfil" style="
             display:none;
             position:absolute;
             right:0;
-            background:#fff;
-            color:#000;
-            border-radius:8px;
-            padding:10px;
-            margin-top:10px;
-            min-width:120px;
-            box-shadow:0 4px 10px rgba(0,0,0,0.2);
+            top:40px;
+            background:white;
+            border-radius:12px;
+            min-width:180px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.2);
           ">
-            <div onclick="logout()" style="cursor:pointer; padding:5px;">
-               Sair
-            </div>
-          </div>
 
+            <div onclick="logout()" style="
+              padding:10px;
+              cursor:pointer;
+              color:red;
+              font-weight:bold;
+            ">
+              Sair
+            </div>
+
+          </div>
         </div>
       `;
 
@@ -331,32 +325,24 @@ function simularLogin() {
       alert(data.mensagem);
     }
 
-  })
-  .catch(() => {
-    alert("Erro ao conectar com servidor");
   });
 
 }
 
 /* LOGOUT */
-function logout() {
+function logout(){
   usuarioLogado = false;
-
-  alert("Você saiu da conta");
-
-  document.getElementById("areaUsuario").innerHTML = `
-    <a href="#" onclick="abrirLogin()">Login</a>
-  `;
+  document.getElementById("areaUsuario").innerHTML = `<a href="#" onclick="abrirLogin()">Login</a>`;
 }
 
-/* MENU PERFIL */
-function toggleMenu() {
+/* MENU */
+function toggleMenu(){
   const menu = document.getElementById("menuPerfil");
   menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
 /* CADASTRO */
-function simularCadastro() {
+function simularCadastro(){
 
   const nome = document.getElementById("nomeCadastro").value;
   const telefone = document.getElementById("telefoneCadastro").value;
@@ -364,49 +350,29 @@ function simularCadastro() {
   const senha = document.getElementById("senhaCadastro").value;
 
   fetch("cadastrar.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: `nome=${encodeURIComponent(nome)}&telefone=${encodeURIComponent(telefone)}&email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`nome=${nome}&telefone=${telefone}&email=${email}&senha=${senha}`
   })
-  .then(res => res.json())
-  .then(data => {
-
-    if(data.status === "ok"){
-      alert("Conta criada com sucesso!");
-      fecharCadastro();
-      abrirLogin();
-    } else {
-      alert(data.mensagem);
-    }
-
-  })
-  .catch(() => {
-    alert("Erro ao cadastrar");
+  .then(res=>res.json())
+  .then(data=>{
+    alert(data.status==="ok"?"Conta criada!":data.mensagem);
+    fecharCadastro();
+    abrirLogin();
   });
 
 }
 
-/* ✅ MODAL CORRIGIDO */
-window.addEventListener("click", function(e){
+/* MODAIS */
+function abrirLogin(){document.getElementById("loginModal").style.display="flex";}
+function fecharLogin(){document.getElementById("loginModal").style.display="none";}
+function abrirCadastro(){fecharLogin();document.getElementById("cadastroModal").style.display="flex";}
+function fecharCadastro(){document.getElementById("cadastroModal").style.display="none";}
 
-  const login = document.getElementById("loginModal");
-  const cadastro = document.getElementById("cadastroModal");
-
-  if(e.target === login){
-    login.style.display = "none";
+window.addEventListener("click",function(e){
+  if(e.target.classList.contains("modal")){
+    e.target.style.display="none";
   }
-
-  if(e.target === cadastro){
-    cadastro.style.display = "none";
-  }
-
-  if (!e.target.closest('#menuPerfil') && !e.target.closest('#areaUsuario')) {
-    const menu = document.getElementById("menuPerfil");
-    if(menu) menu.style.display = "none";
-  }
-
 });
 
 </script>
