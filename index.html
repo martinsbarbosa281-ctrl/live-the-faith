@@ -87,6 +87,7 @@
       margin: 40px;
     }
 
+    /* 🔥 CARD CORRIGIDO */
     .product-card {
       background: white;
       border-radius: 10px;
@@ -94,18 +95,25 @@
       overflow: hidden;
       text-align: center;
       transition: 0.3s;
+
+      display: flex;
+      flex-direction: column;
+      height: 420px;
     }
 
     .product-card:hover {
       transform: translateY(-8px);
     }
 
-    /* ✅ CORREÇÃO AQUI */
     .product-card img {
       width: 100%;
-      height: 250px;
-      object-fit: contain; /* antes era cover */
-      background-color: #fff;
+      height: 200px;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .card-content {
+      flex: 1;
       padding: 10px;
     }
 
@@ -116,9 +124,10 @@
     }
 
     .product-card button {
+      margin-top: auto;
       background-color: #f39c12;
       color: white;
-      padding: 10px;
+      padding: 12px;
       width: 100%;
       border: none;
       cursor: pointer;
@@ -195,7 +204,6 @@
     <a href="#">Início</a>
     <a href="#produtos">Produtos</a>
     <a href="#">Contato</a>
-
     <span id="areaUsuario">
       <a href="#" onclick="abrirLogin()">Login</a>
     </span>
@@ -211,49 +219,13 @@
 
   <div class="product-card">
     <img src="camisaltf.png">
-    <h3>Camisa Live the Faith</h3>
-    <p>Fé que ilumina, amor que transforma.</p>
-    <div class="price">R$90,00</div>
-    <button onclick="verificarCompra()">Comprar</button>
-  </div>
 
-  <div class="product-card">
-    <img src="camisaltf.png">
-    <h3>Camisa Fé Inabalável</h3>
-    <p>Força e propósito no dia a dia.</p>
-    <div class="price">R$85,00</div>
-    <button onclick="verificarCompra()">Comprar</button>
-  </div>
+    <div class="card-content">
+      <h3>Camisa Live the Faith</h3>
+      <p>Fé que ilumina, amor que transforma.</p>
+      <div class="price">R$90,00</div>
+    </div>
 
-  <div class="product-card">
-    <img src="camisaltf.png">
-    <h3>Camisa Luz Divina</h3>
-    <p>Ilumine seu caminho com fé.</p>
-    <div class="price">R$95,00</div>
-    <button onclick="verificarCompra()">Comprar</button>
-  </div>
-
-  <div class="product-card">
-    <img src="camisaltf.png">
-    <h3>Camisa Espírito Santo</h3>
-    <p>Proteção e paz todos os dias.</p>
-    <div class="price">R$100,00</div>
-    <button onclick="verificarCompra()">Comprar</button>
-  </div>
-
-  <div class="product-card">
-    <img src="camisaltf.png">
-    <h3>Camisa Graça e Fé</h3>
-    <p>Estilo com propósito.</p>
-    <div class="price">R$88,00</div>
-    <button onclick="verificarCompra()">Comprar</button>
-  </div>
-
-  <div class="product-card">
-    <img src="camisaltf.png">
-    <h3>Camisa Amor de Deus</h3>
-    <p>Vista o amor todos os dias.</p>
-    <div class="price">R$92,00</div>
     <button onclick="verificarCompra()">Comprar</button>
   </div>
 
