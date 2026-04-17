@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Painel Admin</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#f5f5f5;
+  padding:20px;
+}
+
+h1{color:#333;}
+
+.container{
+  background:#fff;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+input, textarea{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+}
+
+button{
+  padding:10px;
+  background:#facc15;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+table{
+  width:100%;
+  margin-top:20px;
+  border-collapse:collapse;
+}
+
+td, th{
+  padding:10px;
+  border-bottom:1px solid #ddd;
+}
+
+.edit{
+  background:#4CAF50;
+  color:white;
+}
+
+.delete{
+  background:#e74c3c;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Painel Admin - Produtos</h1>
+
+<!-- FORMULARIO -->
+<div class="container">
+  <h2>Adicionar Produto</h2>
+
+  <input id="nome" placeholder="Nome do produto">
+  <input id="preco" placeholder="Preço">
+  <input id="imagem" placeholder="URL da imagem">
+  <textarea id="descricao" placeholder="Descrição"></textarea>
+
+  <button onclick="adicionarProduto()">Salvar</button>
+</div>
+
+<!-- LISTA -->
+<div class="container">
+  <h2>Produtos cadastrados</h2>
+  <div id="lista"></div>
+</div>
+
+<script>
+
+function carregarProdutos(){
+  fetch("produtos_listar.php")
+  .then(r => r.json())
+  .then(data => {
+
+    let html = `<table>
+      <tr>
+        <th>Nome</th>
+        <th>Preço</th>
+        <th>Ações</th>
+      </tr>`;
+
+    data.forEach(p => {
+      html += `
+        <tr>
+          <td>${p.nome}</td>
+          <td>R$ ${p.preco}</td>
+          <td>
+            <button class="edit" onclick="editar(${p.id})">Editar</button>
+            <button class="delete" onclick="deletar(${p.id})">Excluir</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += "</table>";
+
+    document.getElementById("lista").innerHTML = html;
+  });
+}
+
+function adicionarProduto(){
+
+  const nome = document.getElementById("nome").value;
+  const preco = document.getElementById("preco").value;
+  const imagem = document.getElementById("imagem").value;
+  const descricao = document.getElementById("descricao").value;
+
+  fetch("produtos_add.php", {
+    method:"POST",
+    headers: {"Content-Type":"application/x-www-form-urlencoded"},
+    body:`nome=${nome}&preco=${preco}&imagem=${imagem}&descricao=${descricao}`
+  })
+  .then(() => {
+    alert("Produto adicionado!");
+    carregarProdutos();
+  });
+}
+
+function deletar(id){
+  fetch("produtos_delete.php?id="+id)
+  .then(() => carregarProdutos());
+}
+
+function editar(id){
+  const novoPreco = prompt("Novo preço:");
+  fetch("produtos_edit.php", {
+    method:"POST",
+    headers: {"Content-Type":"application/x-www-form-urlencoded"},
+    body:`id=${id}&preco=${novoPreco}`
+  })
+  .then(() => carregarProdutos());
+}
+
+carregarProdutos();
+
+</script>
+
+</body>
+</html>
