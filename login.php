@@ -10,6 +10,30 @@ if($conn->connect_error){
 $email = $_POST['email'];
 $senha = $_POST['senha'];
 
+/* 👑 ADMIN FIXO */
+$admin_email = "admin@livefaith.com";
+$admin_senha = "admin123";
+
+/* VERIFICA SE É ADMIN */
+if($email === $admin_email){
+
+    if($senha === $admin_senha){
+        echo json_encode([
+            "status" => "ok",
+            "nome" => "Administrador",
+            "admin" => 1
+        ]);
+    } else {
+        echo json_encode([
+            "status" => "erro",
+            "mensagem" => "Senha incorreta"
+        ]);
+    }
+
+    exit;
+}
+
+/* 👤 USUÁRIO NORMAL */
 $stmt = $conn->prepare("SELECT nome, senha FROM usuarios WHERE email=?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -18,13 +42,25 @@ $stmt->bind_result($nome, $senhaHash);
 
 if($stmt->num_rows > 0){
     $stmt->fetch();
+
     if(password_verify($senha, $senhaHash)){
-        echo json_encode(["status"=>"ok","nome"=>$nome]);
+        echo json_encode([
+            "status" => "ok",
+            "nome" => $nome,
+            "admin" => 0
+        ]);
     } else {
-        echo json_encode(["status"=>"erro","mensagem"=>"Senha incorreta"]);
+        echo json_encode([
+            "status" => "erro",
+            "mensagem" => "Senha incorreta"
+        ]);
     }
+
 } else {
-    echo json_encode(["status"=>"erro","mensagem"=>"Usuário não encontrado"]);
+    echo json_encode([
+        "status" => "erro",
+        "mensagem" => "Usuário não encontrado"
+    ]);
 }
 
 $stmt->close();
