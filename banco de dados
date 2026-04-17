@@ -1,11 +1,40 @@
-CREATE DATABASE live_the_faith;
+
+CREATE DATABASE IF NOT EXISTS live_the_faith;
+
 USE live_the_faith;
-CREATE TABLE usuarios (
+
+-- 👤 TABELA USUÁRIOS
+CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     telefone VARCHAR(20) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
+    is_admin TINYINT(1) DEFAULT 0,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 👑 CRIAR APENAS UM ADMIN FIXO
+INSERT INTO usuarios (nome, telefone, email, senha, is_admin)
+VALUES (
+  'Administrador',
+  '000000000',
+  'admin@livefaith.com',
+  '$2y$10$wH6dG9pP6X7QzQK6Qzj7OeGQZ8VxQvX9G1ZJ5YyQj3p9l7sKj1K9G',
+  1
+);
+
+-- 🔍 VER USUÁRIOS
+SELECT id, nome, email, is_admin FROM usuarios;
+SELECT * FROM usuarios WHERE email = 'admin@livefaith.com';
+
+CREATE TABLE produtos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  descricao TEXT,
+  preco DECIMAL(10,2) NOT NULL,
+  imagem VARCHAR(255),
+  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  select* from produtos
 );
 SELECT * FROM usuarios;
