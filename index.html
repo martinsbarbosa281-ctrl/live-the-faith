@@ -1,379 +1,381 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Live the Faith</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Live the Faith</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-      scroll-behavior: smooth;
-    }
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  scroll-behavior: smooth;
+}
 
-    body {
-      background-color: #f8fafc;
-      color: #333;
-    }
+body {
+  background-color: #f8fafc;
+  color: #333;
+}
 
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      background-color: #2e2e2e;
-      padding: 12px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 1000;
-    }
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #2e2e2e;
+  padding: 12px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
 
-    .logo {
-      font-size: 22px;
-      font-weight: 700;
-      color: #facc15;
-    }
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #facc15;
+}
 
-    nav a {
-      color: white;
-      margin-left: 20px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-    }
+nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 
-    nav a:hover {
-      color: #facc15;
-    }
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+}
 
-    .hero {
-      height: 80vh;
-      background: linear-gradient(rgba(15,23,42,0.75), rgba(15,23,42,0.75)),
-      url('https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d');
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      text-align: center;
-      margin-top: 60px;
-    }
+nav a:hover {
+  color: #facc15;
+}
 
-    .hero h2 {
-      font-size: 3em;
-      margin-bottom: 20px;
-    }
+/* ÁREA DO USUÁRIO */
+.user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
 
-    .btn {
-      background-color: #facc15;
-      padding: 12px 30px;
-      border-radius: 50px;
-      text-decoration: none;
-      color: #000;
-      font-weight: bold;
-    }
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin: 40px;
-    }
+.user-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  transition: 0.3s;
+}
 
-    .product-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      overflow: hidden;
-      text-align: center;
-      transition: 0.3s;
-    }
+.user-icon:hover {
+  background: rgba(255,255,255,0.1);
+}
 
-    .product-card:hover {
-      transform: translateY(-8px);
-    }
+.user-name {
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+}
 
-    .product-card img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-    }
+/* DROPDOWN */
+.dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border-radius: 10px;
+  width: 180px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: 0.3s;
+}
 
-    .price {
-      color: #4CAF50;
-      font-weight: bold;
-      margin: 10px 0;
-    }
+.user-menu:hover .dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
 
-    .product-card button {
-      background-color: #f39c12;
-      color: white;
-      padding: 10px;
-      width: 100%;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  transition: 0.2s;
+}
 
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      justify-content: center;
-      align-items: center;
-    }
+.dropdown a:hover {
+  background: #f3f4f6;
+}
 
-    .login-box {
-      background: #fff;
-      width: 320px;
-      padding: 30px;
-      border-radius: 14px;
-      text-align: center;
-      position: relative;
-    }
+/* HERO */
+.hero {
+  height: 80vh;
+  background: linear-gradient(rgba(15,23,42,0.75), rgba(15,23,42,0.75)),
+  url('https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  margin-top: 60px;
+}
 
-    .login-box input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
+.hero h2 {
+  font-size: 3em;
+}
 
-    .login-box button {
-      width: 100%;
-      padding: 12px;
-      background: #facc15;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+/* PRODUTOS */
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 40px;
+}
 
-    .fechar {
-      position: absolute;
-      right: 15px;
-      top: 10px;
-      font-size: 20px;
-      cursor: pointer;
-    }
+.product-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  text-align: center;
+  transition: 0.3s;
+}
 
-    .link {
-      margin-top: 10px;
-      font-size: 14px;
-    }
+.product-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
 
-    .link a {
-      color: #facc15;
-      font-weight: bold;
-      text-decoration: none;
-      cursor: pointer;
-    }
-  </style>
+.price {
+  color: #4CAF50;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.product-card button {
+  background-color: #f39c12;
+  color: white;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background: #fff;
+  width: 320px;
+  padding: 30px;
+  border-radius: 14px;
+  text-align: center;
+  position: relative;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background: #facc15;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.fechar {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.btn-login {
+  background: #facc15;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1 class="logo">Live the Faith</h1>
-  <nav>
-    <a href="#">Início</a>
-    <a href="#produtos">Produtos</a>
-    <a href="#">Contato</a>
+<h1 class="logo">Live the Faith</h1>
 
-    <span id="areaUsuario">
-      <a href="#" onclick="abrirLogin()">Login</a>
-    </span>
-  </nav>
+<nav>
+<a href="#">Início</a>
+<a href="#produtos">Produtos</a>
+<a href="#">Contato</a>
+
+<div id="areaUsuario">
+<button class="btn-login" onclick="abrirLogin()">Login</button>
+</div>
+
+</nav>
 </header>
 
 <section class="hero">
-  <h2>Vista sua fé ✨</h2>
-  <a href="#produtos" class="btn">Explorar coleção</a>
+<h2>Vista sua fé</h2>
 </section>
 
-<section id="produtos" class="products">
-  <div class="product-card">
-    <img src="camisaltf.png">
-    <h3>Camisa Live the Faith</h3>
-    <p>Fé que ilumina, amor que transforma.</p>
-    <div class="price">R$90,00</div>
-    <button onclick="verificarCompra()">Comprar</button>
-  </div>
-</section>
+<section id="produtos" class="products"></section>
 
 <!-- LOGIN -->
 <div id="loginModal" class="modal">
-  <div class="login-box">
-    <span class="fechar" onclick="fecharLogin()">&times;</span>
+<div class="login-box">
 
-    <h2>Entrar</h2>
+<span class="fechar" onclick="fecharLogin()">X</span>
 
-    <input type="email" id="email" placeholder="E-mail">
-    <input type="password" id="senha" placeholder="Senha">
+<h2>Entrar</h2>
 
-    <button onclick="simularLogin()">Entrar</button>
+<input id="email" placeholder="email">
+<input id="senha" type="password" placeholder="senha">
 
-    <div class="link">
-      Não tem conta? <a onclick="abrirCadastro()">Cadastre-se</a>
-    </div>
-  </div>
+<button onclick="simularLogin()">Entrar</button>
+
 </div>
-
-<!-- CADASTRO -->
-<div id="cadastroModal" class="modal">
-  <div class="login-box">
-    <span class="fechar" onclick="fecharCadastro()">&times;</span>
-
-    <h2>Cadastrar</h2>
-
-    <input type="text" id="nomeCadastro" placeholder="Nome">
-    <input type="tel" id="telefoneCadastro" placeholder="Telefone">
-    <input type="email" id="emailCadastro" placeholder="E-mail">
-    <input type="password" id="senhaCadastro" placeholder="Senha">
-
-    <button onclick="simularCadastro()">Criar conta</button>
-  </div>
 </div>
 
 <script>
 
-let usuarioLogado = false;
-
-/* LOGIN COM ADMIN */
-function simularLogin() {
-
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
-
-  fetch("login.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: `email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`
-  })
-  .then(res => res.json())
-  .then(data => {
-
-    if(data.status === "ok"){
-
-      usuarioLogado = true;
-      fecharLogin();
-
-      const isAdmin = data.admin == 1;
-
-      if(isAdmin){
-        window.location.href = "admin.html";
-        return;
-      }
-
-      alert("Bem-vindo " + data.nome);
-
-      document.getElementById("areaUsuario").innerHTML = `
-        <div style="position:relative; display:inline-block; margin-left:20px;">
-
-          <div onclick="toggleMenu()" style="
-            display:flex;
-            align-items:center;
-            gap:10px;
-            cursor:pointer;
-            color:white;
-            font-weight:600;
-          ">
-            👤 ${data.nome}
-          </div>
-
-          <div id="menuPerfil" style="
-            display:none;
-            position:absolute;
-            right:0;
-            top:40px;
-            background:white;
-            border-radius:12px;
-            min-width:180px;
-            box-shadow:0 10px 25px rgba(0,0,0,0.2);
-          ">
-
-            <div onclick="logout()" style="
-              padding:10px;
-              cursor:pointer;
-              color:red;
-              font-weight:bold;
-            ">
-              Sair
-            </div>
-
-          </div>
-        </div>
-      `;
-
-    } else {
-      usuarioLogado = false;
-      alert(data.mensagem);
-    }
-
-  });
-
+function abrirLogin(){
+  document.getElementById("loginModal").style.display = "flex";
 }
 
-/* LOGOUT */
-function logout(){
-  usuarioLogado = false;
-  document.getElementById("areaUsuario").innerHTML = `<a href="#" onclick="abrirLogin()">Login</a>`;
+function fecharLogin(){
+  document.getElementById("loginModal").style.display = "none";
 }
 
-/* MENU */
-function toggleMenu(){
-  const menu = document.getElementById("menuPerfil");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-
-/* CADASTRO */
-function simularCadastro(){
-
-  const nome = document.getElementById("nomeCadastro").value;
-  const telefone = document.getElementById("telefoneCadastro").value;
-  const email = document.getElementById("emailCadastro").value;
-  const senha = document.getElementById("senhaCadastro").value;
-
-  fetch("cadastrar.php", {
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:`nome=${nome}&telefone=${telefone}&email=${email}&senha=${senha}`
-  })
-  .then(res=>res.json())
-  .then(data=>{
-    alert(data.status==="ok"?"Conta criada!":data.mensagem);
-    fecharCadastro();
-    abrirLogin();
-  });
-
-}
-
-/* MODAIS */
-function abrirLogin(){document.getElementById("loginModal").style.display="flex";}
-function fecharLogin(){document.getElementById("loginModal").style.display="none";}
-function abrirCadastro(){fecharLogin();document.getElementById("cadastroModal").style.display="flex";}
-function fecharCadastro(){document.getElementById("cadastroModal").style.display="none";}
-
-window.addEventListener("click",function(e){
-  if(e.target.classList.contains("modal")){
-    e.target.style.display="none";
-  }
+function carregarProdutos(){
+fetch("listar.php")
+.then(r=>r.json())
+.then(produtos=>{
+let html="";
+produtos.forEach(p=>{
+html+=`
+<div class="product-card">
+<img src="${p.imagem}">
+<h3>${p.nome}</h3>
+<p>${p.descricao}</p>
+<div class="price">R$ ${p.preco}</div>
+<button>Comprar</button>
+</div>`;
 });
+document.getElementById("produtos").innerHTML=html;
+});
+}
+
+function simularLogin(){
+
+const email=document.getElementById("email").value;
+const senha=document.getElementById("senha").value;
+
+fetch("login.php",{
+method:"POST",
+headers:{"Content-Type":"application/x-www-form-urlencoded"},
+body:`email=${email}&senha=${senha}`
+})
+.then(r=>r.json())
+.then(data=>{
+
+if(data.status==="ok"){
+
+localStorage.setItem("usuarioNome",data.nome);
+
+fecharLogin();
+
+if(data.admin==1){
+window.location.href="admin.html";
+return;
+}
+
+document.getElementById("areaUsuario").innerHTML = `
+<div class="user-menu">
+
+  <div class="user-info">
+    <div class="user-icon">
+      ${data.nome.charAt(0).toUpperCase()}
+    </div>
+    <span class="user-name">${data.nome}</span>
+  </div>
+
+  <div class="dropdown">
+    <a href="#">🛒 Carrinho</a>
+    <a href="#">❤️ Favoritos</a>
+    <a href="#" onclick="logout()">🚪 Sair</a>
+  </div>
+
+</div>
+`;
+
+}else{
+alert(data.mensagem);
+}
+
+});
+
+}
+
+function logout(){
+  localStorage.removeItem("usuarioNome");
+  location.reload();
+}
+
+window.onload=()=>{
+carregarProdutos();
+}
 
 </script>
 
