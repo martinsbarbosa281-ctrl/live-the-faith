@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrinho</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+  font-family: 'Poppins', sans-serif;
+  background:#f8fafc;
+  margin:0;
+}
+
+/* HEADER IGUAL INDEX */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #2e2e2e;
+  padding: 12px 40px;
+  color:white;
+  font-weight: bold;
+  z-index:1000;
+}
+
+/* CONTAINER */
+.container{
+  padding:100px 40px;
+}
+
+h1{
+  margin-bottom:20px;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:20px;
+}
+
+/* CARD */
+.card{
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  padding:15px;
+}
+
+.card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.nome{
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.preco{
+  font-weight:bold;
+  margin:10px 0;
+}
+
+/* QUANTIDADE */
+.quantidade{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:10px 0;
+}
+
+.quantidade button{
+  padding:5px 10px;
+  border:none;
+  cursor:pointer;
+  background:#ddd;
+  border-radius:5px;
+}
+
+.qtd-num{
+  font-weight:bold;
+}
+
+/* BOTÕES */
+.btn{
+  width:100%;
+  padding:10px;
+  border:none;
+  cursor:pointer;
+  margin-top:5px;
+  border-radius:6px;
+  font-weight:bold;
+}
+
+.remover{
+  background:#facc15;
+}
+
+.comprar{
+  background:black;
+  color:white;
+}
+
+/* TOTAL */
+.total{
+  margin-top:30px;
+  font-size:20px;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🛒 Seu Carrinho
+</header>
+
+<div class="container">
+
+<div class="grid" id="lista"></div>
+
+<div class="total" id="total"></div>
+
+</div>
+
+<script>
+
+function carregarCarrinho(){
+
+  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+
+  let html = "";
+  let total = 0;
+
+  carrinho.forEach((p, i)=>{
+
+    // garantir quantidade
+    if(!p.qtd) p.qtd = 1;
+
+    total += p.preco * p.qtd;
+
+    html += `
+    <div class="card">
+
+      <img src="${p.imagem}">
+
+      <div class="nome">${p.nome}</div>
+      <div>Tamanho: ${p.tamanho}</div>
+
+      <div class="preco">R$ ${(p.preco * p.qtd).toFixed(2)}</div>
+
+      <div class="quantidade">
+        <button onclick="diminuir(${i})">-</button>
+        <span class="qtd-num">${p.qtd}</span>
+        <button onclick="aumentar(${i})">+</button>
+      </div>
+
+      <button class="btn remover" onclick="remover(${i})">
+        Remover
+      </button>
+
+      <button class="btn comprar" onclick="comprar(${i})">
+        Comprar
+      </button>
+
+    </div>
+    `;
+  });
+
+  document.getElementById("lista").innerHTML = html;
+  document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
+
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+}
+
+/* AUMENTAR */
+function aumentar(i){
+  let carrinho = JSON.parse(localStorage.getItem("carrinho"));
+  carrinho[i].qtd++;
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  carregarCarrinho();
+}
+
+/* DIMINUIR */
+function diminuir(i){
+  let carrinho = JSON.parse(localStorage.getItem("carrinho"));
+  if(carrinho[i].qtd > 1){
+    carrinho[i].qtd--;
+  }
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  carregarCarrinho();
+}
+
+/* REMOVER */
+function remover(i){
+  let carrinho = JSON.parse(localStorage.getItem("carrinho"));
+  carrinho.splice(i,1);
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  carregarCarrinho();
+}
+
+/* COMPRAR */
+function comprar(i){
+  let carrinho = JSON.parse(localStorage.getItem("carrinho"));
+
+  localStorage.setItem("compraDireta", JSON.stringify(carrinho[i]));
+
+  alert("Indo para pagamento...");
+}
+
+/* LOAD */
+carregarCarrinho();
+
+</script>
+
+</body>
+</html>
