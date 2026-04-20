@@ -276,6 +276,16 @@ nav a:hover {
   font-weight: 600;
   cursor: pointer;
 }
+
+/* 🔥 CADASTRO MODAL (ADICIONADO) */
+#cadastroModal input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
 </style>
 </head>
 
@@ -312,7 +322,30 @@ nav a:hover {
 <input id="email" placeholder="email">
 <input id="senha" type="password" placeholder="senha">
 
+<p style="margin-bottom:10px; font-size:13px;">
+Não tem conta? 
+<a href="#" onclick="abrirCadastro()" style="color:#facc15;">Cadastre-se</a>
+</p>
+
 <button onclick="simularLogin()">Entrar</button>
+
+</div>
+</div>
+
+<!-- 🔥 CADASTRO (ADICIONADO SEM REMOVER NADA) -->
+<div id="cadastroModal" class="modal">
+<div class="login-box">
+
+<span class="fechar" onclick="fecharCadastro()">X</span>
+
+<h2>Criar conta</h2>
+
+<input id="nomeCad" placeholder="nome">
+<input id="telefoneCad" placeholder="telefone">
+<input id="emailCad" placeholder="email">
+<input id="senhaCad" type="password" placeholder="senha">
+
+<button onclick="cadastrar()">Cadastrar</button>
 
 </div>
 </div>
@@ -327,45 +360,44 @@ function fecharLogin(){
   document.getElementById("loginModal").style.display = "none";
 }
 
-function carregarProdutos(){
-fetch("listar.php")
+/* 🔥 CADASTRO */
+function abrirCadastro(){
+  document.getElementById("loginModal").style.display = "none";
+  document.getElementById("cadastroModal").style.display = "flex";
+}
+
+function fecharCadastro(){
+  document.getElementById("cadastroModal").style.display = "none";
+}
+
+function cadastrar(){
+
+const nome=document.getElementById("nomeCad").value;
+const telefone=document.getElementById("telefoneCad").value;
+const email=document.getElementById("emailCad").value;
+const senha=document.getElementById("senhaCad").value;
+
+fetch("cadastrar.php",{
+method:"POST",
+headers:{"Content-Type":"application/x-www-form-urlencoded"},
+body:`nome=${nome}&telefone=${telefone}&email=${email}&senha=${senha}`
+})
 .then(r=>r.json())
-.then(produtos=>{
-let html="";
+.then(data=>{
 
-produtos.forEach(p=>{
-html+=`
-<div class="product-card" onclick='abrirProduto(${JSON.stringify(p)})'>
-
-  <div class="img-container">
-    <img src="${p.imagem}">
-    <div class="fav">♡</div>
-  </div>
-
-  <div class="product-info">
-    <h3>${p.nome}</h3>
-    <span class="categoria">${p.categoria || "Casual"}</span>
-
-    <div class="price-box">
-      <span class="price">R$ ${p.preco}</span>
-      ${p.preco_antigo ? `<span class="old-price">R$ ${p.preco_antigo}</span>` : ""}
-      ${p.desconto ? `<span class="desconto">${p.desconto}</span>` : ""}
-    </div>
-  </div>
-
-</div>
-`;
-});
-
-document.getElementById("produtos").innerHTML=html;
-});
+if(data.status==="ok"){
+alert("Cadastro realizado com sucesso!");
+fecharCadastro();
+abrirLogin();
+}else{
+alert(data.mensagem);
 }
 
-function abrirProduto(produto){
-  localStorage.setItem("produtoSelecionado", JSON.stringify(produto));
-  window.location.href = "produto.html";
+});
+
 }
 
+/* LOGIN */
 function simularLogin(){
 
 const email=document.getElementById("email").value;
@@ -419,6 +451,43 @@ function logout(){
 
 window.onload=()=>{
 carregarProdutos();
+}
+
+function carregarProdutos(){
+fetch("listar.php")
+.then(r=>r.json())
+.then(produtos=>{
+let html="";
+
+produtos.forEach(p=>{
+html+=`
+<div class="product-card" onclick='abrirProduto(${JSON.stringify(p)})'>
+  <div class="img-container">
+    <img src="${p.imagem}">
+    <div class="fav">♡</div>
+  </div>
+
+  <div class="product-info">
+    <h3>${p.nome}</h3>
+    <span class="categoria">${p.categoria || "Casual"}</span>
+
+    <div class="price-box">
+      <span class="price">R$ ${p.preco}</span>
+      ${p.preco_antigo ? `<span class="old-price">R$ ${p.preco_antigo}</span>` : ""}
+      ${p.desconto ? `<span class="desconto">${p.desconto}</span>` : ""}
+    </div>
+  </div>
+</div>
+`;
+});
+
+document.getElementById("produtos").innerHTML=html;
+});
+}
+
+function abrirProduto(produto){
+  localStorage.setItem("produtoSelecionado", JSON.stringify(produto));
+  window.location.href = "produto.html";
 }
 
 </script>
