@@ -14,7 +14,6 @@ body{
   background:#f8fafc;
 }
 
-/* CONTAINER IGUAL PADRÃO */
 .container{
   display:flex;
   gap:50px;
@@ -23,7 +22,6 @@ body{
   flex-wrap:wrap;
 }
 
-/* CARD IMAGEM */
 .img-box{
   position:relative;
   background:white;
@@ -37,7 +35,6 @@ body{
   object-fit:contain;
 }
 
-/* CORAÇÃO */
 .fav{
   position:absolute;
   top:15px;
@@ -52,14 +49,8 @@ body{
   font-size:20px;
   cursor:pointer;
   box-shadow:0 2px 6px rgba(0,0,0,0.2);
-  transition:0.2s;
 }
 
-.fav:hover{
-  transform:scale(1.1);
-}
-
-/* INFO */
 .info{
   max-width:400px;
 }
@@ -75,7 +66,12 @@ body{
   margin:15px 0;
 }
 
-/* TAMANHOS */
+.estoque{
+  margin:10px 0;
+  font-weight:600;
+  color:#444;
+}
+
 .tamanhos{
   display:flex;
   gap:10px;
@@ -87,11 +83,6 @@ body{
   border:1px solid #ccc;
   cursor:pointer;
   border-radius:8px;
-  transition:0.2s;
-}
-
-.tamanho:hover{
-  border-color:#000;
 }
 
 .tamanho.ativo{
@@ -99,7 +90,6 @@ body{
   color:white;
 }
 
-/* BOTÕES */
 .botoes{
   display:flex;
   gap:15px;
@@ -113,24 +103,15 @@ button{
   cursor:pointer;
   border-radius:10px;
   font-weight:600;
-  transition:0.2s;
 }
 
 .btn-carrinho{
   background:#facc15;
 }
 
-.btn-carrinho:hover{
-  background:#eab308;
-}
-
 .btn-comprar{
   background:#000;
   color:white;
-}
-
-.btn-comprar:hover{
-  background:#111;
 }
 </style>
 </head>
@@ -148,10 +129,10 @@ button{
     <h1 id="nome"></h1>
     <div class="preco" id="preco"></div>
 
-    <!-- Tamanhos (vai sumir se NÃO for roupa) -->
+    <div class="estoque" id="estoque"></div>
+
     <div id="areaTamanho">
       <p>Escolha o tamanho:</p>
-
       <div class="tamanhos">
         <div class="tamanho" onclick="selecionarTamanho(this,'P')">P</div>
         <div class="tamanho" onclick="selecionarTamanho(this,'M')">M</div>
@@ -170,7 +151,6 @@ button{
 
 <script>
 
-/* PRODUTO */
 let produto = JSON.parse(localStorage.getItem("produtoSelecionado"));
 
 if(!produto){
@@ -178,110 +158,103 @@ if(!produto){
   window.location.href = "index.html";
 }
 
-/* MOSTRAR */
 document.getElementById("nome").innerText = produto.nome;
 document.getElementById("preco").innerText = "R$ " + produto.preco;
 document.getElementById("imgProduto").src = produto.imagem;
 
-/* ESCONDER TAMANHO SE NÃO FOR ROUPA */
+function atualizarEstoque(){
+  document.getElementById("estoque").innerText =
+    "Estoque: " + (produto.quantidade_estoque ?? 0);
+}
+
+atualizarEstoque();
+
 if(produto.categoria !== "roupa"){
   document.getElementById("areaTamanho").style.display = "none";
 }
 
 let tamanhoSelecionado = null;
 
-/* TAMANHO */
 function selecionarTamanho(el, tamanho){
   tamanhoSelecionado = tamanho;
-
-  document.querySelectorAll(".tamanho").forEach(t=>{
-    t.classList.remove("ativo");
-  });
-
+  document.querySelectorAll(".tamanho").forEach(t=>t.classList.remove("ativo"));
   el.classList.add("ativo");
 }
 
-/* FAVORITOS */
-function toggleFavorito(){
-  let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+/* 🔥 FUNÇÃO QUE ATUALIZA BANCO */
+function reduzirEstoque(){
 
-  const index = favoritos.findIndex(p => p.nome === produto.nome);
-  const btn = document.getElementById("btnFav");
-
-  if(index >= 0){
-    favoritos.splice(index,1);
-    btn.innerHTML = "♡";
-    btn.style.color = "#000";
-  }else{
-    favoritos.push(produto);
-    btn.innerHTML = "❤️";
-    btn.style.color = "red";
-  }
-
-  localStorage.setItem("favoritos", JSON.stringify(favoritos));
+  return fetch("diminuir_estoque.php", {
+    method:"POST",
+    headers: {"Content-Type":"application/x-www-form-urlencoded"},
+    body: new URLSearchParams({
+      id: produto.id,
+      quantidade: 1
+    })
+  })
+  .then(r => r.json());
 }
-
-/* MARCAR FAVORITO */
-window.onload = () => {
-  let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-  const isFav = favoritos.some(p => p.nome === produto.nome);
-
-  if(isFav){
-    document.getElementById("btnFav").innerHTML = "❤️";
-    document.getElementById("btnFav").style.color = "red";
-  }
-};
 
 /* CARRINHO */
 function addCarrinho(){
 
-  const usuario = localStorage.getItem("usuarioNome");
-
-  if(!usuario){
+  if(!localStorage.getItem("usuarioNome")){
     alert("Você precisa estar logado");
-    window.location.href = "index.html";
     return;
   }
 
-  if(produto.categoria === "roupa" && !tamanhoSelecionado){
-    alert("Selecione um tamanho");
+  const estoque = produto.quantidade_estoque ?? 0;
+
+  if(estoque <= 0){
+    alert("Produto sem estoque");
     return;
   }
 
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+  reduzirEstoque().then(res => {
 
-  carrinho.push({
-    ...produto,
-    tamanho: produto.categoria === "roupa" ? tamanhoSelecionado : null
+    if(res.status !== "ok"){
+      alert("Erro ao atualizar estoque");
+      return;
+    }
+
+    produto.quantidade_estoque -= 1;
+    atualizarEstoque();
+
+    let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+
+    carrinho.push({
+      ...produto,
+      tamanho: produto.categoria === "roupa" ? tamanhoSelecionado : null
+    });
+
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+
+    alert("Adicionado ao carrinho 🛒");
   });
-
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
-
-  alert("Adicionado ao carrinho 🛒");
 }
 
-/* COMPRAR */
+/* COMPRA */
 function comprarAgora(){
 
-  const usuario = localStorage.getItem("usuarioNome");
-
-  if(!usuario){
+  if(!localStorage.getItem("usuarioNome")){
     alert("Você precisa estar logado");
-    window.location.href = "index.html";
     return;
   }
 
-  if(produto.categoria === "roupa" && !tamanhoSelecionado){
-    alert("Selecione um tamanho");
-    return;
-  }
+  reduzirEstoque().then(res => {
 
-  localStorage.setItem("compraDireta", JSON.stringify({
-    ...produto,
-    tamanho: produto.categoria === "roupa" ? tamanhoSelecionado : null
-  }));
+    if(res.status !== "ok"){
+      alert("Erro ao atualizar estoque");
+      return;
+    }
 
-  alert("Indo para pagamento...");
+    produto.quantidade_estoque -= 1;
+    atualizarEstoque();
+
+    localStorage.setItem("compraDireta", JSON.stringify(produto));
+
+    alert("Indo para pagamento...");
+  });
 }
 
 </script>
