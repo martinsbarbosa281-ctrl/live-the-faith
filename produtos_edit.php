@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
 
-$conn = new mysqli("localhost","root","SUA_SENHA","live_the_faith");
+$conn = new mysqli("localhost","root","Home@spSENAI2025!","live_the_faith");
 
 if($conn->connect_error){
   echo json_encode([
