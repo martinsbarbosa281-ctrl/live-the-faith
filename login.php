@@ -2,13 +2,27 @@
 header('Content-Type: application/json');
 
 $conn = new mysqli("localhost","root","Home@spSENAI2025!","live_the_faith");
+
 if($conn->connect_error){
-    echo json_encode(["status"=>"erro","mensagem"=>$conn->connect_error]);
+    echo json_encode([
+        "status"=>"erro",
+        "mensagem"=>$conn->connect_error
+    ]);
     exit;
 }
 
-$email = $_POST['email'];
-$senha = $_POST['senha'];
+/* 🔒 EVITA ERRO DE VARIÁVEL NÃO DEFINIDA */
+$email = $_POST['email'] ?? "";
+$senha = $_POST['senha'] ?? "";
+
+/* 🔴 VALIDAÇÃO */
+if(empty($email) || empty($senha)){
+    echo json_encode([
+        "status"=>"erro",
+        "mensagem"=>"Preencha todos os campos"
+    ]);
+    exit;
+}
 
 /* 👑 ADMIN FIXO */
 $admin_email = "admin@livefaith.com";
@@ -21,6 +35,7 @@ if($email === $admin_email){
         echo json_encode([
             "status" => "ok",
             "nome" => "Administrador",
+            "email" => $email, // ✔ importante
             "admin" => 1
         ]);
     } else {
@@ -47,6 +62,7 @@ if($stmt->num_rows > 0){
         echo json_encode([
             "status" => "ok",
             "nome" => $nome,
+            "email" => $email, // ✔ ESSENCIAL PRO TROCAR SENHA
             "admin" => 0
         ]);
     } else {
