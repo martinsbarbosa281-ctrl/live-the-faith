@@ -97,21 +97,38 @@ body{
 }
 
 button{
-  flex:1;
-  padding:15px;
+  padding:10px 15px;
   border:none;
   cursor:pointer;
-  border-radius:10px;
+  border-radius:8px;
   font-weight:600;
 }
 
 .btn-carrinho{
   background:#facc15;
+  flex:1;
 }
 
 .btn-comprar{
   background:#000;
   color:white;
+  flex:1;
+}
+
+.contador{
+  margin-top:20px;
+}
+
+.contador-box{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.contador-box button{
+  width:35px;
+  height:35px;
+  font-size:18px;
 }
 </style>
 </head>
@@ -141,6 +158,16 @@ button{
       </div>
     </div>
 
+    <!-- 🔥 CONTADOR -->
+    <div class="contador">
+      <p>Quantidade:</p>
+      <div class="contador-box">
+        <button onclick="diminuirQtd()">-</button>
+        <span id="qtd">1</span>
+        <button onclick="aumentarQtd()">+</button>
+      </div>
+    </div>
+
     <div class="botoes">
       <button class="btn-carrinho" onclick="addCarrinho()">Adicionar ao carrinho</button>
       <button class="btn-comprar" onclick="comprarAgora()">Comprar agora</button>
@@ -162,14 +189,21 @@ document.getElementById("nome").innerText = produto.nome;
 document.getElementById("preco").innerText = "R$ " + produto.preco;
 document.getElementById("imgProduto").src = produto.imagem;
 
+/* 🔥 ESTOQUE CORRIGIDO */
 function atualizarEstoque(){
+  const estoque = produto.quantidade_estoque 
+               ?? produto.estoque 
+               ?? produto.quantidade 
+               ?? 0;
+
   document.getElementById("estoque").innerText =
-    "Estoque: " + (produto.quantidade_estoque ?? 0);
+    "Estoque: " + estoque;
 }
 
 atualizarEstoque();
 
-if(produto.categoria !== "roupa"){
+/* 🔥 TIPO CORRIGIDO */
+if(produto.tipo !== "roupa"){
   document.getElementById("areaTamanho").style.display = "none";
 }
 
@@ -181,21 +215,46 @@ function selecionarTamanho(el, tamanho){
   el.classList.add("ativo");
 }
 
-/* 🔥 FUNÇÃO QUE ATUALIZA BANCO */
-function reduzirEstoque(){
+/* 🔥 CONTADOR */
+let quantidadeSelecionada = 1;
 
+function atualizarQtd(){
+  document.getElementById("qtd").innerText = quantidadeSelecionada;
+}
+
+function aumentarQtd(){
+  const estoque = produto.quantidade_estoque 
+               ?? produto.estoque 
+               ?? produto.quantidade 
+               ?? 0;
+
+  if(quantidadeSelecionada < estoque){
+    quantidadeSelecionada++;
+    atualizarQtd();
+  }
+}
+
+function diminuirQtd(){
+  if(quantidadeSelecionada > 1){
+    quantidadeSelecionada--;
+    atualizarQtd();
+  }
+}
+
+/* 🔥 BACKEND */
+function reduzirEstoque(){
   return fetch("diminuir_estoque.php", {
     method:"POST",
     headers: {"Content-Type":"application/x-www-form-urlencoded"},
     body: new URLSearchParams({
       id: produto.id,
-      quantidade: 1
+      quantidade: quantidadeSelecionada
     })
   })
   .then(r => r.json());
 }
 
-/* CARRINHO */
+/* 🛒 CARRINHO */
 function addCarrinho(){
 
   if(!localStorage.getItem("usuarioNome")){
@@ -203,10 +262,13 @@ function addCarrinho(){
     return;
   }
 
-  const estoque = produto.quantidade_estoque ?? 0;
+  const estoque = produto.quantidade_estoque 
+               ?? produto.estoque 
+               ?? produto.quantidade 
+               ?? 0;
 
-  if(estoque <= 0){
-    alert("Produto sem estoque");
+  if(estoque < quantidadeSelecionada){
+    alert("Quantidade indisponível em estoque");
     return;
   }
 
@@ -217,14 +279,15 @@ function addCarrinho(){
       return;
     }
 
-    produto.quantidade_estoque -= 1;
+    produto.quantidade_estoque -= quantidadeSelecionada;
     atualizarEstoque();
 
     let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
     carrinho.push({
       ...produto,
-      tamanho: produto.categoria === "roupa" ? tamanhoSelecionado : null
+      tamanho: produto.tipo === "roupa" ? tamanhoSelecionado : null,
+      quantidade: quantidadeSelecionada
     });
 
     localStorage.setItem("carrinho", JSON.stringify(carrinho));
@@ -233,11 +296,21 @@ function addCarrinho(){
   });
 }
 
-/* COMPRA */
+/* 💳 COMPRA */
 function comprarAgora(){
 
   if(!localStorage.getItem("usuarioNome")){
     alert("Você precisa estar logado");
+    return;
+  }
+
+  const estoque = produto.quantidade_estoque 
+               ?? produto.estoque 
+               ?? produto.quantidade 
+               ?? 0;
+
+  if(estoque < quantidadeSelecionada){
+    alert("Quantidade indisponível em estoque");
     return;
   }
 
@@ -248,10 +321,13 @@ function comprarAgora(){
       return;
     }
 
-    produto.quantidade_estoque -= 1;
+    produto.quantidade_estoque -= quantidadeSelecionada;
     atualizarEstoque();
 
-    localStorage.setItem("compraDireta", JSON.stringify(produto));
+    localStorage.setItem("compraDireta", JSON.stringify({
+      ...produto,
+      quantidade: quantidadeSelecionada
+    }));
 
     alert("Indo para pagamento...");
   });
