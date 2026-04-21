@@ -31,12 +31,45 @@ header {
   justify-content: space-between;
   align-items: center;
   z-index: 1000;
+  gap: 15px;
 }
 
 .logo {
   font-size: 22px;
   font-weight: 700;
   color: #facc15;
+  white-space: nowrap;
+}
+
+.search-box {
+  flex-grow: 1;
+  max-width: 400px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.menu-toggle span {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
 }
 
 nav {
@@ -56,7 +89,6 @@ nav a:hover {
   color: #facc15;
 }
 
-/* ÁREA DO USUÁRIO */
 .user-menu {
   position: relative;
   display: flex;
@@ -116,7 +148,28 @@ nav a:hover {
   background: #f3f4f6;
 }
 
-/* HERO */
+@media (max-width: 850px) {
+  header { padding: 12px 20px; }
+  .menu-toggle { display: flex; }
+  
+  nav {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #2e2e2e;
+    padding: 20px;
+    gap: 15px;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+  }
+
+  nav.active {
+    display: flex;
+  }
+}
+
 .hero {
   height: 80vh;
   background: linear-gradient(rgba(15,23,42,0.75), rgba(15,23,42,0.75)),
@@ -137,7 +190,6 @@ nav a:hover {
   margin-bottom: 20px;
 }
 
-/* PRODUTOS */
 .products{
   display:grid;
   grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
@@ -219,7 +271,6 @@ nav a:hover {
   font-size:14px;
 }
 
-/* MODAL */
 .modal {
   display: none;
   position: fixed;
@@ -276,116 +327,116 @@ nav a:hover {
   font-weight: 600;
   cursor: pointer;
 }
-
-/* 🔥 CADASTRO MODAL */
-#cadastroModal input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-
 </style>
 </head>
 
 <body>
 
 <header>
-<h1 class="logo">Live the Faith</h1>
+  <div class="menu-toggle" onclick="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
 
-<nav>
-<a href="#">Início</a>
-<a href="#produtos">Produtos</a>
-<a href="#">Contato</a>
+  <h1 class="logo">Live the Faith</h1>
 
-<div id="areaUsuario">
-<button class="btn-login" onclick="abrirLogin()">Login</button>
-</div>
-</nav>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Pesquisar produtos..." onkeyup="filtrarProdutos()" autocomplete="off">
+  </div>
+
+  <nav id="navLinks">
+    <a href="#">Início</a>
+    <a href="#produtos">Produtos</a>
+    <a href="#">Contato</a>
+
+    <div id="areaUsuario">
+      <button class="btn-login" onclick="abrirLogin()">Login</button>
+    </div>
+  </nav>
 </header>
 
 <section class="hero">
-<h2>Vista sua fé</h2>
+  <h2>Vista sua fé</h2>
 </section>
 
 <section id="produtos" class="products"></section>
 
 <div id="loginModal" class="modal">
-<div class="login-box">
-
-<span class="fechar" onclick="fecharLogin()">X</span>
-
-<h2>Entrar</h2>
-
-<input id="email" placeholder="email">
-<input id="senha" type="password" placeholder="senha">
-
-<p style="margin-bottom:10px; font-size:13px;">
-Não tem conta? 
-<a href="#" onclick="abrirCadastro()" style="color:#facc15;">Cadastre-se</a>
-</p>
-
-<p style="margin-bottom:10px; font-size:13px;">
-Esqueceu a senha? 
-<a href="#" onclick="abrirRecuperarSenha()" style="color:#facc15;">Recuperar senha</a>
-</p>
-
-<button onclick="simularLogin()">Entrar</button>
-
-</div>
+  <div class="login-box">
+    <span class="fechar" onclick="fecharLogin()">X</span>
+    <h2>Entrar</h2>
+    <input id="email" placeholder="email">
+    <input id="senha" type="password" placeholder="senha">
+    <p style="margin-bottom:10px; font-size:13px;">Não tem conta? <a href="#" onclick="abrirCadastro()" style="color:#facc15;">Cadastre-se</a></p>
+    <p style="margin-bottom:10px; font-size:13px;">Esqueceu a senha? <a href="#" onclick="abrirRecuperarSenha()" style="color:#facc15;">Recuperar senha</a></p>
+    <button onclick="simularLogin()">Entrar</button>
+  </div>
 </div>
 
 <div id="cadastroModal" class="modal">
-<div class="login-box">
-
-<span class="fechar" onclick="fecharCadastro()">X</span>
-
-<h2>Criar conta</h2>
-
-<input id="nomeCad" placeholder="nome">
-<input id="telefoneCad" placeholder="telefone">
-<input id="emailCad" placeholder="email">
-<input id="senhaCad" type="password" placeholder="senha">
-
-<button onclick="cadastrar()">Cadastrar</button>
-
-</div>
+  <div class="login-box">
+    <span class="fechar" onclick="fecharCadastro()">X</span>
+    <h2>Criar conta</h2>
+    <input id="nomeCad" placeholder="nome">
+    <input id="telefoneCad" placeholder="telefone">
+    <input id="emailCad" placeholder="email">
+    <input id="senhaCad" type="password" placeholder="senha">
+    <button onclick="cadastrar()">Cadastrar</button>
+  </div>
 </div>
 
 <div id="trocarSenhaModal" class="modal">
-<div class="login-box">
-
-<span class="fechar" onclick="fecharTrocarSenha()">X</span>
-
-<h2>Trocar senha</h2>
-
-<input id="senhaAtual" type="password" placeholder="Senha atual">
-<input id="novaSenha" type="password" placeholder="Nova senha">
-
-<button onclick="trocarSenha()">Atualizar senha</button>
-
-</div>
+  <div class="login-box">
+    <span class="fechar" onclick="fecharTrocarSenha()">X</span>
+    <h2>Trocar senha</h2>
+    <input id="senhaAtual" type="password" placeholder="Senha atual">
+    <input id="novaSenha" type="password" placeholder="Nova senha">
+    <button onclick="trocarSenha()">Atualizar senha</button>
+  </div>
 </div>
 
 <div id="recuperarModal" class="modal">
-<div class="login-box">
-
-<span class="fechar" onclick="fecharRecuperarSenha()">X</span>
-
-<h2>Recuperar senha</h2>
-
-<input id="emailRec" placeholder="Digite seu email">
-<input id="novaSenhaRec" type="password" placeholder="Nova senha">
-
-<button onclick="recuperarSenha()">Atualizar senha</button>
-
-</div>
+  <div class="login-box">
+    <span class="fechar" onclick="fecharRecuperarSenha()">X</span>
+    <h2>Recuperar senha</h2>
+    <input id="emailRec" placeholder="Digite seu email">
+    <input id="novaSenhaRec" type="password" placeholder="Nova senha">
+    <button onclick="recuperarSenha()">Atualizar senha</button>
+  </div>
 </div>
 
 <script>
 
-// --- FUNÇÃO DE LIMPEZA ---
+// --- FUNÇÃO MENU HAMBÚRGUER ---
+function toggleMenu() {
+  document.getElementById("navLinks").classList.toggle("active");
+}
+
+// --- FUNÇÃO DE PESQUISA (RESETÁVEL) ---
+function filtrarProdutos() {
+  const termo = document.getElementById("searchInput").value.toLowerCase();
+  const cards = document.querySelectorAll(".product-card");
+
+  cards.forEach(card => {
+    const nome = card.querySelector("h3").innerText.toLowerCase();
+    if (nome.includes(termo)) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+// --- FUNÇÃO PARA MANTER A BARRA LIMPA ---
+function limparBusca() {
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.value = "";
+    filtrarProdutos(); // Reseta a visibilidade dos produtos
+  }
+}
+
 function limparFormularios(modalId) {
   const inputs = document.querySelectorAll(`#${modalId} input`);
   inputs.forEach(input => {
@@ -393,9 +444,10 @@ function limparFormularios(modalId) {
   });
 }
 
-// --- FUNÇÕES DE CONTROLE DOS MODAIS ---
+// --- CONTROLE DOS MODAIS COM LIMPEZA DE BUSCA ---
 
 function abrirLogin(){ 
+  limparBusca();
   limparFormularios("loginModal");
   document.getElementById("loginModal").style.display = "flex"; 
 }
@@ -405,6 +457,7 @@ function fecharLogin(){
 }
 
 function abrirCadastro(){
+  limparBusca();
   limparFormularios("cadastroModal");
   document.getElementById("loginModal").style.display = "none";
   document.getElementById("cadastroModal").style.display = "flex";
@@ -415,6 +468,7 @@ function fecharCadastro(){
 }
 
 function abrirTrocarSenha(){ 
+  limparBusca();
   limparFormularios("trocarSenhaModal");
   document.getElementById("trocarSenhaModal").style.display = "flex"; 
 }
@@ -424,6 +478,7 @@ function fecharTrocarSenha(){
 }
 
 function abrirRecuperarSenha(){
+  limparBusca();
   limparFormularios("recuperarModal");
   document.getElementById("loginModal").style.display = "none";
   document.getElementById("recuperarModal").style.display = "flex";
@@ -433,7 +488,7 @@ function fecharRecuperarSenha(){
   limparFormularios("recuperarModal");
 }
 
-// --- LÓGICA DE BACKEND (FETCH) ---
+// --- LÓGICA DE BACKEND ---
 
 function cadastrar(){
   const nome=document.getElementById("nomeCad").value;
@@ -540,10 +595,12 @@ function simularLogin(){
 
 function logout(){
   localStorage.removeItem("usuarioNome");
+  limparBusca();
   location.reload();
 }
 
 window.onload=()=>{
+  limparBusca(); // Garante barra limpa ao carregar/recarregar
   carregarProdutos();
 }
 
