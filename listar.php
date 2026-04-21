@@ -8,7 +8,9 @@ if ($conn->connect_error) {
     exit;
 }
 
-$sql = "SELECT id, nome, preco, imagem, descricao, quantidade_estoque FROM produtos";
+/* 🔥 ADICIONADO: tipo e tamanhos */
+$sql = "SELECT id, nome, preco, imagem, descricao, quantidade_estoque, tipo, tamanhos FROM produtos";
+
 $result = $conn->query($sql);
 
 $produtos = [];
