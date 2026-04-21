@@ -150,6 +150,9 @@ button{
   <input id="imagem" placeholder="URL da imagem">
   <textarea id="descricao" placeholder="Descrição"></textarea>
 
+  <!-- 🔥 ESTOQUE ADICIONADO -->
+  <input id="estoque" type="number" placeholder="Quantidade em estoque">
+
   <button class="btn salvar" onclick="adicionarProduto()">Salvar</button>
 </div>
 
@@ -160,12 +163,10 @@ button{
 
 <script>
 
-/* VOLTAR PRA LOJA */
 function voltarLoja(){
   window.location.href = "index.html";
 }
 
-/* LOGOUT */
 function logout(){
   alert("Você saiu do painel admin");
   window.location.href = "index.html";
@@ -182,6 +183,7 @@ function carregarProdutos(){
       <tr>
         <th>Nome</th>
         <th>Preço</th>
+        <th>Estoque</th>
         <th>Descrição</th>
         <th>Ações</th>
       </tr>`;
@@ -191,6 +193,7 @@ function carregarProdutos(){
         <tr>
           <td>${p.nome}</td>
           <td>R$ ${p.preco}</td>
+          <td>${p.quantidade_estoque ?? 0}</td>
           <td>${p.descricao}</td>
           <td>
             <button class="btn edit"
@@ -212,15 +215,16 @@ function carregarProdutos(){
   });
 }
 
-/* ADICIONAR */
+/* ADICIONAR PRODUTO (ATUALIZADO COM ESTOQUE) */
 function adicionarProduto(){
 
   const nome = document.getElementById("nome").value.trim();
   const preco = document.getElementById("preco").value.trim().replace(",", ".");
   const imagem = document.getElementById("imagem").value.trim();
   const descricao = document.getElementById("descricao").value.trim();
+  const quantidade_estoque = document.getElementById("estoque").value.trim();
 
-  if(!nome || !preco || !imagem || !descricao){
+  if(!nome || !preco || !imagem || !descricao || quantidade_estoque === ""){
     alert("Preencha todos os campos!");
     return;
   }
@@ -228,7 +232,13 @@ function adicionarProduto(){
   fetch("produtos_add.php", {
     method:"POST",
     headers: {"Content-Type":"application/x-www-form-urlencoded"},
-    body: new URLSearchParams({nome, preco, imagem, descricao})
+    body: new URLSearchParams({
+      nome,
+      preco,
+      imagem,
+      descricao,
+      quantidade_estoque
+    })
   })
   .then(res => res.json())
   .then(data => {
@@ -272,9 +282,6 @@ function editar(id, nomeAtual, precoAtual, descricaoAtual){
     if(data.status === "ok"){
       carregarProdutos();
     }
-  })
-  .catch(() => {
-    alert("Erro ao editar");
   });
 }
 
