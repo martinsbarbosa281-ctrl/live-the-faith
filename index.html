@@ -311,7 +311,6 @@ nav a:hover {
 
 <section id="produtos" class="products"></section>
 
-<!-- LOGIN -->
 <div id="loginModal" class="modal">
 <div class="login-box">
 
@@ -327,7 +326,6 @@ Não tem conta?
 <a href="#" onclick="abrirCadastro()" style="color:#facc15;">Cadastre-se</a>
 </p>
 
-<!-- 🔥 ADICIONADO -->
 <p style="margin-bottom:10px; font-size:13px;">
 Esqueceu a senha? 
 <a href="#" onclick="abrirRecuperarSenha()" style="color:#facc15;">Recuperar senha</a>
@@ -338,7 +336,6 @@ Esqueceu a senha?
 </div>
 </div>
 
-<!-- CADASTRO -->
 <div id="cadastroModal" class="modal">
 <div class="login-box">
 
@@ -356,7 +353,6 @@ Esqueceu a senha?
 </div>
 </div>
 
-<!-- 🔒 TROCAR SENHA -->
 <div id="trocarSenhaModal" class="modal">
 <div class="login-box">
 
@@ -372,7 +368,6 @@ Esqueceu a senha?
 </div>
 </div>
 
-<!-- 🔑 RECUPERAR SENHA -->
 <div id="recuperarModal" class="modal">
 <div class="login-box">
 
@@ -390,136 +385,157 @@ Esqueceu a senha?
 
 <script>
 
-function abrirLogin(){ document.getElementById("loginModal").style.display = "flex"; }
-function fecharLogin(){ document.getElementById("loginModal").style.display = "none"; }
+// --- FUNÇÃO DE LIMPEZA ---
+function limparFormularios(modalId) {
+  const inputs = document.querySelectorAll(`#${modalId} input`);
+  inputs.forEach(input => {
+    input.value = "";
+  });
+}
+
+// --- FUNÇÕES DE CONTROLE DOS MODAIS ---
+
+function abrirLogin(){ 
+  limparFormularios("loginModal");
+  document.getElementById("loginModal").style.display = "flex"; 
+}
+function fecharLogin(){ 
+  document.getElementById("loginModal").style.display = "none";
+  limparFormularios("loginModal");
+}
 
 function abrirCadastro(){
+  limparFormularios("cadastroModal");
   document.getElementById("loginModal").style.display = "none";
   document.getElementById("cadastroModal").style.display = "flex";
 }
-function fecharCadastro(){ document.getElementById("cadastroModal").style.display = "none"; }
+function fecharCadastro(){ 
+  document.getElementById("cadastroModal").style.display = "none";
+  limparFormularios("cadastroModal");
+}
 
-function abrirTrocarSenha(){ document.getElementById("trocarSenhaModal").style.display = "flex"; }
-function fecharTrocarSenha(){ document.getElementById("trocarSenhaModal").style.display = "none"; }
+function abrirTrocarSenha(){ 
+  limparFormularios("trocarSenhaModal");
+  document.getElementById("trocarSenhaModal").style.display = "flex"; 
+}
+function fecharTrocarSenha(){ 
+  document.getElementById("trocarSenhaModal").style.display = "none";
+  limparFormularios("trocarSenhaModal");
+}
 
 function abrirRecuperarSenha(){
+  limparFormularios("recuperarModal");
   document.getElementById("loginModal").style.display = "none";
   document.getElementById("recuperarModal").style.display = "flex";
 }
-function fecharRecuperarSenha(){ document.getElementById("recuperarModal").style.display = "none"; }
-
-function cadastrar(){
-
-const nome=document.getElementById("nomeCad").value;
-const telefone=document.getElementById("telefoneCad").value;
-const email=document.getElementById("emailCad").value;
-const senha=document.getElementById("senhaCad").value;
-
-fetch("cadastrar.php",{
-method:"POST",
-headers:{"Content-Type":"application/x-www-form-urlencoded"},
-body:`nome=${nome}&telefone=${telefone}&email=${email}&senha=${senha}`
-})
-.then(r=>r.json())
-.then(data=>{
-
-if(data.status==="ok"){
-alert("Cadastro realizado com sucesso!");
-fecharCadastro();
-abrirLogin();
-}else{
-alert(data.mensagem);
+function fecharRecuperarSenha(){ 
+  document.getElementById("recuperarModal").style.display = "none";
+  limparFormularios("recuperarModal");
 }
 
-});
+// --- LÓGICA DE BACKEND (FETCH) ---
+
+function cadastrar(){
+  const nome=document.getElementById("nomeCad").value;
+  const telefone=document.getElementById("telefoneCad").value;
+  const email=document.getElementById("emailCad").value;
+  const senha=document.getElementById("senhaCad").value;
+
+  fetch("cadastrar.php",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`nome=${nome}&telefone=${telefone}&email=${email}&senha=${senha}`
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.status==="ok"){
+      alert("Cadastro realizado com sucesso!");
+      fecharCadastro();
+      abrirLogin();
+    }else{
+      alert(data.mensagem);
+    }
+  });
 }
 
 function trocarSenha(){
-const senhaAtual=document.getElementById("senhaAtual").value;
-const novaSenha=document.getElementById("novaSenha").value;
+  const senhaAtual=document.getElementById("senhaAtual").value;
+  const novaSenha=document.getElementById("novaSenha").value;
 
-fetch("trocar_senha.php",{
-method:"POST",
-headers:{"Content-Type":"application/x-www-form-urlencoded"},
-body:`senhaAtual=${senhaAtual}&novaSenha=${novaSenha}`
-})
-.then(r=>r.json())
-.then(data=>{
-if(data.status==="ok"){
-alert("Senha atualizada com sucesso!");
-fecharTrocarSenha();
-}else{
-alert(data.mensagem);
-}
-});
+  fetch("trocar_senha.php",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`senhaAtual=${senhaAtual}&novaSenha=${novaSenha}`
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.status==="ok"){
+      alert("Senha atualizada com sucesso!");
+      fecharTrocarSenha();
+    }else{
+      alert(data.mensagem);
+    }
+  });
 }
 
 function recuperarSenha(){
-const email=document.getElementById("emailRec").value;
-const novaSenha=document.getElementById("novaSenhaRec").value;
+  const email=document.getElementById("emailRec").value;
+  const novaSenha=document.getElementById("novaSenhaRec").value;
 
-fetch("trocar_senha.php",{
-method:"POST",
-headers:{"Content-Type":"application/x-www-form-urlencoded"},
-body:`email=${email}&novaSenha=${novaSenha}`
-})
-.then(r=>r.json())
-.then(data=>{
-if(data.status==="ok"){
-alert("Senha atualizada com sucesso!");
-fecharRecuperarSenha();
-abrirLogin();
-}else{
-alert(data.mensagem);
-}
-});
+  fetch("trocar_senha.php",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`email=${email}&novaSenha=${novaSenha}`
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.status==="ok"){
+      alert("Senha atualizada com sucesso!");
+      fecharRecuperarSenha();
+      abrirLogin();
+    }else{
+      alert(data.mensagem);
+    }
+  });
 }
 
-/* LOGIN */
 function simularLogin(){
+  const email=document.getElementById("email").value;
+  const senha=document.getElementById("senha").value;
 
-const email=document.getElementById("email").value;
-const senha=document.getElementById("senha").value;
+  fetch("login.php",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`email=${email}&senha=${senha}`
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.status==="ok"){
+      localStorage.setItem("usuarioNome",data.nome);
+      fecharLogin();
 
-fetch("login.php",{
-method:"POST",
-headers:{"Content-Type":"application/x-www-form-urlencoded"},
-body:`email=${email}&senha=${senha}`
-})
-.then(r=>r.json())
-.then(data=>{
+      if(data.admin==1){
+        window.location.href="admin.html";
+        return;
+      }
 
-if(data.status==="ok"){
-
-localStorage.setItem("usuarioNome",data.nome);
-
-fecharLogin();
-
-if(data.admin==1){
-window.location.href="admin.html";
-return;
-}
-
-document.getElementById("areaUsuario").innerHTML = `
-<div class="user-menu">
-  <div class="user-icon">
-    ${data.nome.charAt(0).toUpperCase()}
-  </div>
-
-  <div class="dropdown">
-    <a href="carrinho.html">🛒 Carrinho</a>
-    <a href="favoritos.html">❤️ Favoritos</a>
-    <a href="#" onclick="abrirTrocarSenha()">🔒 Trocar senha</a>
-    <a href="#" onclick="logout()">🚪 Sair</a>
-  </div>
-</div>
-`;
-
-}else{
-alert(data.mensagem);
-}
-
-});
+      document.getElementById("areaUsuario").innerHTML = `
+        <div class="user-menu">
+          <div class="user-icon">
+            ${data.nome.charAt(0).toUpperCase()}
+          </div>
+          <div class="dropdown">
+            <a href="carrinho.html">🛒 Carrinho</a>
+            <a href="favoritos.html">❤️ Favoritos</a>
+            <a href="#" onclick="abrirTrocarSenha()">🔒 Trocar senha</a>
+            <a href="#" onclick="logout()">🚪 Sair</a>
+          </div>
+        </div>
+      `;
+    }else{
+      alert(data.mensagem);
+    }
+  });
 }
 
 function logout(){
@@ -528,39 +544,35 @@ function logout(){
 }
 
 window.onload=()=>{
-carregarProdutos();
+  carregarProdutos();
 }
 
 function carregarProdutos(){
-fetch("listar.php")
-.then(r=>r.json())
-.then(produtos=>{
-let html="";
-
-produtos.forEach(p=>{
-html+=`
-<div class="product-card" onclick='abrirProduto(${JSON.stringify(p)})'>
-  <div class="img-container">
-    <img src="${p.imagem}">
-    <div class="fav">♡</div>
-  </div>
-
-  <div class="product-info">
-    <h3>${p.nome}</h3>
-    <span class="categoria">${p.categoria || "Casual"}</span>
-
-    <div class="price-box">
-      <span class="price">R$ ${p.preco}</span>
-      ${p.preco_antigo ? `<span class="old-price">R$ ${p.preco_antigo}</span>` : ""}
-      ${p.desconto ? `<span class="desconto">${p.desconto}</span>` : ""}
-    </div>
-  </div>
-</div>
-`;
-});
-
-document.getElementById("produtos").innerHTML=html;
-});
+  fetch("listar.php")
+  .then(r=>r.json())
+  .then(produtos=>{
+    let html="";
+    produtos.forEach(p=>{
+      html+=`
+        <div class="product-card" onclick='abrirProduto(${JSON.stringify(p)})'>
+          <div class="img-container">
+            <img src="${p.imagem}">
+            <div class="fav">♡</div>
+          </div>
+          <div class="product-info">
+            <h3>${p.nome}</h3>
+            <span class="categoria">${p.categoria || "Casual"}</span>
+            <div class="price-box">
+              <span class="price">R$ ${p.preco}</span>
+              ${p.preco_antigo ? `<span class="old-price">R$ ${p.preco_antigo}</span>` : ""}
+              ${p.desconto ? `<span class="desconto">${p.desconto}</span>` : ""}
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    document.getElementById("produtos").innerHTML=html;
+  });
 }
 
 function abrirProduto(produto){
