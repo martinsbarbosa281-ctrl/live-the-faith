@@ -53,3 +53,10 @@ ADD FOREIGN KEY (categoria_id) REFERENCES categorias(id);
 
 ALTER TABLE produtos
 ADD quantidade_estoque INT DEFAULT 0;
+
+
+ALTER TABLE produtos
+ADD tipo ENUM('simples','roupa') DEFAULT 'simples';
+
+ALTER TABLE produtos
+ADD tamanhos TEXT;
