@@ -277,7 +277,7 @@ nav a:hover {
   cursor: pointer;
 }
 
-/* 🔥 CADASTRO MODAL (ADICIONADO) */
+/* 🔥 CADASTRO MODAL */
 #cadastroModal input {
   width: 100%;
   padding: 12px;
@@ -327,12 +327,18 @@ Não tem conta?
 <a href="#" onclick="abrirCadastro()" style="color:#facc15;">Cadastre-se</a>
 </p>
 
+<!-- 🔥 ADICIONADO -->
+<p style="margin-bottom:10px; font-size:13px;">
+Esqueceu a senha? 
+<a href="#" onclick="abrirRecuperarSenha()" style="color:#facc15;">Recuperar senha</a>
+</p>
+
 <button onclick="simularLogin()">Entrar</button>
 
 </div>
 </div>
 
-<!-- 🔥 CADASTRO (ADICIONADO SEM REMOVER NADA) -->
+<!-- CADASTRO -->
 <div id="cadastroModal" class="modal">
 <div class="login-box">
 
@@ -350,25 +356,57 @@ Não tem conta?
 </div>
 </div>
 
+<!-- 🔒 TROCAR SENHA -->
+<div id="trocarSenhaModal" class="modal">
+<div class="login-box">
+
+<span class="fechar" onclick="fecharTrocarSenha()">X</span>
+
+<h2>Trocar senha</h2>
+
+<input id="senhaAtual" type="password" placeholder="Senha atual">
+<input id="novaSenha" type="password" placeholder="Nova senha">
+
+<button onclick="trocarSenha()">Atualizar senha</button>
+
+</div>
+</div>
+
+<!-- 🔑 RECUPERAR SENHA -->
+<div id="recuperarModal" class="modal">
+<div class="login-box">
+
+<span class="fechar" onclick="fecharRecuperarSenha()">X</span>
+
+<h2>Recuperar senha</h2>
+
+<input id="emailRec" placeholder="Digite seu email">
+<input id="novaSenhaRec" type="password" placeholder="Nova senha">
+
+<button onclick="recuperarSenha()">Atualizar senha</button>
+
+</div>
+</div>
+
 <script>
 
-function abrirLogin(){
-  document.getElementById("loginModal").style.display = "flex";
-}
+function abrirLogin(){ document.getElementById("loginModal").style.display = "flex"; }
+function fecharLogin(){ document.getElementById("loginModal").style.display = "none"; }
 
-function fecharLogin(){
-  document.getElementById("loginModal").style.display = "none";
-}
-
-/* 🔥 CADASTRO */
 function abrirCadastro(){
   document.getElementById("loginModal").style.display = "none";
   document.getElementById("cadastroModal").style.display = "flex";
 }
+function fecharCadastro(){ document.getElementById("cadastroModal").style.display = "none"; }
 
-function fecharCadastro(){
-  document.getElementById("cadastroModal").style.display = "none";
+function abrirTrocarSenha(){ document.getElementById("trocarSenhaModal").style.display = "flex"; }
+function fecharTrocarSenha(){ document.getElementById("trocarSenhaModal").style.display = "none"; }
+
+function abrirRecuperarSenha(){
+  document.getElementById("loginModal").style.display = "none";
+  document.getElementById("recuperarModal").style.display = "flex";
 }
+function fecharRecuperarSenha(){ document.getElementById("recuperarModal").style.display = "none"; }
 
 function cadastrar(){
 
@@ -394,7 +432,47 @@ alert(data.mensagem);
 }
 
 });
+}
 
+function trocarSenha(){
+const senhaAtual=document.getElementById("senhaAtual").value;
+const novaSenha=document.getElementById("novaSenha").value;
+
+fetch("trocar_senha.php",{
+method:"POST",
+headers:{"Content-Type":"application/x-www-form-urlencoded"},
+body:`senhaAtual=${senhaAtual}&novaSenha=${novaSenha}`
+})
+.then(r=>r.json())
+.then(data=>{
+if(data.status==="ok"){
+alert("Senha atualizada com sucesso!");
+fecharTrocarSenha();
+}else{
+alert(data.mensagem);
+}
+});
+}
+
+function recuperarSenha(){
+const email=document.getElementById("emailRec").value;
+const novaSenha=document.getElementById("novaSenhaRec").value;
+
+fetch("trocar_senha.php",{
+method:"POST",
+headers:{"Content-Type":"application/x-www-form-urlencoded"},
+body:`email=${email}&novaSenha=${novaSenha}`
+})
+.then(r=>r.json())
+.then(data=>{
+if(data.status==="ok"){
+alert("Senha atualizada com sucesso!");
+fecharRecuperarSenha();
+abrirLogin();
+}else{
+alert(data.mensagem);
+}
+});
 }
 
 /* LOGIN */
@@ -431,6 +509,7 @@ document.getElementById("areaUsuario").innerHTML = `
   <div class="dropdown">
     <a href="carrinho.html">🛒 Carrinho</a>
     <a href="favoritos.html">❤️ Favoritos</a>
+    <a href="#" onclick="abrirTrocarSenha()">🔒 Trocar senha</a>
     <a href="#" onclick="logout()">🚪 Sair</a>
   </div>
 </div>
@@ -441,7 +520,6 @@ alert(data.mensagem);
 }
 
 });
-
 }
 
 function logout(){
