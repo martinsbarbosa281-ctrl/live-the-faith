@@ -34,7 +34,22 @@ CREATE TABLE produtos (
   descricao TEXT,
   preco DECIMAL(10,2) NOT NULL,
   imagem VARCHAR(255),
-  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  select* from produtos
+  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+SELECT * FROM produtos
+;
+SELECT*FROM categorias;
+
+CREATE TABLE categorias (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL
 );
-SELECT * FROM usuarios;
+
+ALTER TABLE produtos
+ADD categoria_id INT;
+ALTER TABLE produto
+ADD FOREIGN KEY (categoria_id) REFERENCES categorias(id);
+
+
+
+ALTER TABLE produtos
+ADD quantidade_estoque INT DEFAULT 0;
