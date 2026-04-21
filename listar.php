@@ -8,7 +8,7 @@ if ($conn->connect_error) {
     exit;
 }
 
-$sql = "SELECT * FROM produtos";
+$sql = "SELECT id, nome, preco, imagem, descricao, quantidade_estoque FROM produtos";
 $result = $conn->query($sql);
 
 $produtos = [];
