@@ -35,6 +35,7 @@ body{
   object-fit:contain;
 }
 
+/* ❤️ FAVORITO */
 .fav{
   position:absolute;
   top:15px;
@@ -49,6 +50,12 @@ body{
   font-size:20px;
   cursor:pointer;
   box-shadow:0 2px 6px rgba(0,0,0,0.2);
+  transition:0.2s;
+  user-select:none;
+}
+
+.fav.ativo{
+  color:red;
 }
 
 .info{
@@ -136,9 +143,11 @@ button{
 <body>
 
 <div class="container">
-  
+
   <div class="img-box">
     <img id="imgProduto">
+
+    <!-- ❤️ coração -->
     <div class="fav" id="btnFav">♡</div>
   </div>
 
@@ -171,6 +180,7 @@ button{
       <button class="btn-carrinho" onclick="addCarrinho()">Adicionar ao carrinho</button>
       <button class="btn-comprar" onclick="comprarAgora()">Comprar agora</button>
     </div>
+
   </div>
 
 </div>
@@ -184,43 +194,48 @@ if(!produto){
   window.location.href = "index.html";
 }
 
-function getEstoque(){
-  return parseInt(
-    produto.quantidade_estoque ??
-    produto.estoque ??
-    produto.quantidade ??
-    0
-  );
-}
-
 /* render */
 document.getElementById("nome").innerText = produto.nome;
 document.getElementById("preco").innerText = "R$ " + produto.preco;
 document.getElementById("imgProduto").src = produto.imagem;
+document.getElementById("estoque").innerText =
+  "Estoque: " + (produto.quantidade_estoque || 0);
 
-/* estoque */
-function atualizarEstoque(){
-  document.getElementById("estoque").innerText =
-    "Estoque: " + getEstoque();
+/* =========================
+   ❤️ FAVORITO (CORRIGIDO)
+========================= */
+
+const favBtn = document.getElementById("btnFav");
+const favKey = "favorito_" + produto.id;
+
+// carregar estado salvo
+if(localStorage.getItem(favKey) === "true"){
+  favBtn.classList.add("ativo");
+  favBtn.innerHTML = "❤️";
 }
 
-atualizarEstoque();
+// clique no coração
+favBtn.addEventListener("click", () => {
 
-/* tipo */
-if(produto.tipo !== "roupa"){
-  document.getElementById("areaTamanho").style.display = "none";
-}
+  const ativo = favBtn.classList.toggle("ativo");
 
+  favBtn.innerHTML = ativo ? "❤️" : "♡";
+
+  localStorage.setItem(favKey, ativo);
+
+});
+
+/* tamanho */
 let tamanhoSelecionado = null;
 
-function selecionarTamanho(el, tamanho){
-  tamanhoSelecionado = tamanho;
+function selecionarTamanho(el, t){
+  tamanhoSelecionado = t;
   document.querySelectorAll(".tamanho")
-    .forEach(t => t.classList.remove("ativo"));
+    .forEach(x => x.classList.remove("ativo"));
   el.classList.add("ativo");
 }
 
-/* quantidade */
+/* contador */
 let quantidadeSelecionada = 1;
 
 function atualizarQtd(){
@@ -228,7 +243,7 @@ function atualizarQtd(){
 }
 
 function aumentarQtd(){
-  if(quantidadeSelecionada < getEstoque()){
+  if(quantidadeSelecionada < (produto.quantidade_estoque || 0)){
     quantidadeSelecionada++;
     atualizarQtd();
   }
@@ -241,96 +256,31 @@ function diminuirQtd(){
   }
 }
 
-/* backend */
-function reduzirEstoque(){
-  return fetch("diminuir_estoque.php", {
-    method:"POST",
-    headers: {"Content-Type":"application/x-www-form-urlencoded"},
-    body: new URLSearchParams({
-      id: produto.id,
-      quantidade: quantidadeSelecionada
-    })
-  }).then(r => r.json());
-}
-
 /* carrinho */
 function addCarrinho(){
 
-  if(!localStorage.getItem("usuarioNome")){
-    alert("Você precisa estar logado");
-    return;
-  }
+  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
-  if(getEstoque() < quantidadeSelecionada){
-    alert("Estoque insuficiente");
-    return;
-  }
-
-  if(produto.tipo === "roupa" && !tamanhoSelecionado){
-    alert("Selecione um tamanho");
-    return;
-  }
-
-  reduzirEstoque().then(res => {
-
-    if(res.status !== "ok"){
-      alert("Erro ao atualizar estoque");
-      return;
-    }
-
-    produto.quantidade_estoque = getEstoque() - quantidadeSelecionada;
-    atualizarEstoque();
-
-    let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-
-    carrinho.push({
-      ...produto,
-      tamanho: tamanhoSelecionado,
-      quantidade: quantidadeSelecionada
-    });
-
-    localStorage.setItem("carrinho", JSON.stringify(carrinho));
-
-    alert("Adicionado ao carrinho 🛒");
+  carrinho.push({
+    ...produto,
+    tamanho: tamanhoSelecionado,
+    quantidade: quantidadeSelecionada
   });
+
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+
+  alert("Adicionado ao carrinho 🛒");
 }
 
-/* comprar */
+/* compra */
 function comprarAgora(){
 
-  if(!localStorage.getItem("usuarioNome")){
-    alert("Você precisa estar logado");
-    return;
-  }
+  localStorage.setItem("compraDireta", JSON.stringify({
+    ...produto,
+    quantidade: quantidadeSelecionada
+  }));
 
-  if(getEstoque() < quantidadeSelecionada){
-    alert("Estoque insuficiente");
-    return;
-  }
-
-  if(produto.tipo === "roupa" && !tamanhoSelecionado){
-    alert("Selecione um tamanho");
-    return;
-  }
-
-  reduzirEstoque().then(res => {
-
-    if(res.status !== "ok"){
-      alert("Erro ao atualizar estoque");
-      return;
-    }
-
-    produto.quantidade_estoque = getEstoque() - quantidadeSelecionada;
-    atualizarEstoque();
-
-    localStorage.setItem("compraDireta", JSON.stringify({
-      ...produto,
-      quantidade: quantidadeSelecionada,
-      tamanho: tamanhoSelecionado
-    }));
-
-    alert("Indo para pagamento...");
-  });
+  alert("Indo para pagamento...");
 }
 
 </script>
