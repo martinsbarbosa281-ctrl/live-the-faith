@@ -14,7 +14,7 @@ body{
   margin:0;
 }
 
-/* HEADER IGUAL INDEX */
+/* HEADER */
 header {
   position: fixed;
   top: 0;
@@ -141,7 +141,6 @@ function carregarCarrinho(){
 
   carrinho.forEach((p, i)=>{
 
-    // garantir quantidade
     if(!p.qtd) p.qtd = 1;
 
     total += p.preco * p.qtd;
@@ -152,7 +151,7 @@ function carregarCarrinho(){
       <img src="${p.imagem}">
 
       <div class="nome">${p.nome}</div>
-      <div>Tamanho: ${p.tamanho}</div>
+      <div>Tamanho: ${p.tamanho || '-'}</div>
 
       <div class="preco">R$ ${(p.preco * p.qtd).toFixed(2)}</div>
 
@@ -180,7 +179,7 @@ function carregarCarrinho(){
   localStorage.setItem("carrinho", JSON.stringify(carrinho));
 }
 
-/* AUMENTAR */
+/* AUMENTAR QUANTIDADE */
 function aumentar(i){
   let carrinho = JSON.parse(localStorage.getItem("carrinho"));
   carrinho[i].qtd++;
@@ -188,7 +187,7 @@ function aumentar(i){
   carregarCarrinho();
 }
 
-/* DIMINUIR */
+/* DIMINUIR QUANTIDADE */
 function diminuir(i){
   let carrinho = JSON.parse(localStorage.getItem("carrinho"));
   if(carrinho[i].qtd > 1){
@@ -198,7 +197,7 @@ function diminuir(i){
   carregarCarrinho();
 }
 
-/* REMOVER */
+/* REMOVER PRODUTO */
 function remover(i){
   let carrinho = JSON.parse(localStorage.getItem("carrinho"));
   carrinho.splice(i,1);
@@ -206,16 +205,14 @@ function remover(i){
   carregarCarrinho();
 }
 
-/* COMPRAR */
+/* COMPRAR PRODUTO - redireciona para página de pagamento */
 function comprar(i){
   let carrinho = JSON.parse(localStorage.getItem("carrinho"));
-
-  localStorage.setItem("compraDireta", JSON.stringify(carrinho[i]));
-
-  alert("Indo para pagamento...");
+  localStorage.setItem("produtoSelecionado", JSON.stringify(carrinho[i]));
+  window.location.href = "pagina_pagamento.html";
 }
 
-/* LOAD */
+/* CARREGA O CARRINHO AO ABRIR A PÁGINA */
 carregarCarrinho();
 
 </script>
