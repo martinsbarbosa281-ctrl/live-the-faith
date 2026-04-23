@@ -139,7 +139,7 @@ button{
   
   <div class="img-box">
     <img id="imgProduto">
-    <div class="fav" id="btnFav" onclick="toggleFavorito()">♡</div>
+    <div class="fav" id="btnFav">♡</div>
   </div>
 
   <div class="info">
@@ -158,7 +158,6 @@ button{
       </div>
     </div>
 
-    <!-- 🔥 CONTADOR -->
     <div class="contador">
       <p>Quantidade:</p>
       <div class="contador-box">
@@ -185,24 +184,29 @@ if(!produto){
   window.location.href = "index.html";
 }
 
+function getEstoque(){
+  return parseInt(
+    produto.quantidade_estoque ??
+    produto.estoque ??
+    produto.quantidade ??
+    0
+  );
+}
+
+/* render */
 document.getElementById("nome").innerText = produto.nome;
 document.getElementById("preco").innerText = "R$ " + produto.preco;
 document.getElementById("imgProduto").src = produto.imagem;
 
-/* 🔥 ESTOQUE CORRIGIDO */
+/* estoque */
 function atualizarEstoque(){
-  const estoque = produto.quantidade_estoque 
-               ?? produto.estoque 
-               ?? produto.quantidade 
-               ?? 0;
-
   document.getElementById("estoque").innerText =
-    "Estoque: " + estoque;
+    "Estoque: " + getEstoque();
 }
 
 atualizarEstoque();
 
-/* 🔥 TIPO CORRIGIDO */
+/* tipo */
 if(produto.tipo !== "roupa"){
   document.getElementById("areaTamanho").style.display = "none";
 }
@@ -211,11 +215,12 @@ let tamanhoSelecionado = null;
 
 function selecionarTamanho(el, tamanho){
   tamanhoSelecionado = tamanho;
-  document.querySelectorAll(".tamanho").forEach(t=>t.classList.remove("ativo"));
+  document.querySelectorAll(".tamanho")
+    .forEach(t => t.classList.remove("ativo"));
   el.classList.add("ativo");
 }
 
-/* 🔥 CONTADOR */
+/* quantidade */
 let quantidadeSelecionada = 1;
 
 function atualizarQtd(){
@@ -223,12 +228,7 @@ function atualizarQtd(){
 }
 
 function aumentarQtd(){
-  const estoque = produto.quantidade_estoque 
-               ?? produto.estoque 
-               ?? produto.quantidade 
-               ?? 0;
-
-  if(quantidadeSelecionada < estoque){
+  if(quantidadeSelecionada < getEstoque()){
     quantidadeSelecionada++;
     atualizarQtd();
   }
@@ -241,7 +241,7 @@ function diminuirQtd(){
   }
 }
 
-/* 🔥 BACKEND */
+/* backend */
 function reduzirEstoque(){
   return fetch("diminuir_estoque.php", {
     method:"POST",
@@ -250,11 +250,10 @@ function reduzirEstoque(){
       id: produto.id,
       quantidade: quantidadeSelecionada
     })
-  })
-  .then(r => r.json());
+  }).then(r => r.json());
 }
 
-/* 🛒 CARRINHO */
+/* carrinho */
 function addCarrinho(){
 
   if(!localStorage.getItem("usuarioNome")){
@@ -262,13 +261,13 @@ function addCarrinho(){
     return;
   }
 
-  const estoque = produto.quantidade_estoque 
-               ?? produto.estoque 
-               ?? produto.quantidade 
-               ?? 0;
+  if(getEstoque() < quantidadeSelecionada){
+    alert("Estoque insuficiente");
+    return;
+  }
 
-  if(estoque < quantidadeSelecionada){
-    alert("Quantidade indisponível em estoque");
+  if(produto.tipo === "roupa" && !tamanhoSelecionado){
+    alert("Selecione um tamanho");
     return;
   }
 
@@ -279,14 +278,14 @@ function addCarrinho(){
       return;
     }
 
-    produto.quantidade_estoque -= quantidadeSelecionada;
+    produto.quantidade_estoque = getEstoque() - quantidadeSelecionada;
     atualizarEstoque();
 
     let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
     carrinho.push({
       ...produto,
-      tamanho: produto.tipo === "roupa" ? tamanhoSelecionado : null,
+      tamanho: tamanhoSelecionado,
       quantidade: quantidadeSelecionada
     });
 
@@ -296,7 +295,7 @@ function addCarrinho(){
   });
 }
 
-/* 💳 COMPRA */
+/* comprar */
 function comprarAgora(){
 
   if(!localStorage.getItem("usuarioNome")){
@@ -304,13 +303,13 @@ function comprarAgora(){
     return;
   }
 
-  const estoque = produto.quantidade_estoque 
-               ?? produto.estoque 
-               ?? produto.quantidade 
-               ?? 0;
+  if(getEstoque() < quantidadeSelecionada){
+    alert("Estoque insuficiente");
+    return;
+  }
 
-  if(estoque < quantidadeSelecionada){
-    alert("Quantidade indisponível em estoque");
+  if(produto.tipo === "roupa" && !tamanhoSelecionado){
+    alert("Selecione um tamanho");
     return;
   }
 
@@ -321,12 +320,13 @@ function comprarAgora(){
       return;
     }
 
-    produto.quantidade_estoque -= quantidadeSelecionada;
+    produto.quantidade_estoque = getEstoque() - quantidadeSelecionada;
     atualizarEstoque();
 
     localStorage.setItem("compraDireta", JSON.stringify({
       ...produto,
-      quantidade: quantidadeSelecionada
+      quantidade: quantidadeSelecionada,
+      tamanho: tamanhoSelecionado
     }));
 
     alert("Indo para pagamento...");
