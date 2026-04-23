@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Pagamento</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f5f5f5;
+}
+
+.container {
+    width: 350px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px #ccc;
+}
+
+h2 {
+    text-align: center;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: darkgreen;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Pagamento</h2>
+
+    <input type="text" placeholder="Nome no cartão" id="nome">
+    <input type="text" placeholder="Número do cartão" id="cartao">
+    <input type="text" placeholder="Validade (MM/AA)" id="validade">
+    <input type="text" placeholder="CVV" id="cvv">
+
+    <button onclick="pagar()">Finalizar Pagamento</button>
+</div>
+
+<script>
+function pagar() {
+    let nome = document.getElementById("nome").value;
+    let cartao = document.getElementById("cartao").value;
+
+    if(nome === "" || cartao === "") {
+        alert("Preencha todos os campos!");
+    } else {
+        alert("Pagamento realizado com sucesso!");
+    }
+}
+</script>
+
+</body>
+</html>
