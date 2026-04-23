@@ -5,14 +5,12 @@
 <title>Painel Admin</title>
 
 <style>
-
 body{
   font-family: 'Poppins', sans-serif;
   background:#f1f5f9;
   margin:0;
 }
 
-/* HEADER */
 header{
   background:#1e293b;
   color:white;
@@ -48,27 +46,15 @@ header{
   font-weight:600;
 }
 
-.voltar{
-  background:#38bdf8;
-  color:white;
-}
+.voltar{ background:#38bdf8; color:white; }
+.logout{ background:#ef4444; color:white; }
 
-.logout{
-  background:#ef4444;
-  color:white;
-}
-
-/* CONTEÚDO */
 .container{
   background:#fff;
   padding:20px;
   border-radius:12px;
   margin:20px;
   box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
-
-h2{
-  margin-bottom:10px;
 }
 
 input, textarea, select{
@@ -79,13 +65,11 @@ input, textarea, select{
   border:1px solid #ddd;
 }
 
-/* BOTÃO SALVAR */
 .salvar{
   background:#facc15;
   width:150px;
 }
 
-/* TABELA */
 table{
   width:100%;
   border-collapse:collapse;
@@ -104,41 +88,23 @@ td:first-child, th:first-child{
   text-align:left;
 }
 
-/* BOTÕES AÇÃO */
-.edit{
-  background:#22c55e;
-  color:white;
-}
+.edit{ background:#22c55e; color:white; }
+.delete{ background:#ef4444; color:white; }
 
-.delete{
-  background:#ef4444;
-  color:white;
-}
-
-button{
-  margin:3px;
-}
-
+button{ margin:3px; }
 </style>
 </head>
 
 <body>
 
 <header>
-  <div class="header-left">
-    Painel Admin
-  </div>
+  <div class="header-left">Painel Admin</div>
 
   <div class="header-right">
     <span class="badge">Logado como Admin</span>
 
-    <button class="btn voltar" onclick="voltarLoja()">
-      Voltar à loja
-    </button>
-
-    <button class="btn logout" onclick="logout()">
-      Sair
-    </button>
+    <button class="btn voltar" onclick="voltarLoja()">Voltar à loja</button>
+    <button class="btn logout" onclick="logout()">Sair</button>
   </div>
 </header>
 
@@ -152,7 +118,6 @@ button{
 
   <input id="estoque" type="number" placeholder="Quantidade em estoque">
 
-  <!-- 🔥 NOVO -->
   <select id="tipoProduto">
     <option value="simples">Produto comum</option>
     <option value="roupa">Roupa (com tamanhos)</option>
@@ -183,22 +148,22 @@ function logout(){
   window.location.href = "index.html";
 }
 
-/* 🔥 NOVO */
+/* mostrar tamanhos */
 document.getElementById("tipoProduto").addEventListener("change", function(){
-  const box = document.getElementById("tamanhosBox");
-
-  if(this.value === "roupa"){
-    box.style.display = "block";
-  } else {
-    box.style.display = "none";
-  }
+  document.getElementById("tamanhosBox").style.display =
+    this.value === "roupa" ? "block" : "none";
 });
 
-/* CARREGAR */
+/* listar */
 function carregarProdutos(){
   fetch("listar.php")
   .then(r => r.json())
   .then(data => {
+
+    if(!Array.isArray(data)){
+      console.error("Erro listar.php:", data);
+      return;
+    }
 
     let html = `
     <table>
@@ -211,23 +176,26 @@ function carregarProdutos(){
       </tr>`;
 
     data.forEach(p => {
+
+      let tamanhos = "";
+
+      if(p.tipo === "roupa"){
+        try{
+          const obj = JSON.parse(p.tamanhos || "{}");
+          tamanhos = Object.entries(obj)
+            .map(([t,q]) => `${t}: ${q}`)
+            .join("<br>");
+        } catch(e){
+          tamanhos = "Erro";
+        }
+      }
+
       html += `
         <tr>
           <td>${p.nome}</td>
           <td>R$ ${p.preco}</td>
-
-          <td>
-            ${
-              p.tipo === "roupa"
-              ? Object.entries(JSON.parse(p.tamanhos || "{}"))
-                  .map(([t,q]) => `${t}: ${q}`)
-                  .join("<br>")
-              : (p.quantidade_estoque ?? 0)
-            }
-          </td>
-
+          <td>${p.tipo === "roupa" ? tamanhos : (p.quantidade_estoque || 0)}</td>
           <td>${p.descricao}</td>
-
           <td>
             <button class="btn edit"
               onclick='editar(${p.id}, ${JSON.stringify(p.nome)}, ${JSON.stringify(p.preco)}, ${JSON.stringify(p.descricao)})'>
@@ -243,23 +211,33 @@ function carregarProdutos(){
     });
 
     html += "</table>";
-
     document.getElementById("lista").innerHTML = html;
-  });
+  })
+  .catch(err => console.error("Erro fetch:", err));
 }
 
-/* ATUALIZADO */
+/* adicionar */
 function adicionarProduto(){
 
-  const nome = document.getElementById("nome").value.trim();
-  const preco = document.getElementById("preco").value.trim().replace(",", ".");
-  const imagem = document.getElementById("imagem").value.trim();
-  const descricao = document.getElementById("descricao").value.trim();
-  const quantidade_estoque = document.getElementById("estoque").value.trim();
+  const nomeEl = document.getElementById("nome");
+  const precoEl = document.getElementById("preco");
+  const imagemEl = document.getElementById("imagem");
+  const descricaoEl = document.getElementById("descricao");
+  const estoqueEl = document.getElementById("estoque");
 
+  if(!nomeEl || !precoEl || !imagemEl || !descricaoEl || !estoqueEl){
+    alert("Erro: campos não encontrados");
+    return;
+  }
+
+  const nome = nomeEl.value.trim();
+  const preco = precoEl.value.trim().replace(",", ".");
+  const imagem = imagemEl.value.trim();
+  const descricao = descricaoEl.value.trim();
+  const quantidade_estoque = parseInt(estoqueEl.value) || 0;
   const tipo = document.getElementById("tipoProduto").value;
 
-  let tamanhos = null;
+  let tamanhos = "";
 
   if(tipo === "roupa"){
     tamanhos = JSON.stringify({
@@ -269,7 +247,7 @@ function adicionarProduto(){
     });
   }
 
-  if(!nome || !preco || !imagem || !descricao || (tipo === "simples" && quantidade_estoque === "")){
+  if(!nome || !preco || !imagem || !descricao){
     alert("Preencha todos os campos!");
     return;
   }
@@ -287,48 +265,55 @@ function adicionarProduto(){
       tamanhos
     })
   })
-  .then(res => res.json())
-  .then(data => {
-    alert(data.mensagem);
-    if(data.status === "ok"){
-      carregarProdutos();
+  .then(r => r.text())
+  .then(text => {
+
+    console.log("RESPOSTA:", text);
+
+    try{
+      const data = JSON.parse(text);
+      alert(data.mensagem);
+
+      if(data.status === "ok"){
+        carregarProdutos();
+      }
+
+    } catch(e){
+      console.error("Erro PHP:", text);
+      alert("Erro no servidor (veja console)");
     }
   });
 }
 
-/* EXCLUIR */
+/* deletar */
 function deletar(id){
   fetch("produtos_delete.php?id="+id)
   .then(() => carregarProdutos());
 }
 
-/* EDITAR */
-function editar(id, nomeAtual, precoAtual, descricaoAtual){
+/* editar */
+function editar(id, nome, preco, descricao){
 
-  const novoNome = prompt("Novo nome:", nomeAtual);
-  const novoPreco = prompt("Novo preço:", precoAtual);
-  const novaDescricao = prompt("Nova descrição:", descricaoAtual);
+  const n = prompt("Novo nome:", nome);
+  const p = prompt("Novo preço:", preco);
+  const d = prompt("Nova descrição:", descricao);
 
-  if(!novoNome || !novoPreco || !novaDescricao){
-    return;
-  }
+  if(!n || !p || !d) return;
 
   fetch("produtos_edit.php", {
     method:"POST",
     headers: {"Content-Type":"application/x-www-form-urlencoded"},
     body: new URLSearchParams({
       id,
-      nome: novoNome,
-      preco: novoPreco.replace(",", "."),
-      descricao: novaDescricao
+      nome: n,
+      preco: p.replace(",", "."),
+      descricao: d
     })
   })
-  .then(res => res.json())
+  .then(r => r.json())
   .then(data => {
     alert(data.mensagem || "Atualizado");
-    if(data.status === "ok"){
-      carregarProdutos();
-    }
+    if(data.status === "ok") carregarProdutos();
   });
 }
 
