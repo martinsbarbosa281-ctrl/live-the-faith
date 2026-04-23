@@ -1,9 +1,8 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Produto</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -11,31 +10,43 @@
 body{
   font-family: 'Poppins', sans-serif;
   margin:0;
-  background:#f8fafc;
+  background:#fff;
+  color:#111;
 }
 
+/* HEADER */
+.header{
+  padding:20px 60px;
+  border-bottom:1px solid #eee;
+  font-weight:700;
+  font-size:20px;
+  text-align:center;
+}
+
+/* layout */
 .container{
-  display:flex;
-  gap:50px;
-  padding:120px 80px;
-  align-items:flex-start;
-  flex-wrap:wrap;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:80px;
+  padding:60px;
 }
 
+/* imagem */
 .img-box{
+  background:#f6f6f6;
+  padding:40px;
+  border-radius:10px;
   position:relative;
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 
 .img-box img{
-  width:350px;
-  object-fit:contain;
+  width:100%;
+  max-width:500px;
+  display:block;
+  margin:auto;
 }
 
-/* ❤️ FAVORITO */
+/* favorito */
 .fav{
   position:absolute;
   top:15px;
@@ -47,83 +58,52 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:20px;
   cursor:pointer;
-  box-shadow:0 2px 6px rgba(0,0,0,0.2);
-  transition:0.2s;
-  user-select:none;
+  font-size:20px;
 }
 
 .fav.ativo{
   color:red;
 }
 
-.info{
-  max-width:400px;
-}
-
+/* info */
 .info h1{
-  font-size:28px;
-  margin-bottom:10px;
+  font-size:32px;
 }
 
 .preco{
-  font-size:24px;
-  font-weight:bold;
-  margin:15px 0;
+  font-size:26px;
+  font-weight:700;
+  margin:10px 0 20px;
 }
 
 .estoque{
-  margin:10px 0;
-  font-weight:600;
-  color:#444;
+  color:#666;
+  margin-bottom:15px;
 }
 
+/* tamanhos */
 .tamanhos{
   display:flex;
   gap:10px;
-  margin:20px 0;
+  margin:15px 0;
 }
 
 .tamanho{
-  padding:10px 15px;
   border:1px solid #ccc;
+  padding:10px 14px;
   cursor:pointer;
-  border-radius:8px;
+  border-radius:6px;
 }
 
 .tamanho.ativo{
-  background:#000;
-  color:white;
-}
-
-.botoes{
-  display:flex;
-  gap:15px;
-  margin-top:20px;
-}
-
-button{
-  padding:10px 15px;
-  border:none;
-  cursor:pointer;
-  border-radius:8px;
+  border:2px solid #000;
   font-weight:600;
 }
 
-.btn-carrinho{
-  background:#facc15;
-  flex:1;
-}
-
-.btn-comprar{
-  background:#000;
-  color:white;
-  flex:1;
-}
-
+/* quantidade */
 .contador{
-  margin-top:20px;
+  margin:20px 0;
 }
 
 .contador-box{
@@ -136,35 +116,111 @@ button{
   width:35px;
   height:35px;
   font-size:18px;
+  border:none;
+  background:#eee;
+  cursor:pointer;
 }
+
+/* botões */
+.botoes{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.btn-comprar{
+  background:#000;
+  color:#fff;
+  padding:14px;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.btn-carrinho{
+  background:#FFD600; /* amarelo */
+  color:#111;
+  padding:14px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* frete */
+.frete{
+  margin-top:20px;
+  border-top:1px solid #eee;
+  padding-top:20px;
+}
+
+.frete input{
+  padding:10px;
+  width:60%;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+
+.frete button{
+  padding:10px;
+  background:#000;
+  color:white;
+  border:none;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+/* descrição */
+.descricao{
+  padding:60px;
+  max-width:800px;
+}
+
+/* relacionados */
+.relacionados{
+  padding:60px;
+}
+
+.grid-produtos{
+  display:grid;
+  grid-template-columns: repeat(3,1fr);
+  gap:30px;
+}
+
+.card img{
+  width:100%;
+  background:#f6f6f6;
+  padding:20px;
+}
+
+.card{
+  cursor:pointer;
+}
+
 </style>
 </head>
 
 <body>
 
+<div class="header"></div>
+
 <div class="container">
 
   <div class="img-box">
     <img id="imgProduto">
-
-    <!-- ❤️ coração -->
     <div class="fav" id="btnFav">♡</div>
   </div>
 
   <div class="info">
     <h1 id="nome"></h1>
     <div class="preco" id="preco"></div>
-
     <div class="estoque" id="estoque"></div>
 
-    <div id="areaTamanho">
-      <p>Escolha o tamanho:</p>
-      <div class="tamanhos">
-        <div class="tamanho" onclick="selecionarTamanho(this,'P')">P</div>
-        <div class="tamanho" onclick="selecionarTamanho(this,'M')">M</div>
-        <div class="tamanho" onclick="selecionarTamanho(this,'G')">G</div>
-        <div class="tamanho" onclick="selecionarTamanho(this,'GG')">GG</div>
-      </div>
+    <p>Escolha o tamanho:</p>
+    <div class="tamanhos">
+      <div class="tamanho" onclick="selecionarTamanho(this,'P')">P</div>
+      <div class="tamanho" onclick="selecionarTamanho(this,'M')">M</div>
+      <div class="tamanho" onclick="selecionarTamanho(this,'G')">G</div>
+      <div class="tamanho" onclick="selecionarTamanho(this,'GG')">GG</div>
     </div>
 
     <div class="contador">
@@ -177,112 +233,127 @@ button{
     </div>
 
     <div class="botoes">
-      <button class="btn-carrinho" onclick="addCarrinho()">Adicionar ao carrinho</button>
       <button class="btn-comprar" onclick="comprarAgora()">Comprar agora</button>
+      <button class="btn-carrinho" onclick="addCarrinho()">Adicionar ao carrinho</button>
+    </div>
+
+    <div class="frete">
+      <p><strong>Calcular frete</strong></p>
+      <input placeholder="00000-000">
+      <button>Calcular</button>
     </div>
 
   </div>
 
 </div>
 
+<div class="descricao">
+  <h2>Descrição</h2>
+  <p id="descricaoProduto"></p>
+</div>
+
+<div class="relacionados">
+  <h2>Mais Vendidos</h2>
+
+  <div class="grid-produtos" id="produtosRelacionados"></div>
+</div>
+
 <script>
+// Lista de produtos de exemplo
+const produtos = [
+  {
+    id:1,
+    nome:"Camiseta Virgem Maria",
+    preco:"45,95",
+    imagem:"https://s10.aconvert.com/convert/p3r68-cdx67/an574-8zxo6.png",
+    quantidade_estoque:15,
+    descricao:"Camiseta azul com estampa da Virgem Maria. Tecido leve e confortável."
+  },
+  {
+    id:2,
+    nome:"Camiseta Brasil",
+    preco:"49,99",
+    imagem:"https://s10.aconvert.com/convert/p3r68-cdx67/an574-8zxo6.png",
+    quantidade_estoque:10,
+    descricao:"Camiseta temática do Brasil, perfeita para torcedores."
+  },
+  {
+    id:3,
+    nome:"corajoso jesus",
+    preco:"60,99",
+    imagem:"https://s10.aconvert.com/convert/p3r68-cdx67/a6fl6-sd7az.png",
+    quantidade_estoque:8,
+    descricao:"camiseta estilosa para o dia a dia."
+  },
 
-let produto = JSON.parse(localStorage.getItem("produtoSelecionado"));
+{
+    id:4,
+    nome:"camiseta",
+    preco:"80,99",
+    imagem:"https://s10.aconvert.com/convert/p3r68-cdx67/agyue-cynqp.png",
+    quantidade_estoque:8,
+    descricao:"viva a fe"
+  }
+];
 
-if(!produto){
-  alert("Nenhum produto selecionado");
-  window.location.href = "index.html";
-}
+// Produto principal
+let produto = JSON.parse(localStorage.getItem("produtoSelecionado")) || produtos[0];
 
-/* render */
+// Render do produto principal
 document.getElementById("nome").innerText = produto.nome;
 document.getElementById("preco").innerText = "R$ " + produto.preco;
 document.getElementById("imgProduto").src = produto.imagem;
-document.getElementById("estoque").innerText =
-  "Estoque: " + (produto.quantidade_estoque || 0);
+document.getElementById("estoque").innerText = "Estoque: " + produto.quantidade_estoque;
+document.getElementById("descricaoProduto").innerText = produto.descricao;
 
-/* =========================
-   ❤️ FAVORITO (CORRIGIDO)
-========================= */
-
+// Favorito
 const favBtn = document.getElementById("btnFav");
-const favKey = "favorito_" + produto.id;
-
-// carregar estado salvo
+const favKey = "fav_" + produto.id;
 if(localStorage.getItem(favKey) === "true"){
   favBtn.classList.add("ativo");
   favBtn.innerHTML = "❤️";
 }
-
-// clique no coração
-favBtn.addEventListener("click", () => {
-
+favBtn.onclick = () => {
   const ativo = favBtn.classList.toggle("ativo");
-
   favBtn.innerHTML = ativo ? "❤️" : "♡";
-
   localStorage.setItem(favKey, ativo);
+};
 
-});
-
-/* tamanho */
+// Tamanho
 let tamanhoSelecionado = null;
-
 function selecionarTamanho(el, t){
   tamanhoSelecionado = t;
-  document.querySelectorAll(".tamanho")
-    .forEach(x => x.classList.remove("ativo"));
+  document.querySelectorAll(".tamanho").forEach(x => x.classList.remove("ativo"));
   el.classList.add("ativo");
 }
 
-/* contador */
+// Quantidade
 let quantidadeSelecionada = 1;
+function atualizarQtd(){ document.getElementById("qtd").innerText = quantidadeSelecionada; }
+function aumentarQtd(){ if(quantidadeSelecionada < produto.quantidade_estoque){ quantidadeSelecionada++; atualizarQtd(); } }
+function diminuirQtd(){ if(quantidadeSelecionada > 1){ quantidadeSelecionada--; atualizarQtd(); } }
 
-function atualizarQtd(){
-  document.getElementById("qtd").innerText = quantidadeSelecionada;
-}
-
-function aumentarQtd(){
-  if(quantidadeSelecionada < (produto.quantidade_estoque || 0)){
-    quantidadeSelecionada++;
-    atualizarQtd();
-  }
-}
-
-function diminuirQtd(){
-  if(quantidadeSelecionada > 1){
-    quantidadeSelecionada--;
-    atualizarQtd();
-  }
-}
-
-/* carrinho */
+// Carrinho
 function addCarrinho(){
-
   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-
-  carrinho.push({
-    ...produto,
-    tamanho: tamanhoSelecionado,
-    quantidade: quantidadeSelecionada
-  });
-
+  carrinho.push({...produto, tamanho: tamanhoSelecionado, quantidade: quantidadeSelecionada});
   localStorage.setItem("carrinho", JSON.stringify(carrinho));
-
   alert("Adicionado ao carrinho 🛒");
 }
 
-/* compra */
+// Comprar agora → redireciona para pagina_pagamento.html
 function comprarAgora(){
-
-  localStorage.setItem("compraDireta", JSON.stringify({
-    ...produto,
-    quantidade: quantidadeSelecionada
-  }));
-
-  alert("Indo para pagamento...");
+  window.location.href = "pagina_pagamento.html";
 }
 
+// Render produtos relacionados
+const containerRelacionados = document.getElementById("produtosRelacionados");
+produtos.slice(1).forEach(p => {
+  const div = document.createElement("div");
+  div.className = "card";
+  div.innerHTML = `<img src="${p.imagem}"><p>${p.nome}</p><strong>R$ ${p.preco}</strong><p>${p.descricao}</p>`;
+  containerRelacionados.appendChild(div);
+});
 </script>
 
 </body>
