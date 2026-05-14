@@ -347,8 +347,10 @@ nav a:hover {
 
   <nav id="navLinks">
     <a href="#">Início</a>
+    <a href="#sobre">Sobre nós</a>
     <a href="#produtos">Produtos</a>
     <a href="#">Contato</a>
+    
 
     <div id="areaUsuario">
       <button class="btn-login" onclick="abrirLogin()">Login</button>
@@ -361,6 +363,8 @@ nav a:hover {
 </section>
 
 <section id="produtos" class="products"></section>
+
+<section id="sobre" class=""></section>
 
 <div id="loginModal" class="modal">
   <div class="login-box">
@@ -407,6 +411,23 @@ nav a:hover {
 </div>
 
 <script>
+
+// --- FUNÇÕES DE COOKIES ---
+function criarCookie(nome, valor, dias) {
+    const data = new Date();
+    data.setTime(data.getTime() + (dias * 24 * 60 * 60 * 1000));
+    document.cookie = `${nome}=${valor}; expires=${data.toUTCString()}; path=/`;
+}
+
+function lerCookie(nome) {
+    const nomeIgual = nome + "=";
+    const array = document.cookie.split(';');
+    for(let i = 0; i < array.length; i++) {
+        let c = array[i].trim();
+        if (c.indexOf(nomeIgual) == 0) return c.substring(nomeIgual.length, c.length);
+    }
+    return null;
+}
 
 // --- FUNÇÃO MENU HAMBÚRGUER ---
 function toggleMenu() {
@@ -467,7 +488,7 @@ function fecharCadastro(){
   limparFormularios("cadastroModal");
 }
 
-function abrirTrocarSenha(){ 
+function abrirTrocarSenhas(){ 
   limparBusca();
   limparFormularios("trocarSenhaModal");
   document.getElementById("trocarSenhaModal").style.display = "flex"; 
@@ -489,6 +510,7 @@ function fecharRecuperarSenha(){
 }
 
 // --- LÓGICA DE BACKEND ---
+
 
 function cadastrar(){
   const nome=document.getElementById("nomeCad").value;
@@ -567,6 +589,10 @@ function simularLogin(){
   .then(data=>{
     if(data.status==="ok"){
       localStorage.setItem("usuarioNome",data.nome);
+      
+      // CRIA O COOKIE AO LOGAR (Duração 7 dias)
+      criarCookie("usuario_logado", data.nome, 7);
+
       fecharLogin();
 
       if(data.admin==1){
@@ -582,7 +608,6 @@ function simularLogin(){
           <div class="dropdown">
             <a href="carrinho.html">🛒 Carrinho</a>
             <a href="favoritos.html">❤️ Favoritos</a>
-            <a href="#" onclick="abrirTrocarSenha()">🔒 Trocar senha</a>
             <a href="#" onclick="logout()">🚪 Sair</a>
           </div>
         </div>
@@ -595,6 +620,10 @@ function simularLogin(){
 
 function logout(){
   localStorage.removeItem("usuarioNome");
+  
+  // MATA O COOKIE AO SAIR
+  document.cookie = "usuario_logado=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  
   limparBusca();
   location.reload();
 }
@@ -602,6 +631,23 @@ function logout(){
 window.onload=()=>{
   limparBusca(); // Garante barra limpa ao carregar/recarregar
   carregarProdutos();
+
+  // VERIFICA SE EXISTE COOKIE PARA MANTER LOGADO AO RECARREGAR
+  const userCookie = lerCookie("usuario_logado");
+  if(userCookie){
+      document.getElementById("areaUsuario").innerHTML = `
+        <div class="user-menu">
+          <div class="user-icon">
+            ${userCookie.charAt(0).toUpperCase()}
+          </div>
+          <div class="dropdown">
+            <a href="carrinho.html">🛒 Carrinho</a>
+            <a href="favoritos.html">❤️ Favoritos</a>
+            <a href="#" onclick="logout()">🚪 Sair</a>
+          </div>
+        </div>
+      `;
+  }
 }
 
 function carregarProdutos(){

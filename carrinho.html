@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
+
 body{
   font-family: 'Poppins', sans-serif;
   background:#f8fafc;
@@ -15,15 +16,35 @@ body{
 }
 
 /* HEADER */
-header {
+header{
   position: fixed;
   top: 0;
   width: 100%;
   background-color: #2e2e2e;
   padding: 12px 40px;
   color:white;
-  font-weight: bold;
+  font-weight:bold;
   z-index:1000;
+
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+/* BOTÃO VOLTAR */
+.voltar{
+  background:white;
+  color:black;
+  border:none;
+  padding:8px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.voltar:hover{
+  background:#ddd;
 }
 
 /* CONTAINER */
@@ -48,6 +69,7 @@ h1{
   border-radius:12px;
   overflow:hidden;
   padding:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
 .card img{
@@ -81,6 +103,7 @@ h1{
   cursor:pointer;
   background:#ddd;
   border-radius:5px;
+  font-weight:bold;
 }
 
 .qtd-num{
@@ -96,15 +119,24 @@ h1{
   margin-top:5px;
   border-radius:6px;
   font-weight:bold;
+  transition:0.3s;
 }
 
 .remover{
   background:#facc15;
 }
 
+.remover:hover{
+  background:#eab308;
+}
+
 .comprar{
   background:black;
   color:white;
+}
+
+.comprar:hover{
+  background:#333;
 }
 
 /* TOTAL */
@@ -113,24 +145,41 @@ h1{
   font-size:20px;
   font-weight:bold;
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
-🛒 Seu Carrinho
+
+  <button class="voltar" onclick="voltarPagina()">
+    ← Voltar
+  </button>
+
+  🛒 Seu Carrinho
+
 </header>
 
 <div class="container">
 
-<div class="grid" id="lista"></div>
+  <div class="grid" id="lista"></div>
 
-<div class="total" id="total"></div>
+  <div class="total" id="total"></div>
 
 </div>
 
 <script>
+
+/* VOLTAR */
+function voltarPagina(){
+  window.history.back();
+
+  /*
+  Se quiser voltar sempre para outra página:
+  window.location.href = "index.html";
+  */
+}
 
 function carregarCarrinho(){
 
@@ -141,7 +190,9 @@ function carregarCarrinho(){
 
   carrinho.forEach((p, i)=>{
 
-    if(!p.qtd) p.qtd = 1;
+    if(!p.qtd){
+      p.qtd = 1;
+    }
 
     total += p.preco * p.qtd;
 
@@ -151,14 +202,29 @@ function carregarCarrinho(){
       <img src="${p.imagem}">
 
       <div class="nome">${p.nome}</div>
-      <div>Tamanho: ${p.tamanho || '-'}</div>
 
-      <div class="preco">R$ ${(p.preco * p.qtd).toFixed(2)}</div>
+      <div>
+        Tamanho: ${p.tamanho || '-'}
+      </div>
+
+      <div class="preco">
+        R$ ${(p.preco * p.qtd).toFixed(2)}
+      </div>
 
       <div class="quantidade">
-        <button onclick="diminuir(${i})">-</button>
-        <span class="qtd-num">${p.qtd}</span>
-        <button onclick="aumentar(${i})">+</button>
+
+        <button onclick="diminuir(${i})">
+          -
+        </button>
+
+        <span class="qtd-num">
+          ${p.qtd}
+        </span>
+
+        <button onclick="aumentar(${i})">
+          +
+        </button>
+
       </div>
 
       <button class="btn remover" onclick="remover(${i})">
@@ -174,45 +240,65 @@ function carregarCarrinho(){
   });
 
   document.getElementById("lista").innerHTML = html;
-  document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
+
+  document.getElementById("total").innerText =
+    "Total: R$ " + total.toFixed(2);
 
   localStorage.setItem("carrinho", JSON.stringify(carrinho));
 }
 
 /* AUMENTAR QUANTIDADE */
 function aumentar(i){
+
   let carrinho = JSON.parse(localStorage.getItem("carrinho"));
+
   carrinho[i].qtd++;
+
   localStorage.setItem("carrinho", JSON.stringify(carrinho));
+
   carregarCarrinho();
 }
 
 /* DIMINUIR QUANTIDADE */
 function diminuir(i){
+
   let carrinho = JSON.parse(localStorage.getItem("carrinho"));
+
   if(carrinho[i].qtd > 1){
     carrinho[i].qtd--;
   }
+
   localStorage.setItem("carrinho", JSON.stringify(carrinho));
+
   carregarCarrinho();
 }
 
 /* REMOVER PRODUTO */
 function remover(i){
+
   let carrinho = JSON.parse(localStorage.getItem("carrinho"));
+
   carrinho.splice(i,1);
+
   localStorage.setItem("carrinho", JSON.stringify(carrinho));
+
   carregarCarrinho();
 }
 
-/* COMPRAR PRODUTO - redireciona para página de pagamento */
+/* COMPRAR PRODUTO */
 function comprar(i){
+
   let carrinho = JSON.parse(localStorage.getItem("carrinho"));
-  localStorage.setItem("produtoSelecionado", JSON.stringify(carrinho[i]));
+
+  localStorage.setItem(
+    "produtoSelecionado",
+    JSON.stringify(carrinho[i])
+  );
+
   window.location.href = "pagina_pagamento.html";
 }
 
-/* CARREGA O CARRINHO AO ABRIR A PÁGINA */
+/* CARREGA O CARRINHO */
 carregarCarrinho();
 
 </script>
