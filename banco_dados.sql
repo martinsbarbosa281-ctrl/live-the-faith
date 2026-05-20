@@ -1,5 +1,4 @@
 CREATE DATABASE IF NOT EXISTS live_the_faith;
-
 USE live_the_faith;
 
 -- 👤 TABELA USUÁRIOS
@@ -14,29 +13,17 @@ CREATE TABLE IF NOT EXISTS usuarios (
 );
 
 -- 👑 ADMIN FIXO
-INSERT INTO usuarios (
-    nome,
-    telefone,
-    email,
-    senha,
-    is_admin
-)
+INSERT INTO usuarios (nome, telefone, email, senha, is_admin)
 SELECT 
     'Administrador',
     '000000000',
     'admin@livefaith.com',
     '$2y$10$wH6dG9pP6X7QzQK6Qzj7OeGQZ8VxQvX9G1ZJ5YyQj3p9l7sKj1K9G',
     1
+FROM DUAL
 WHERE NOT EXISTS (
-    SELECT 1 FROM usuarios 
-    WHERE email = 'admin@livefaith.com'
+    SELECT 1 FROM usuarios WHERE email = 'admin@livefaith.com'
 );
-
--- 🔍 VER USUÁRIOS
-SELECT id, nome, email, is_admin FROM usuarios;
-
-SELECT * FROM usuarios
-WHERE email = 'admin@livefaith.com';
 
 -- 📂 TABELA CATEGORIAS
 CREATE TABLE IF NOT EXISTS categorias (
@@ -46,29 +33,16 @@ CREATE TABLE IF NOT EXISTS categorias (
 
 -- 📦 TABELA PRODUTOS
 CREATE TABLE IF NOT EXISTS produtos (
-
     id INT AUTO_INCREMENT PRIMARY KEY,
-
     nome VARCHAR(150) NOT NULL,
-
     descricao TEXT,
-
     preco DECIMAL(10,2) NOT NULL,
-
-    /* IMAGEM PRINCIPAL */
-    imagem_frente TEXT NOT NULL,
-
+    imagem TEXT NOT NULL, -- 🔄 Atualizado para bater com seu PHP
     quantidade_estoque INT DEFAULT 0,
-
-    tipo ENUM('simples','roupa')
-    DEFAULT 'simples',
-
+    tipo ENUM('simples','roupa') DEFAULT 'simples',
     tamanhos TEXT,
-
     categoria_id INT,
-
-    data_criacao TIMESTAMP
-    DEFAULT CURRENT_TIMESTAMP,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_categoria
     FOREIGN KEY (categoria_id)
@@ -76,7 +50,7 @@ CREATE TABLE IF NOT EXISTS produtos (
     ON DELETE SET NULL
 );
 
--- 🔍 CONSULTAS
+-- 🔍 CONSULTAS DE VERIFICAÇÃO
+SELECT id, nome, email, is_admin FROM usuarios;
 SELECT * FROM produtos;
-
 SELECT * FROM categorias;
