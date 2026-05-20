@@ -5,13 +5,13 @@ USE live_the_faith;
 -- 👤 TABELA USUÁRIOS
 -- =========================================================================
 CREATE TABLE IF NOT EXISTS usuarios (
-    id            INT AUTO_INCREMENT PRIMARY KEY,
-    nome          VARCHAR(100) NOT NULL,
-    telefone      VARCHAR(20)  NOT NULL,
-    email         VARCHAR(150) NOT NULL UNIQUE,
-    senha         VARCHAR(255) NOT NULL,
-    is_admin      TINYINT(1)   DEFAULT 0,
-    data_cadastro TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    nome           VARCHAR(100) NOT NULL,
+    telefone       VARCHAR(20)  NOT NULL,
+    email          VARCHAR(150) NOT NULL UNIQUE,
+    senha          VARCHAR(255) NOT NULL,
+    is_admin       TINYINT(1)   DEFAULT 0,
+    data_cadastro  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 👑 ADMIN FIXO (Garante a inserção apenas se não existir)
@@ -56,3 +56,60 @@ CREATE TABLE IF NOT EXISTS produtos (
         REFERENCES categorias(id)
         ON DELETE SET NULL
 );
+
+-- =========================================================================
+-- ❤️ TABELA FAVORITOS
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS favoritos (
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id      INT NOT NULL,
+    produto_id      INT NOT NULL,
+    data_adicionado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- Garante que o mesmo usuário não favorite o mesmo produto duas vezes
+    CONSTRAINT unique_usuario_produto UNIQUE (usuario_id, produto_id),
+
+    -- Relacionamentos (Chaves Estrangeiras)
+    CONSTRAINT fk_favoritos_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE, -- Se o usuário for deletado, apaga os favoritos dele
+
+    CONSTRAINT fk_favoritos_produto
+        FOREIGN KEY (produto_id)
+        REFERENCES produtos(id)
+        ON DELETE CASCADE  -- Se o produto for deletado, sai da lista de favoritos
+);
+
+-- =========================================================================
+-- 🛒 TABELA CARRINHO
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS carrinho (
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id      INT NULL,          -- NULL permite que usuários não logados adicionem ao carrinho
+    sessao_id       VARCHAR(255) NULL, -- Identificador temporário para usuários anônimos
+    produto_id      INT NOT NULL,
+    quantidade      INT NOT NULL DEFAULT 1,
+    tamanho         VARCHAR(10) NULL,  -- Crucial para seu site de roupas (guarda P, M, G, etc.)
+    data_adicionado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- Relacionamentos (Chaves Estrangeiras)
+    CONSTRAINT fk_carrinho_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_carrinho_produto
+        FOREIGN KEY (produto_id)
+        REFERENCES produtos(id)
+        ON DELETE CASCADE
+);
+
+-- =========================================================================
+-- 🔍 CONSULTAS DE TESTE (Opcional)
+-- =========================================================================
+-- Exemplo: Buscar itens do carrinho do usuário ID 5
+-- SELECT c.*, p.nome, p.preco, p.imagem 
+-- FROM carrinho c
+-- JOIN produtos p ON c.produto_id = p.id
+-- WHERE c.usuario_id = 5;
