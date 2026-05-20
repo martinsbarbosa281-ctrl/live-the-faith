@@ -1,330 +1,341 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Painel Admin</title>
+    <meta charset="UTF-8">
+    <title>Painel Admin</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+        }
 
-<style>
-body{
-  font-family: 'Poppins', sans-serif;
-  background:#f1f5f9;
-  margin:0;
-}
+        header {
+            background: #1e293b;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-header{
-  background:#1e293b;
-  color:white;
-  padding:15px 30px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+        .header-left {
+            font-size: 20px;
+            font-weight: bold;
+        }
 
-.header-left{
-  font-size:20px;
-  font-weight:bold;
-}
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-.header-right{
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
+        .badge {
+            background: #22c55e;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
 
-.badge{
-  background:#22c55e;
-  padding:5px 10px;
-  border-radius:8px;
-  font-size:12px;
-}
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
 
-.btn{
-  padding:8px 14px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
+        .voltar { background: #38bdf8; color: white; }
+        .logout { background: #ef4444; color: white; }
 
-.voltar{ background:#38bdf8; color:white; }
-.logout{ background:#ef4444; color:white; }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
 
-.container{
-  background:#fff;
-  padding:20px;
-  border-radius:12px;
-  margin:20px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
 
-input, textarea, select{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
-  border-radius:8px;
-  border:1px solid #ddd;
-}
+        .salvar {
+            background: #facc15;
+            width: 150px;
+        }
 
-.salvar{
-  background:#facc15;
-  width:150px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-}
+        th {
+            background: #f8fafc;
+        }
 
-th{
-  background:#f8fafc;
-}
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
 
-th, td{
-  padding:12px;
-  text-align:center;
-}
+        td:first-child, th:first-child {
+            text-align: left;
+        }
 
-td:first-child, th:first-child{
-  text-align:left;
-}
+        .edit { background: #22c55e; color: white; }
+        .delete { background: #ef4444; color: white; }
 
-.edit{ background:#22c55e; color:white; }
-.delete{ background:#ef4444; color:white; }
-
-button{ margin:3px; }
-</style>
+        button { margin: 3px; }
+    </style>
 </head>
-
 <body>
 
 <header>
-  <div class="header-left">Painel Admin</div>
-
-  <div class="header-right">
-    <span class="badge">Logado como Admin</span>
-
-    <button class="btn voltar" onclick="voltarLoja()">Voltar à loja</button>
-    <button class="btn logout" onclick="logout()">Sair</button>
-  </div>
+    <div class="header-left">Painel Admin</div>
+    <div class="header-right">
+        <span class="badge">Logado como Admin</span>
+        <button class="btn voltar" onclick="voltarLoja()">Voltar à loja</button>
+        <button class="btn logout" onclick="logout()">Sair</button>
+    </div>
 </header>
 
 <div class="container">
-  <h2>Adicionar Produto</h2>
+    <h2>Adicionar Produto</h2>
 
-  <input id="nome" placeholder="Nome do produto">
-  <input id="preco" placeholder="Preço">
-  <input id="imagem" placeholder="URL da imagem (Frente)">
-  <input id="imagem_costas" placeholder="URL da imagem (Costas)"> <textarea id="descricao" placeholder="Descrição"></textarea>
+    <input id="nome" placeholder="Nome do produto">
+    <input id="preco" placeholder="Preço (Ex: 59.90)">
+    <input id="imagem" placeholder="URL da imagem (Frente)">
+    <input id="imagem_costas" placeholder="URL da imagem (Costas) - Opcional"> 
+    <textarea id="descricao" placeholder="Descrição"></textarea>
 
-  <input id="estoque" type="number" placeholder="Quantidade em estoque">
+    <select id="tipoProduto">
+        <option value="simples">Produto comum</option>
+        <option value="roupa">Roupa (com tamanhos)</option>
+    </select>
 
-  <select id="tipoProduto">
-    <option value="simples">Produto comum</option>
-    <option value="roupa">Roupa (com tamanhos)</option>
-  </select>
+    <div id="estoqueBox">
+        <input id="estoque" type="number" placeholder="Quantidade em estoque geral">
+    </div>
 
-  <div id="tamanhosBox" style="display:none;">
-    <input id="tamP" type="number" placeholder="Quantidade P">
-    <input id="tamM" type="number" placeholder="Quantidade M">
-    <input id="tamG" type="number" placeholder="Quantidade G">
-  </div>
+    <div id="tamanhosBox" style="display:none;">
+        <input id="tamP" type="number" placeholder="Quantidade P">
+        <input id="tamM" type="number" placeholder="Quantidade M">
+        <input id="tamG" type="number" placeholder="Quantidade G">
+    </div>
 
-  <button class="btn salvar" onclick="adicionarProduto()">Salvar</button>
+    <button class="btn salvar" onclick="adicionarProduto()">Salvar</button>
 </div>
 
 <div class="container">
-  <h2>Produtos cadastrados</h2>
-  <div id="lista"></div>
+    <h2>Produtos cadastrados</h2>
+    <div id="lista"></div>
 </div>
 
 <script>
-
 function voltarLoja(){
-  window.location.href = "index.html";
+    window.location.href = "index.html";
 }
 
+// Limpa todas as credenciais do admin e sai direto
 function logout(){
-  alert("Você saiu do painel admin");
-  window.location.href = "index.html";
+    // 1. Limpa o LocalStorage
+    localStorage.removeItem("usuarioNome");
+    localStorage.removeItem("usuarioAdmin");
+    
+    // 2. Limpa os cookies definindo uma data passada com path=/ idêntico ao index
+    document.cookie = "usuario_logado=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "usuario_admin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    
+    alert("Você saiu do painel admin");
+    window.location.href = "index.html";
 }
 
-/* mostrar tamanhos */
+// Alternar exibição de estoque/tamanhos dinamicamente
 document.getElementById("tipoProduto").addEventListener("change", function(){
-  document.getElementById("tamanhosBox").style.display =
-    this.value === "roupa" ? "block" : "none";
+    if(this.value === "roupa") {
+        document.getElementById("tamanhosBox").style.display = "block";
+        document.getElementById("estoqueBox").style.display = "none";
+    } else {
+        document.getElementById("tamanhosBox").style.display = "none";
+        document.getElementById("estoqueBox").style.display = "block";
+    }
 });
 
-/* listar */
+// Listar produtos cadastrados
 function carregarProdutos(){
-  fetch("listar.php")
-  .then(r => r.json())
-  .then(data => {
-
-    if(!Array.isArray(data)){
-      console.error("Erro listar.php:", data);
-      return;
-    }
-
-    let html = `
-    <table>
-      <tr>
-        <th>Nome</th>
-        <th>Preço</th>
-        <th>Estoque</th>
-        <th>Descrição</th>
-        <th>Ações</th>
-      </tr>`;
-
-    data.forEach(p => {
-
-      let tamanhos = "";
-
-      if(p.tipo === "roupa"){
-        try{
-          const obj = JSON.parse(p.tamanhos || "{}");
-          tamanhos = Object.entries(obj)
-            .map(([t,q]) => `${t}: ${q}`)
-            .join("<br>");
-        } catch(e){
-          tamanhos = "Erro";
+    fetch("listar.php")
+    .then(r => r.json())
+    .then(data => {
+        if(!Array.isArray(data)){
+            console.error("Erro listar.php:", data);
+            return;
         }
-      }
 
-      html += `
-        <tr>
-          <td>${p.nome}</td>
-          <td>R$ ${p.preco}</td>
-          <td>${p.tipo === "roupa" ? tamanhos : (p.quantidade_estoque || 0)}</td>
-          <td>${p.descricao}</td>
-          <td>
-            <button class="btn edit"
-              onclick='editar(${p.id}, ${JSON.stringify(p.nome)}, ${JSON.stringify(p.preco)}, ${JSON.stringify(p.descricao)})'>
-              Editar
-            </button>
+        let html = `
+        <table>
+            <tr>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Estoque / Grades</th>
+                <th>Descrição</th>
+                <th>Ações</th>
+            </tr>`;
 
-            <button class="btn delete" onclick="deletar(${p.id})">
-              Excluir
-            </button>
-          </td>
-        </tr>
-      `;
-    });
+        data.forEach(p => {
+            let infoEstoque = p.quantidade_estoque || 0;
 
-    html += "</table>";
-    document.getElementById("lista").innerHTML = html;
-  })
-  .catch(err => console.error("Erro fetch:", err));
+            if(p.tipo === "roupa"){
+                try {
+                    const obj = JSON.parse(p.tamanhos || "{}");
+                    infoEstoque = Object.entries(obj)
+                        .map(([t, q]) => `<strong>${t}</strong>: ${q}`)
+                        .join(" | ");
+                } catch(e) {
+                    infoEstoque = "Erro na grade";
+                }
+            }
+
+            html += `
+            <tr>
+                <td>${p.nome}</td>
+                <td>R$ ${parseFloat(p.preco).toFixed(2)}</td>
+                <td>${infoEstoque}</td>
+                <td>${p.descricao}</td>
+                <td>
+                    <button class="btn edit" onclick='editar(${p.id}, ${JSON.stringify(p.nome)}, ${JSON.stringify(p.preco)}, ${JSON.stringify(p.descricao)})'>
+                        Editar
+                    </button>
+                    <button class="btn delete" onclick="deletar(${p.id})">
+                        Excluir
+                    </button>
+                </td>
+            </tr>`;
+        });
+
+        html += "</table>";
+        document.getElementById("lista").innerHTML = html;
+    })
+    .catch(err => console.error("Erro fetch:", err));
 }
 
-/* adicionar */
+// Enviar novos dados ao PHP
 function adicionarProduto(){
+    const nomeEl = document.getElementById("nome");
+    const precoEl = document.getElementById("preco");
+    const imagemEl = document.getElementById("imagem");
+    const imagemCostasEl = document.getElementById("imagem_costas"); 
+    const descricaoEl = document.getElementById("descricao");
+    const estoqueEl = document.getElementById("estoque");
+    const tipo = document.getElementById("tipoProduto").value;
 
-  const nomeEl = document.getElementById("nome");
-  const precoEl = document.getElementById("preco");
-  const imagemEl = document.getElementById("imagem");
-  const imagemCostasEl = document.getElementById("imagem_costas"); // 🔥 Adicionado
-  const descricaoEl = document.getElementById("descricao");
-  const estoqueEl = document.getElementById("estoque");
-
-  if(!nomeEl || !precoEl || !imagemEl || !imagemCostasEl || !descricaoEl || !estoqueEl){ // 🔥 Atualizado
-    alert("Erro: campos não encontrados");
-    return;
-  }
-
-  const nome = nomeEl.value.trim();
-  const preco = precoEl.value.trim().replace(",", ".");
-  const imagem = imagemEl.value.trim();
-  const imagem_costas = imagemCostasEl.value.trim(); // 🔥 Adicionado
-  const descricao = descricaoEl.value.trim();
-  const quantidade_estoque = parseInt(estoqueEl.value) || 0;
-  const tipo = document.getElementById("tipoProduto").value;
-
-  let tamanhos = "";
-
-  if(tipo === "roupa"){
-    tamanhos = JSON.stringify({
-      P: document.getElementById("tamP").value || 0,
-      M: document.getElementById("tamM").value || 0,
-      G: document.getElementById("tamG").value || 0
-    });
-  }
-
-  if(!nome || !preco || !imagem || !descricao){
-    alert("Preencha todos os campos!");
-    return;
-  }
-
-  fetch("produtos_add.php", {
-    method:"POST",
-    headers: {"Content-Type":"application/x-www-form-urlencoded"},
-    body: new URLSearchParams({
-      nome,
-      preco,
-      imagem,
-      imagem_costas, // 🔥 Adicionado
-      descricao,
-      quantidade_estoque,
-      tipo,
-      tamanhos
-    })
-  })
-  .then(r => r.text())
-  .then(text => {
-
-    console.log("RESPOSTA:", text);
-
-    try{
-      const data = JSON.parse(text);
-      alert(data.mensagem);
-
-      if(data.status === "ok"){
-        carregarProdutos();
-        // Limpa o novo campo após salvar
-        imagemCostasEl.value = "";
-      }
-
-    } catch(e){
-      console.error("Erro PHP:", text);
-      alert("Erro no servidor (veja console)");
+    if(!nomeEl || !precoEl || !imagemEl || !imagemCostasEl || !descricaoEl || !estoqueEl){ 
+        alert("Erro estrutural: Elementos HTML não encontrados.");
+        return;
     }
-  });
-}
 
-/* deletar */
-function deletar(id){
-  fetch("produtos_delete.php?id="+id)
-  .then(() => carregarProdutos());
-}
+    const nome = nomeEl.value.trim();
+    const preco = precoEl.value.trim().replace(",", ".");
+    const imagem = imagemEl.value.trim();
+    const imagem_costas = imagemCostasEl.value.trim(); 
+    const descricao = descricaoEl.value.trim();
+    
+    let quantidade_estoque = parseInt(estoqueEl.value) || 0;
+    let tamanhos = "";
 
-/* editar */
-function editar(id, nome, preco, descricao){
+    // Validação inteligente (Apenas campos obrigatórios cruciais)
+    if(!nome || !preco || !imagem || !descricao){
+        alert("Por favor, preencha Nome, Preço, Imagem da Frente e Descrição!");
+        return;
+    }
 
-  const n = prompt("Novo nome:", nome);
-  const p = prompt("Novo preço:", preco);
-  const d = prompt("Nova descrição:", descricao);
+    if(tipo === "roupa"){
+        quantidade_estoque = 0; 
+        tamanhos = JSON.stringify({
+            P: parseInt(document.getElementById("tamP").value) || 0,
+            M: parseInt(document.getElementById("tamM").value) || 0,
+            G: parseInt(document.getElementById("tamG").value) || 0
+        });
+    }
 
-  if(!n || !p || !d) return;
-
-  fetch("produtos_edit.php", {
-    method:"POST",
-    headers: {"Content-Type":"application/x-www-form-urlencoded"},
-    body: new URLSearchParams({
-      id,
-      nome: n,
-      preco: p.replace(",", "."),
-      descricao: d
+    fetch("produtos_add.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: new URLSearchParams({
+            nome,
+            preco,
+            imagem,
+            imagem_costas, 
+            descricao,
+            quantidade_estoque,
+            tipo,
+            tamanhos
+        })
     })
-  })
-  .then(r => r.json())
-  .then(data => {
-    alert(data.mensagem || "Atualizado");
-    if(data.status === "ok") carregarProdutos();
-  });
+    .then(r => r.text())
+    .then(text => {
+        try {
+            const data = JSON.parse(text);
+            alert(data.mensagem);
+
+            if(data.status === "ok"){
+                // Limpa o formulário perfeitamente após o sucesso
+                nomeEl.value = "";
+                precoEl.value = "";
+                imagemEl.value = "";
+                imagemCostasEl.value = "";
+                descricaoEl.value = "";
+                estoqueEl.value = "";
+                document.getElementById("tamP").value = "";
+                document.getElementById("tamM").value = "";
+                document.getElementById("tamG").value = "";
+                
+                carregarProdutos();
+            }
+        } catch(e) {
+            console.error("Erro PHP:", text);
+            alert("Erro no processamento do servidor.");
+        }
+    });
+}
+
+function deletar(id){
+    if(confirm("Tem certeza que deseja excluir este produto?")){
+        fetch("produtos_delete.php?id=" + id)
+        .then(() => carregarProdutos());
+    }
+}
+
+function editar(id, nome, preco, descricao){
+    const n = prompt("Novo nome:", nome);
+    const p = prompt("Novo preço:", preco);
+    const d = prompt("Nova descrição:", descricao);
+
+    if(!n || !p || !d) return;
+
+    fetch("produtos_edit.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: new URLSearchParams({
+            id,
+            nome: n,
+            preco: p.replace(",", "."),
+            descricao: d
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        alert(data.mensagem || "Atualizado!");
+        if(data.status === "ok") carregarProdutos();
+    });
 }
 
 carregarProdutos();
-
 </script>
-
 </body>
 </html>
