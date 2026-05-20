@@ -209,15 +209,59 @@ nav a:hover {
   transform:translateY(-5px);
 }
 
-.img-container{
-  position:relative;
-  background:#f3f4f6;
+.img-container {
+  position: relative;
+  background: #f3f4f6;
+  height: 260px; /* Adicionado para segurar a altura do bloco */
 }
 
-.img-container img{
-  width:100%;
-  height:260px;
-  object-fit:contain;
+.img-container img {
+  width: 100%;
+  height: 260px;
+  object-fit: contain;
+  position: absolute; /* Adicionado para sobrepor as imagens */
+  top: 0;
+  left: 0;
+  opacity: 0;        /* Começam invisíveis */
+  transition: 0.4s ease;
+}
+
+/* Faz a imagem com a classe 'active' aparecer */
+.img-container img.active {
+  opacity: 1;
+}
+
+/* Estilização base das setas */
+.seta {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10; /* Garante que fiquem acima das imagens */
+  transition: background 0.2s;
+}
+
+.seta:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Posicionamento individual das setas */
+.prev {
+  left: 8px;
+}
+
+.next {
+  right: 8px;
 }
 
 .fav{
@@ -659,9 +703,15 @@ function carregarProdutos(){
       html+=`
         <div class="product-card" onclick='abrirProduto(${JSON.stringify(p)})'>
           <div class="img-container">
-            <img src="${p.imagem}">
-            <div class="fav">♡</div>
-          </div>
+  <img src="${p.imagem}" class="active" id="img-frente-${p.id}">
+  
+  <img src="${p.imagem_costas || p.imagem}" id="img-costas-${p.id}">
+  
+  <button class="seta prev" onclick="event.stopPropagation(); trocar(-1, ${p.id})">&#10094;</button>
+  <button class="seta next" onclick="event.stopPropagation(); trocar(1, ${p.id})">&#10095;</button>
+  
+  <div class="fav">♡</div>
+</div>
           <div class="product-info">
             <h3>${p.nome}</h3>
             <span class="categoria">${p.categoria || "Casual"}</span>
@@ -681,6 +731,23 @@ function carregarProdutos(){
 function abrirProduto(produto){
   localStorage.setItem("produtoSelecionado", JSON.stringify(produto));
   window.location.href = "produto.html";
+}
+// --- FUNÇÃO PARA TROCAR FRENTE/COSTAS DA CAMISETA ---
+function trocar(direcao, idProduto) {
+    // Busca os elementos específicos daquele produto usando o ID
+    const imgFrente = document.getElementById("img-frente-" + idProduto);
+    const imgCostas = document.getElementById("img-costas-" + idProduto);
+
+    // Se a frente estiver ativa, muda para as costas
+    if (imgFrente.classList.contains("active")) {
+        imgFrente.classList.remove("active");
+        imgCostas.classList.add("active");
+    } 
+    // Se as costas estiverem ativas, volta para a frente
+    else {
+        imgCostas.classList.remove("active");
+        imgFrente.classList.add("active");
+    }
 }
 
 </script>
