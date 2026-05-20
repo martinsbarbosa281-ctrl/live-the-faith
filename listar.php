@@ -8,8 +8,8 @@ if ($conn->connect_error) {
     exit;
 }
 
-/* 🔥 ADICIONADO: tipo e tamanhos */
-$sql = "SELECT id, nome, preco, imagem, descricao, quantidade_estoque, tipo, tamanhos FROM produtos";
+/* 🔥 ADICIONADO: tipo, tamanhos e imagem_costas na consulta SQL */
+$sql = "SELECT id, nome, preco, imagem, imagem_costas, descricao, quantidade_estoque, tipo, tamanhos FROM produtos";
 
 $result = $conn->query($sql);
 
