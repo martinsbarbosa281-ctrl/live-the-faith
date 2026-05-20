@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detalhes do Produto - Live the Faith</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -37,14 +38,56 @@ body{
   padding:40px;
   border-radius:10px;
   position:relative;
+  height: 450px; /* Definido para segurar o tamanho das imagens absolutas */
 }
 
+/* 🔥 Alterado para permitir a sobreposição das fotos frente/costas */
 .img-box img{
   width:100%;
   max-width:500px;
+  height: 100%;
+  object-fit: contain;
   display:block;
   margin:auto;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: 0.4s ease;
 }
+
+/* 🔥 Faz a imagem ativa aparecer */
+.img-box img.active {
+  opacity: 1;
+}
+
+/* 🔥 Estilização das setas de navegação */
+.seta {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.4);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background 0.2s;
+}
+
+.seta:hover {
+  background: rgba(0,0,0,0.7);
+}
+
+.prev { left: 15px; }
+.next { right: 15px; }
 
 /* favorito */
 .fav{
@@ -60,6 +103,7 @@ body{
   justify-content:center;
   cursor:pointer;
   font-size:20px;
+  z-index: 11; /* Fica acima das setas */
 }
 
 .fav.ativo{
@@ -96,7 +140,7 @@ body{
   border-radius:6px;
 }
 
-.tamanho.ativo{
+.tamanho.active{ /* 🔥 Mudado de .ativo para .active para manter padrão */
   border:2px solid #000;
   font-weight:600;
 }
@@ -195,18 +239,22 @@ body{
 .card{
   cursor:pointer;
 }
-
 </style>
 </head>
 
 <body>
 
-<div class="header"></div>
+<div class="header">Live the Faith</div>
 
 <div class="container">
 
   <div class="img-box">
-    <img id="imgProduto">
+    <img id="imgProdutoFrente" class="active">
+    <img id="imgProdutoCostas">
+    
+    <button class="seta prev" onclick="trocarImagem()">&#10094;</button>
+    <button class="seta next" onclick="trocarImagem()">&#10095;</button>
+    
     <div class="fav" id="btnFav">♡</div>
   </div>
 
@@ -254,57 +302,40 @@ body{
 
 <div class="relacionados">
   <h2>Mais Vendidos</h2>
-
   <div class="grid-produtos" id="produtosRelacionados"></div>
 </div>
 
 <script>
-// Lista de produtos de exemplo
-const produtos = [
-  {
-    id:1,
-    nome:"Camiseta Virgem Maria",
-    preco:"45,95",
-    imagem:"https://s10.aconvert.com/convert/p3r68-cdx67/an574-8zxo6.png",
-    quantidade_estoque:15,
-    descricao:"Camiseta azul com estampa da Virgem Maria. Tecido leve e confortável."
-  },
-  {
-    id:2,
-    nome:"Camiseta Brasil",
-    preco:"49,99",
-    imagem:"https://s10.aconvert.com/convert/p3r68-cdx67/aecps-pf843.png",
-    quantidade_estoque:10,
-    descricao:"Camiseta temática do Brasil, perfeita para torcedores."
-  },
-  {
-    id:3,
-    nome:"corajoso jesus",
-    preco:"60,99",
-    imagem:"https://s10.aconvert.com/convert/p3r68-cdx67/a6fl6-sd7az.png",
-    quantidade_estoque:8,
-    descricao:"camiseta estilosa para o dia a dia."
-  },
+// Pega o produto real clicado vindo do localStorage
+let produto = JSON.parse(localStorage.getItem("produtoSelecionated")) || JSON.parse(localStorage.getItem("produtoSelecionado"));
 
-{
-    id:4,
-    nome:"camiseta",
-    preco:"80,99",
-    imagem:"https://s10.aconvert.com/convert/p3r68-cdx67/agyue-cynqp.png",
-    quantidade_estoque:8,
-    descricao:"viva a fe"
-  }
-];
+if (!produto) {
+  alert("Nenhum produto selecionado!");
+  window.location.href = "index.html";
+}
 
-// Produto principal
-let produto = JSON.parse(localStorage.getItem("produtoSelecionado")) || produtos[0];
-
-// Render do produto principal
+// Render do produto principal com dados do Banco de Dados
 document.getElementById("nome").innerText = produto.nome;
 document.getElementById("preco").innerText = "R$ " + produto.preco;
-document.getElementById("imgProduto").src = produto.imagem;
-document.getElementById("estoque").innerText = "Estoque: " + produto.quantidade_estoque;
+document.getElementById("imgProdutoFrente").src = produto.imagem;
+// Caso não tenha foto das costas cadastrada, repete a da frente por segurança
+document.getElementById("imgProdutoCostas").src = produto.imagem_costas || produto.imagem; 
+document.getElementById("estoque").innerText = "Estoque: " + (produto.quantidade_estoque || 0);
 document.getElementById("descricaoProduto").innerText = produto.descricao;
+
+// 🔥 Função simples para trocar a foto de frente/costas nesta tela
+function trocarImagem() {
+    const frente = document.getElementById("imgProdutoFrente");
+    const costas = document.getElementById("imgProdutoCostas");
+    
+    if(frente.classList.contains("active")) {
+        frente.classList.remove("active");
+        costas.classList.add("active");
+    } else {
+        costas.classList.remove("active");
+        frente.classList.add("active");
+    }
+}
 
 // Favorito
 const favBtn = document.getElementById("btnFav");
@@ -323,8 +354,8 @@ favBtn.onclick = () => {
 let tamanhoSelecionado = null;
 function selecionarTamanho(el, t){
   tamanhoSelecionado = t;
-  document.querySelectorAll(".tamanho").forEach(x => x.classList.remove("ativo"));
-  el.classList.add("ativo");
+  document.querySelectorAll(".tamanho").forEach(x => x.classList.remove("active"));
+  el.classList.add("active");
 }
 
 // Quantidade
@@ -341,19 +372,32 @@ function addCarrinho(){
   alert("Adicionado ao carrinho 🛒");
 }
 
-// Comprar agora → redireciona para pagina_pagamento.html
+// Comprar agora
 function comprarAgora(){
   window.location.href = "pagina_pagamento.html";
 }
 
-// Render produtos relacionados
-const containerRelacionados = document.getElementById("produtosRelacionados");
-produtos.slice(1).forEach(p => {
-  const div = document.createElement("div");
-  div.className = "card";
-  div.innerHTML = `<img src="${p.imagem}"><p>${p.nome}</p><strong>R$ ${p.preco}</strong><p>${p.descricao}</p>`;
-  containerRelacionados.appendChild(div);
-});
+// Render dinâmico de produtos relacionados vindo do seu listar.php real
+fetch("listar.php")
+  .then(r => r.json())
+  .then(listaProdutos => {
+      const containerRelacionados = document.getElementById("produtosRelacionados");
+      // Filtra para não mostrar o próprio produto que já está aberto na tela
+      const filtrados = listaProdutos.filter(p => p.id !== produto.id);
+      
+      // Pega no máximo 3 itens para exibir
+      filtrados.slice(0, 3).forEach(p => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.onclick = () => {
+            localStorage.setItem("produtoSelecionado", JSON.stringify(p));
+            window.location.reload();
+        };
+        div.innerHTML = `<img src="${p.imagem}"><p>${p.nome}</p><strong>R$ ${p.preco}</strong>`;
+        containerRelacionados.appendChild(div);
+      });
+  })
+  .catch(err => console.error("Erro ao carregar relacionados:", err));
 </script>
 
 </body>
