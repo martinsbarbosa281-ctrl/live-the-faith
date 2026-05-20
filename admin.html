@@ -113,8 +113,8 @@ button{ margin:3px; }
 
   <input id="nome" placeholder="Nome do produto">
   <input id="preco" placeholder="Preço">
-  <input id="imagem" placeholder="URL da imagem">
-  <textarea id="descricao" placeholder="Descrição"></textarea>
+  <input id="imagem" placeholder="URL da imagem (Frente)">
+  <input id="imagem_costas" placeholder="URL da imagem (Costas)"> <textarea id="descricao" placeholder="Descrição"></textarea>
 
   <input id="estoque" type="number" placeholder="Quantidade em estoque">
 
@@ -222,10 +222,11 @@ function adicionarProduto(){
   const nomeEl = document.getElementById("nome");
   const precoEl = document.getElementById("preco");
   const imagemEl = document.getElementById("imagem");
+  const imagemCostasEl = document.getElementById("imagem_costas"); // 🔥 Adicionado
   const descricaoEl = document.getElementById("descricao");
   const estoqueEl = document.getElementById("estoque");
 
-  if(!nomeEl || !precoEl || !imagemEl || !descricaoEl || !estoqueEl){
+  if(!nomeEl || !precoEl || !imagemEl || !imagemCostasEl || !descricaoEl || !estoqueEl){ // 🔥 Atualizado
     alert("Erro: campos não encontrados");
     return;
   }
@@ -233,6 +234,7 @@ function adicionarProduto(){
   const nome = nomeEl.value.trim();
   const preco = precoEl.value.trim().replace(",", ".");
   const imagem = imagemEl.value.trim();
+  const imagem_costas = imagemCostasEl.value.trim(); // 🔥 Adicionado
   const descricao = descricaoEl.value.trim();
   const quantidade_estoque = parseInt(estoqueEl.value) || 0;
   const tipo = document.getElementById("tipoProduto").value;
@@ -259,6 +261,7 @@ function adicionarProduto(){
       nome,
       preco,
       imagem,
+      imagem_costas, // 🔥 Adicionado
       descricao,
       quantidade_estoque,
       tipo,
@@ -276,6 +279,8 @@ function adicionarProduto(){
 
       if(data.status === "ok"){
         carregarProdutos();
+        // Limpa o novo campo após salvar
+        imagemCostasEl.value = "";
       }
 
     } catch(e){
