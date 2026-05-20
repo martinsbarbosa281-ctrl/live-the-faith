@@ -15,13 +15,47 @@ body{
   color:#111;
 }
 
-/* HEADER */
+/* HEADER OTIMIZADO */
 .header{
   padding:20px 60px;
   border-bottom:1px solid #eee;
   font-weight:700;
   font-size:20px;
-  text-align:center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Espaça o botão e o título */
+}
+
+/* Esconde o elemento invisível da direita no desktop para manter o título centralizado */
+.header::after {
+  content: "";
+  width: 90px; 
+}
+
+/* BOTÃO VOLTAR */
+.btn-voltar {
+  background: #f6f6f6;
+  color: #111;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-voltar:hover {
+  background: #e0e0e0;
+  transform: translateX(-2px);
+}
+
+.header-titulo {
+  flex: 1;
+  text-align: center;
 }
 
 /* layout */
@@ -41,7 +75,7 @@ body{
   height: 450px; /* Definido para segurar o tamanho das imagens absolutas */
 }
 
-/* 🔥 Alterado para permitir a sobreposição das fotos frente/costas */
+/* Alterado para permitir a sobreposição das fotos frente/costas */
 .img-box img{
   width:100%;
   max-width:500px;
@@ -57,12 +91,12 @@ body{
   transition: 0.4s ease;
 }
 
-/* 🔥 Faz a imagem ativa aparecer */
+/* Faz a imagem ativa aparecer */
 .img-box img.active {
   opacity: 1;
 }
 
-/* 🔥 Estilização das setas de navegação */
+/* Estilização das setas de navegação */
 .seta {
   position: absolute;
   top: 50%;
@@ -140,7 +174,7 @@ body{
   border-radius:6px;
 }
 
-.tamanho.active{ /* 🔥 Mudado de .ativo para .active para manter padrão */
+.tamanho.active{ /* Mudado de .ativo para .active para manter padrão */
   border:2px solid #000;
   font-weight:600;
 }
@@ -239,18 +273,37 @@ body{
 .card{
   cursor:pointer;
 }
+
+/* Responsividade simples para o Header Mobile */
+@media(max-width: 768px) {
+  .header {
+    padding: 15px 20px;
+    flex-direction: row;
+  }
+  .header::after {
+    display: none;
+  }
+  .container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 20px;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<div class="header">Live the Faith</div>
+<div class="header">
+  <button class="btn-voltar" onclick="voltarPagina()">← Voltar</button>
+  <div class="header-titulo">Live the Faith</div>
+</div>
 
 <div class="container">
 
   <div class="img-box">
-    <img id="imgProdutoFrente" class="active">
-    <img id="imgProdutoCostas">
+    <img id="imgProdutoFrente" class="active" alt="Frente do Produto">
+    <img id="imgProdutoCostas" alt="Costas do Produto">
     
     <button class="seta prev" onclick="trocarImagem()">&#10094;</button>
     <button class="seta next" onclick="trocarImagem()">&#10095;</button>
@@ -306,24 +359,29 @@ body{
 </div>
 
 <script>
+/* FUNÇÃO VOLTAR */
+function voltarPagina() {
+  window.history.back();
+}
+
 // Pega o produto real clicado vindo do localStorage
 let produto = JSON.parse(localStorage.getItem("produtoSelecionated")) || JSON.parse(localStorage.getItem("produtoSelecionado"));
 
 if (!produto) {
   alert("Nenhum produto selecionado!");
   window.location.href = "index.html";
+} else {
+  // Render do produto principal - Executado apenas se existir produto válido
+  document.getElementById("nome").innerText = produto.nome || "Produto sem nome";
+  document.getElementById("preco").innerText = "R$ " + (produto.preco || "0,00");
+  document.getElementById("imgProdutoFrente").src = produto.imagem || "";
+  // Caso não tenha foto das costas cadastrada, repete a da frente por segurança
+  document.getElementById("imgProdutoCostas").src = produto.imagem_costas || produto.imagem || ""; 
+  document.getElementById("estoque").innerText = "Estoque: " + (produto.quantidade_estoque || 0);
+  document.getElementById("descricaoProduto").innerText = produto.descricao || "Sem descrição disponível.";
 }
 
-// Render do produto principal com dados do Banco de Dados
-document.getElementById("nome").innerText = produto.nome;
-document.getElementById("preco").innerText = "R$ " + produto.preco;
-document.getElementById("imgProdutoFrente").src = produto.imagem;
-// Caso não tenha foto das costas cadastrada, repete a da frente por segurança
-document.getElementById("imgProdutoCostas").src = produto.imagem_costas || produto.imagem; 
-document.getElementById("estoque").innerText = "Estoque: " + (produto.quantidade_estoque || 0);
-document.getElementById("descricaoProduto").innerText = produto.descricao;
-
-// 🔥 Função simples para trocar a foto de frente/costas nesta tela
+// Função simples para trocar a foto de frente/costas nesta tela
 function trocarImagem() {
     const frente = document.getElementById("imgProdutoFrente");
     const costas = document.getElementById("imgProdutoCostas");
@@ -338,17 +396,19 @@ function trocarImagem() {
 }
 
 // Favorito
-const favBtn = document.getElementById("btnFav");
-const favKey = "fav_" + produto.id;
-if(localStorage.getItem(favKey) === "true"){
-  favBtn.classList.add("ativo");
-  favBtn.innerHTML = "❤️";
+if (produto) {
+  const favBtn = document.getElementById("btnFav");
+  const favKey = "fav_" + produto.id;
+  if(localStorage.getItem(favKey) === "true"){
+    favBtn.classList.add("ativo");
+    favBtn.innerHTML = "❤️";
+  }
+  favBtn.onclick = () => {
+    const ativo = favBtn.classList.toggle("ativo");
+    favBtn.innerHTML = ativo ? "❤️" : "♡";
+    localStorage.setItem(favKey, ativo);
+  };
 }
-favBtn.onclick = () => {
-  const ativo = favBtn.classList.toggle("ativo");
-  favBtn.innerHTML = ativo ? "❤️" : "♡";
-  localStorage.setItem(favKey, ativo);
-};
 
 // Tamanho
 let tamanhoSelecionado = null;
@@ -361,11 +421,18 @@ function selecionarTamanho(el, t){
 // Quantidade
 let quantidadeSelecionada = 1;
 function atualizarQtd(){ document.getElementById("qtd").innerText = quantidadeSelecionada; }
-function aumentarQtd(){ if(quantidadeSelecionada < produto.quantidade_estoque){ quantidadeSelecionada++; atualizarQtd(); } }
+function aumentarQtd(){ 
+  let estoqueMax = produto ? (produto.quantidade_estoque || 0) : 0;
+  if(quantidadeSelecionada < estoqueMax){ 
+    quantidadeSelecionada++; 
+    atualizarQtd(); 
+  } 
+}
 function diminuirQtd(){ if(quantidadeSelecionada > 1){ quantidadeSelecionada--; atualizarQtd(); } }
 
 // Carrinho
 function addCarrinho(){
+  if (!produto) return;
   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
   carrinho.push({...produto, tamanho: tamanhoSelecionado, quantidade: quantidadeSelecionada});
   localStorage.setItem("carrinho", JSON.stringify(carrinho));
@@ -378,26 +445,28 @@ function comprarAgora(){
 }
 
 // Render dinâmico de produtos relacionados vindo do seu listar.php real
-fetch("listar.php")
-  .then(r => r.json())
-  .then(listaProdutos => {
-      const containerRelacionados = document.getElementById("produtosRelacionados");
-      // Filtra para não mostrar o próprio produto que já está aberto na tela
-      const filtrados = listaProdutos.filter(p => p.id !== produto.id);
-      
-      // Pega no máximo 3 itens para exibir
-      filtrados.slice(0, 3).forEach(p => {
-        const div = document.createElement("div");
-        div.className = "card";
-        div.onclick = () => {
-            localStorage.setItem("produtoSelecionado", JSON.stringify(p));
-            window.location.reload();
-        };
-        div.innerHTML = `<img src="${p.imagem}"><p>${p.nome}</p><strong>R$ ${p.preco}</strong>`;
-        containerRelacionados.appendChild(div);
-      });
-  })
-  .catch(err => console.error("Erro ao carregar relacionados:", err));
+if (produto) {
+  fetch("listar.php")
+    .then(r => r.json())
+    .then(listaProdutos => {
+        const containerRelacionados = document.getElementById("produtosRelacionados");
+        // Filtra para não mostrar o próprio produto que já está aberto na tela
+        const filtrados = listaProdutos.filter(p => p.id !== produto.id);
+        
+        // Pega no máximo 3 itens para exibir
+        filtrados.slice(0, 3).forEach(p => {
+          const div = document.createElement("div");
+          div.className = "card";
+          div.onclick = () => {
+              localStorage.setItem("produtoSelecionado", JSON.stringify(p));
+              window.location.reload();
+          };
+          div.innerHTML = `<img src="${p.imagem}"><p>${p.nome}</p><strong>R$ ${p.preco}</strong>`;
+          containerRelacionados.appendChild(div);
+        });
+    })
+    .catch(err => console.error("Erro ao carregar relacionados:", err));
+}
 </script>
 
 </body>
