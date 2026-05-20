@@ -15,18 +15,21 @@ CREATE TABLE IF NOT EXISTS usuarios (
 
 -- 👑 ADMIN FIXO
 INSERT INTO usuarios (
-  nome,
-  telefone,
-  email,
-  senha,
-  is_admin
+    nome,
+    telefone,
+    email,
+    senha,
+    is_admin
 )
-VALUES (
-  'Administrador',
-  '000000000',
-  'admin@livefaith.com',
-  '$2y$10$wH6dG9pP6X7QzQK6Qzj7OeGQZ8VxQvX9G1ZJ5YyQj3p9l7sKj1K9G',
-  1
+SELECT 
+    'Administrador',
+    '000000000',
+    'admin@livefaith.com',
+    '$2y$10$wH6dG9pP6X7QzQK6Qzj7OeGQZ8VxQvX9G1ZJ5YyQj3p9l7sKj1K9G',
+    1
+WHERE NOT EXISTS (
+    SELECT 1 FROM usuarios 
+    WHERE email = 'admin@livefaith.com'
 );
 
 -- 🔍 VER USUÁRIOS
@@ -35,44 +38,45 @@ SELECT id, nome, email, is_admin FROM usuarios;
 SELECT * FROM usuarios
 WHERE email = 'admin@livefaith.com';
 
+-- 📂 TABELA CATEGORIAS
+CREATE TABLE IF NOT EXISTS categorias (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
 -- 📦 TABELA PRODUTOS
 CREATE TABLE IF NOT EXISTS produtos (
 
-  id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
 
-  nome VARCHAR(150) NOT NULL,
+    nome VARCHAR(150) NOT NULL,
 
-  descricao TEXT,
+    descricao TEXT,
 
-  preco DECIMAL(10,2) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
 
-  /* NOVAS IMAGENS */
-  imagem_frente TEXT,
-  imagem_costas TEXT,
+    /* IMAGEM PRINCIPAL */
+    imagem_frente TEXT NOT NULL,
 
-  quantidade_estoque INT DEFAULT 0,
+    quantidade_estoque INT DEFAULT 0,
 
-  tipo ENUM('simples','roupa')
-  DEFAULT 'simples',
+    tipo ENUM('simples','roupa')
+    DEFAULT 'simples',
 
-  tamanhos TEXT,
+    tamanhos TEXT,
 
-  categoria_id INT,
+    categoria_id INT,
 
-  data_criacao TIMESTAMP
-  DEFAULT CURRENT_TIMESTAMP
+    data_criacao TIMESTAMP
+    DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_categoria
+    FOREIGN KEY (categoria_id)
+    REFERENCES categorias(id)
+    ON DELETE SET NULL
 );
 
--- 📂 TABELA CATEGORIAS
-CREATE TABLE IF NOT EXISTS categorias (
+-- 🔍 CONSULTAS
+SELECT * FROM produtos;
 
-  id INT AUTO_INCREMENT PRIMARY KEY,
-
-  nome VARCHAR(100) NOT NULL
-);
-
--- 🔗 RELAÇÃO CATEGORIA
-ALTER TABLE produtos
-ADD CONSTRAINT fk_categoria
-FOREIGN KEY (categoria_id)
-REFERENCES categorias(id);
+SELECT * FROM categorias;
