@@ -269,6 +269,11 @@ nav a:hover {
   justify-content:center;
   font-size:18px;
   box-shadow:0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+
+.fav:hover {
+  transform: scale(1.1);
 }
 
 .product-info{
@@ -418,7 +423,6 @@ nav a:hover {
     <span class="fechar" onclick="fecharCadastro()">X</span>
     <h2>Criar conta</h2>
     <input id="nomeCad" placeholder="nome">
-    <!-- MODIFICAÇÃO AQUI: Adicionado o maxlength="15" para limitar o tamanho visual da máscara -->
     <input id="telefoneCad" placeholder="telefone" maxlength="15">
     <input id="emailCad" placeholder="email">
     <input id="senhaCad" type="password" placeholder="senha">
@@ -545,7 +549,6 @@ function fecharRecuperarSenha(){
 }
 
 // --- MÁSCARA DO TELEFONE DE CADASTRO ---
-// Esta é a função que captura o que é digitado no input #telefoneCad e formata em tempo real
 document.getElementById('telefoneCad').addEventListener('input', (e) => {
     let target = e.target;
     let valor = target.value;
@@ -629,7 +632,7 @@ function recuperarSenha(){
   .then(r=>r.json())
   .then(data=>{
     if(data.status==="ok"){
-      alert("Senha atualizada com sucesso!");
+      alert("Senha updated com sucesso!");
       fecharRecuperarSenha();
       abrirLogin();
     }else{
@@ -650,8 +653,11 @@ function simularLogin(){
   .then(r=>r.json())
   .then(data=>{
     if(data.status==="ok"){
+      // 🌟 MODIFICAÇÃO: Salvando também o ID único do usuário retornado pelo login.php
+      localStorage.setItem("usuarioId", data.id);
       localStorage.setItem("usuarioNome", data.nome);
       criarCookie("usuario_logado", data.nome, 7);
+      criarCookie("usuario_id", data.id, 7);
 
       fecharLogin();
 
@@ -686,11 +692,14 @@ function simularLogin(){
 }
 
 function logout(){
+  // 🌟 MODIFICAÇÃO: Removendo todos os dados e cookies de ID vinculados ao usuário
+  localStorage.removeItem("usuarioId");
   localStorage.removeItem("usuarioNome");
   localStorage.removeItem("usuarioAdmin");
   
   // MATA OS COOKIES AO SAIR
   document.cookie = "usuario_logado=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "usuario_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   document.cookie = "usuario_admin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   
   limparBusca();
@@ -705,7 +714,6 @@ window.onload=()=>{
   const adminCookie = lerCookie("usuario_admin");
 
   if(userCookie){
-      // 🕵️‍♂️ CHECAGEM INTELIGENTE DO MENU APÓS RECARREGAR A PÁGINA
       if(adminCookie === "1"){
           // Layout limpo para o Administrador (Sem carrinho, sem favoritos)
           document.getElementById("areaUsuario").innerHTML = `
@@ -750,7 +758,8 @@ function carregarProdutos(){
             <img src="${p.imagem_costas || p.imagem}" id="img-costas-${p.id}">
             <button class="seta prev" onclick="event.stopPropagation(); trocar(-1, ${p.id})">&#10094;</button>
             <button class="seta next" onclick="event.stopPropagation(); trocar(1, ${p.id})">&#10095;</button>
-            <div class="fav">♡</div>
+            <!-- 🌟 MODIFICAÇÃO: event.stopPropagation() evita abrir a tela do produto ao clicar no coração -->
+            <div class="fav" onclick="event.stopPropagation(); alternarFavorito(${p.id})">♡</div>
           </div>
           <div class="product-info">
             <h3>${p.nome}</h3>
@@ -784,6 +793,35 @@ function trocar(direcao, idProduto) {
         imgCostas.classList.remove("active");
         imgFrente.classList.add("active");
     }
+}
+
+// 🌟 NOVA FUNÇÃO: Gerencia a adição de produtos aos favoritos de forma única para cada ID de usuário
+function alternarFavorito(idProduto) {
+    const idUsuario = localStorage.getItem("usuarioId");
+
+    if (!idUsuario) {
+        alert("Por favor, faça login para adicionar produtos aos seus favoritos!");
+        abrirLogin();
+        return;
+    }
+
+    fetch("favoritar.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: `id_usuario=${idUsuario}&id_produto=${idProduto}`
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === "ok") {
+            alert(data.mensagem); // Mensagem enviada pelo back-end (ex: "Adicionado aos favoritos!")
+        } else {
+            alert(data.mensagem || "Erro ao processar sua solicitação.");
+        }
+    })
+    .catch(err => {
+        console.error("Erro na requisição:", err);
+        alert("Não foi possível conectar ao servidor.");
+    });
 }
 </script>
 </body>
