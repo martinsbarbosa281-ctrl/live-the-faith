@@ -80,14 +80,14 @@ header::after {
   text-align: center;
 }
 
-/* LISTA DE PRODUTOS (LAYOUT EM LINHAS) */
+/* LISTA DE PRODUTOS */
 .lista-produtos {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* CARD DO PRODUTO REESTRUTURADO COM ESPAÇO PARA O RADIO */
+/* CARD DO PRODUTO AJUSTADO PARA CHECKBOX */
 .card {
   background: white;
   border-radius: 12px;
@@ -95,12 +95,11 @@ header::after {
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);
   border: 1px solid #edf2f7;
   display: flex;
-  align-items: center; /* Alinha verticalmente o conteúdo com o radio button */
+  align-items: center;
   gap: 20px;
   position: relative;
 }
 
-/* ESTILIZAÇÃO DO CONTAINER E INPUT DO RADIO BUTTON */
 .card-selecionador {
   display: flex;
   align-items: center;
@@ -108,11 +107,11 @@ header::after {
   padding-right: 5px;
 }
 
-.radio-produto {
+.checkbox-produto {
   width: 22px;
   height: 22px;
   cursor: pointer;
-  accent-color: #000000; /* Deixa a bolinha preta combinando com o botão do checkout */
+  accent-color: #000000;
 }
 
 .card-img-box {
@@ -138,7 +137,7 @@ header::after {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-self: stroke; /* Permite o crescimento correto dos textos internos */
+  align-self: stretch;
 }
 
 .nome {
@@ -199,7 +198,7 @@ header::after {
   text-align: center;
 }
 
-/* BLOCO DE PREÇOS UNITÁRIOS DO CARD */
+/* BLOCO DE PREÇOS */
 .card-valores {
   text-align: right;
   display: flex;
@@ -225,7 +224,7 @@ header::after {
   margin-top: auto;
 }
 
-/* BOTÕES DE AÇÃO INTERNOS */
+/* BOTÕES DE AÇÃO */
 .card-acoes {
   display: flex;
   gap: 8px;
@@ -252,7 +251,7 @@ header::after {
   background: #fca5a5;
 }
 
-/* LATERAL DIREITA: RESUMO COMPLETO DA COMPRA */
+/* RESUMO DA COMPRA */
 .painel-checkout {
   background: white;
   border-radius: 12px;
@@ -314,7 +313,7 @@ header::after {
   padding: 60px 20px;
 }
 
-/* RESPONSIVIDADE (MOBILE) */
+/* RESPONSIVIDADE */
 @media(max-width: 992px) {
   .container {
     grid-template-columns: 1fr;
@@ -365,7 +364,6 @@ header::after {
 </header>
 
 <div class="container" id="containerCarrinho">
-  <!-- Produtos injetados aqui -->
   <div class="lista-produtos" id="lista"></div>
 
   <!-- Bloco Lateral de Resumo Fixo -->
@@ -404,14 +402,40 @@ function converterPreco(precoValor) {
   return parseFloat(stringPreco) || 0;
 }
 
-function carregarCarrinho(){
+function atualizarResumoValores() {
   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-  let html = "";
+  let checkboxes = document.querySelectorAll('.checkbox-produto');
   
   let acumulaSubtotal = 0;
   let acumulaFrete = 0;
   let totalGeralCarrinho = 0;
 
+  checkboxes.forEach(checkbox => {
+    if (checkbox.checked) {
+      let i = parseInt(checkbox.value);
+      let p = carrinho[i];
+      if (p) {
+        let qtd = parseInt(p.quantidade) || 1;
+        let precoUnitario = converterPreco(p.preco);
+        let subtotalPecas = precoUnitario * qtd;
+        let valorFreteItem = parseFloat(p.valorFrete) || 0;
+
+        acumulaSubtotal += subtotalPecas;
+        acumulaFrete += valorFreteItem;
+        totalGeralCarrinho += (subtotalPecas + valorFreteItem);
+      }
+    }
+  });
+
+  document.getElementById("resumoSubtotal").innerText = "R$ " + acumulaSubtotal.toFixed(2).replace('.', ',');
+  document.getElementById("resumoFrete").innerText = "R$ " + acumulaFrete.toFixed(2).replace('.', ',');
+  document.getElementById("total").innerText = "R$ " + totalGeralCarrinho.toFixed(2).replace('.', ',');
+}
+
+function carregarCarrinho(){
+  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+  let html = "";
+  
   const container = document.getElementById("containerCarrinho");
 
   if (carrinho.length === 0) {
@@ -432,18 +456,10 @@ function carregarCarrinho(){
     let valorFreteItem = parseFloat(p.valorFrete) || 0;
     let totalItemComFrete = subtotalPecas + valorFreteItem;
 
-    acumulaSubtotal += subtotalPecas;
-    acumulaFrete += valorFreteItem;
-    totalGeralCarrinho += totalItemComFrete;
-
-    // O primeiro item (i === 0) recebe a propriedade "checked" nativa do HTML para vir marcado de início
-    let estaMarcado = (i === 0) ? 'checked' : '';
-
     html += `
     <div class="card">
-      <!-- Inclusão do seletor Radio Button -->
       <div class="card-selecionador">
-        <input type="radio" name="produto_selecionado" class="radio-produto" value="${i}" ${estaMarcado}>
+        <input type="checkbox" class="checkbox-produto" value="${i}" checked onchange="atualizarResumoValores()">
       </div>
 
       <div class="card-img-box">
@@ -480,11 +496,7 @@ function carregarCarrinho(){
   });
 
   document.getElementById("lista").innerHTML = html;
-  
-  // Atualiza painel consolidado à direita
-  document.getElementById("resumoSubtotal").innerText = "R$ " + acumulaSubtotal.toFixed(2).replace('.', ',');
-  document.getElementById("resumoFrete").innerText = "R$ " + acumulaFrete.toFixed(2).replace('.', ',');
-  document.getElementById("total").innerText = "R$ " + totalGeralCarrinho.toFixed(2).replace('.', ',');
+  atualizarResumoValores();
 }
 
 function aumentar(i){
@@ -522,7 +534,6 @@ function remover(i){
   carregarCarrinho();
 }
 
-/* 🌟 FUNÇÃO ATUALIZADA RECOLHENDO APENAS O PRODUTO SELECIONADO PELO RADIO BUTTON */
 function comprarTodos(){
   const idUsuario = localStorage.getItem("usuarioId");
 
@@ -535,27 +546,25 @@ function comprarTodos(){
   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
   if(carrinho.length === 0) return;
 
-  // Captura o índice (i) através do Radio Button ativo no documento
-  const radioSelecionado = document.querySelector('input[name="produto_selecionado"]:checked');
+  const checkboxesMarcados = document.querySelectorAll('.checkbox-produto:checked');
   
-  if(!radioSelecionado){
-    alert("Por favor, selecione um produto utilizando o botão de opção antes de finalizar.");
+  if(checkboxesMarcados.length === 0){
+    alert("Por favor, selecione ao menos um produto para poder prosseguir para o pagamento.");
     return;
   }
 
-  const indiceDoProduto = parseInt(radioSelecionado.value);
-  
-  // Pegamos unicamente o item que o usuário marcou no carrinho
-  let itemSelecionado = carrinho[indiceDoProduto];
+  let itensSelecionados = [];
+  checkboxesMarcados.forEach(cb => {
+    let indice = parseInt(cb.value);
+    let itemDoCarrinho = carrinho[indice];
+    
+    if(itemDoCarrinho) {
+      itensSelecionados.push({ ...itemDoCarrinho, usuario_id: idUsuario });
+    }
+  });
 
-  // Injeta de forma limpa o id do comprador neste item selecionado
-  itemSelecionado.usuario_id = idUsuario;
-
-  // Estrutura em formato de array para manter a retrocompatibilidade com seu Checkout Unificado
-  let pacoteCheckout = [itemSelecionado];
-
-  localStorage.setItem("itensCheckoutUnificado", JSON.stringify(pacoteCheckout));
-  localStorage.setItem("produtoSelecionado", JSON.stringify(itemSelecionado));
+  localStorage.setItem("itensCheckoutUnificado", JSON.stringify(itensSelecionados));
+  localStorage.setItem("produtoSelecionado", JSON.stringify(itensSelecionados[0]));
   
   window.location.href = "pagina_pagamento.html";
 }
