@@ -425,12 +425,13 @@ body{
     <div class="preco" id="preco"></div>
     <div class="estoque" id="estoque"></div>
 
-    <p>Escolha o tamanho:</p>
-    <div class="tamanhos">
-      <div class="tamanho" onclick="selecionarTamanho(this,'P')">P</div>
-      <div class="tamanho" onclick="selecionarTamanho(this,'M')">M</div>
-      <div class="tamanho" onclick="selecionarTamanho(this,'G')">G</div>
-      <div class="tamanho" onclick="selecionarTamanho(this,'GG')">GG</div>
+    <div id="boxSelecaoTamanho">
+      <p>Escolha o tamanho:</p>
+      <div class="tamanhos">
+        <div class="tamanho" onclick="selecionarTamanho(this,'P')">P</div>
+        <div class="tamanho" onclick="selecionarTamanho(this,'M')">M</div>
+        <div class="tamanho" onclick="selecionarTamanho(this,'G')">G</div>
+      </div>
     </div>
 
     <div class="contador">
@@ -503,6 +504,7 @@ let tamanhoSelecionado = null;
 let freteSelecionado = null; 
 let valorFreteSelecionado = 0;
 let precoBaseProduto = 0; 
+let estoqueMaximoDisponivel = 0; // Controlará o estoque dinâmico com base no tamanho
 
 let produto = JSON.parse(localStorage.getItem("produtoSelecionated")) || JSON.parse(localStorage.getItem("produtoSelecionado"));
 
@@ -514,10 +516,18 @@ if (!produto) {
   document.getElementById("preco").innerText = "R$ " + (produto.preco || "0,00");
   document.getElementById("imgProdutoFrente").src = produto.imagem || "";
   document.getElementById("imgProdutoCostas").src = produto.imagem_costas || produto.imagem || ""; 
-  document.getElementById("estoque").innerText = "Estoque: " + (produto.quantidade_estoque || 0);
   document.getElementById("descricaoProduto").innerText = produto.descricao || "Sem descrição disponível.";
   
-  let stringPreco = produto.preco.replace("R$", "").trim();
+  // Se for produto comum, o estoque máximo é o estoque geral direto
+  if(produto.tipo !== "roupa") {
+      document.getElementById("boxSelecaoTamanho").style.display = "none";
+      estoqueMaximoDisponivel = parseInt(produto.quantidade_estoque) || 0;
+      document.getElementById("estoque").innerText = "Estoque disponível: " + estoqueMaximoDisponivel;
+  } else {
+      document.getElementById("estoque").innerText = "Selecione um tamanho para ver a disponibilidade.";
+  }
+  
+  let stringPreco = produto.preco.toString().replace("R$", "").trim();
   if (stringPreco.includes(",") && stringPreco.includes(".")) {
     stringPreco = stringPreco.replace(/\./g, ""); 
   }
@@ -551,10 +561,27 @@ if (produto) {
   };
 }
 
+// 🔥 Altera o teto do estoque dependendo do tamanho escolhido
 function selecionarTamanho(el, t){
   tamanhoSelecionado = t;
   document.querySelectorAll(".tamanho").forEach(x => x.classList.remove("active"));
   el.classList.add("active");
+
+  if(produto && produto.tipo === "roupa") {
+      try {
+          const gradeTamanhos = JSON.parse(produto.tamanhos || "{}");
+          estoqueMaximoDisponivel = parseInt(gradeTamanhos[t]) || 0;
+          
+          document.getElementById("estoque").innerText = `Estoque do tamanho ${t}: ${estoqueMaximoDisponivel}`;
+          
+          if(quantidadeSelecionada > estoqueMaximoDisponivel) {
+              quantidadeSelecionada = estoqueMaximoDisponivel > 0 ? 1 : 0;
+              atualizarQtd();
+          }
+      } catch(e) {
+          console.error("Erro ao processar JSON de tamanhos", e);
+      }
+  }
 }
 
 let quantidadeSelecionada = 1;
@@ -562,14 +589,17 @@ function atualizarQtd(){
   document.getElementById("qtd").innerText = quantidadeSelecionada; 
   atualizarCalculoTotal(); 
 }
+
 function aumentarQtd(){ 
-  let estoqueMax = produto ? (produto.quantidade_estoque || 0) : 0;
-  if(quantidadeSelecionada < estoqueMax){ 
+  if(quantidadeSelecionada < estoqueMaximoDisponivel){ 
     quantidadeSelecionada++; 
     atualizarQtd(); 
-  } 
+  } else {
+    alert("Você já atingiu o limite máximo de estoque disponível para essa opção.");
+  }
 }
-function diminuirQtd(){ 
+
+function disminuirQtd(){ 
   if(quantidadeSelecionada > 1){ 
     quantidadeSelecionada--; 
     atualizarQtd(); 
@@ -605,8 +635,12 @@ function selecionarFrete(elemento, tipo, valor) {
 
 function addCarrinho(){
   if (!produto) return;
-  if (!tamanhoSelecionado) {
+  if (produto.tipo === "roupa" && !tamanhoSelecionado) {
     alert("Por favor, selecione um tamanho antes de adicionar ao carrinho!");
+    return;
+  }
+  if (estoqueMaximoDisponivel <= 0 || quantidadeSelecionada === 0) {
+    alert("Este tamanho/produto encontra-se totalmente sem estoque no momento.");
     return;
   }
   if (!freteSelecionado) {
@@ -614,27 +648,31 @@ function addCarrinho(){
     return;
   }
 
-  let subtotal = precoBaseProduto * quantidadeSelecionada;
-  let totalComFrete = subtotal + valorFreteSelecionado;
+  let subtotalProdutos = precoBaseProduto * quantidadeSelecionada;
+  let totalGeralComFrete = subtotalProdutos + valorFreteSelecionado;
 
   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
   carrinho.push({
     ...produto, 
-    tamanho: tamanhoSelecionado, 
+    tamanho: tamanhoSelecionado || 'N/A', 
     quantidade: quantidadeSelecionada,
     tipoFrete: freteSelecionado,
     valorFrete: valorFreteSelecionado,
-    valorTotalCompra: totalComFrete
+    subtotal: subtotalProdutos,
+    valorTotalCompra: totalGeralComFrete // 🔥 VALOR TOTAL DO PRODUTO + FRETE INCLUSO
   });
   
   localStorage.setItem("carrinho", JSON.stringify(carrinho));
   alert("Adicionado ao carrinho com sucesso! 🛒");
 }
 
-/* CORREÇÃO AQUI: Função reestruturada sem erros de digitação nas variáveis */
 function comprarAgora(){
-  if (!tamanhoSelecionado) {
+  if (produto.tipo === "roupa" && !tamanhoSelecionado) {
     alert("Por favor, escolha o seu tamanho!");
+    return;
+  }
+  if (estoqueMaximoDisponivel <= 0 || quantidadeSelecionada === 0) {
+    alert("Desculpe, o produto/tamanho escolhido está sem estoque.");
     return;
   }
   if (!freteSelecionado) {
@@ -642,16 +680,17 @@ function comprarAgora(){
     return;
   }
   
-  let subtotal = precoBaseProduto * quantidadeSelecionada;
-  let totalComFrete = subtotal + valorFreteSelecionado;
+  let subtotalProdutos = precoBaseProduto * quantidadeSelecionada;
+  let totalGeralComFrete = subtotalProdutos + valorFreteSelecionado;
 
   let compraImediata = {
     ...produto,
-    tamanho: tamanhoSelecionado,
+    tamanho: tamanhoSelecionado || 'N/A',
     quantidade: quantidadeSelecionada,
     tipoFrete: freteSelecionado,
     valorFrete: valorFreteSelecionado,
-    valorTotalCompra: totalComFrete
+    subtotal: subtotalProdutos,
+    valorTotalCompra: totalGeralComFrete // 🔥 VALOR TOTAL DO PRODUTO + FRETE INCLUSO
   };
   localStorage.setItem("produtoSelecionado", JSON.stringify(compraImediata));
   
