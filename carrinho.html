@@ -87,7 +87,7 @@ header::after {
   gap: 16px;
 }
 
-/* CARD DO PRODUTO REESTRUTURADO */
+/* CARD DO PRODUTO REESTRUTURADO COM ESPAÇO PARA O RADIO */
 .card {
   background: white;
   border-radius: 12px;
@@ -95,8 +95,24 @@ header::after {
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);
   border: 1px solid #edf2f7;
   display: flex;
+  align-items: center; /* Alinha verticalmente o conteúdo com o radio button */
   gap: 20px;
   position: relative;
+}
+
+/* ESTILIZAÇÃO DO CONTAINER E INPUT DO RADIO BUTTON */
+.card-selecionador {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 5px;
+}
+
+.radio-produto {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: #000000; /* Deixa a bolinha preta combinando com o botão do checkout */
 }
 
 .card-img-box {
@@ -122,6 +138,7 @@ header::after {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-self: stroke; /* Permite o crescimento correto dos textos internos */
 }
 
 .nome {
@@ -192,6 +209,7 @@ header::after {
   min-width: 140px;
   border-left: 1px solid #f1f5f9;
   padding-left: 20px;
+  align-self: stretch;
 }
 
 .detalhe-preco {
@@ -314,6 +332,13 @@ header::after {
   .card {
     flex-direction: column;
     gap: 15px;
+    align-items: flex-start;
+  }
+  .card-selecionador {
+    width: 100%;
+    justify-content: flex-start;
+    border-bottom: 1px dashed #e2e8f0;
+    padding-bottom: 10px;
   }
   .card-img-box {
     width: 100%;
@@ -411,8 +436,16 @@ function carregarCarrinho(){
     acumulaFrete += valorFreteItem;
     totalGeralCarrinho += totalItemComFrete;
 
+    // O primeiro item (i === 0) recebe a propriedade "checked" nativa do HTML para vir marcado de início
+    let estaMarcado = (i === 0) ? 'checked' : '';
+
     html += `
     <div class="card">
+      <!-- Inclusão do seletor Radio Button -->
+      <div class="card-selecionador">
+        <input type="radio" name="produto_selecionado" class="radio-produto" value="${i}" ${estaMarcado}>
+      </div>
+
       <div class="card-img-box">
         <img src="${p.imagem || ''}">
       </div>
@@ -489,17 +522,40 @@ function remover(i){
   carregarCarrinho();
 }
 
-/* FUNÇÃO PARA FINALIZAR TODOS OS ITENS JUNTOS */
+/* 🌟 FUNÇÃO ATUALIZADA RECOLHENDO APENAS O PRODUTO SELECIONADO PELO RADIO BUTTON */
 function comprarTodos(){
+  const idUsuario = localStorage.getItem("usuarioId");
+
+  if(!idUsuario){
+    alert("Identificamos que você não está logado. Por favor, faça login na página inicial antes de finalizar sua compra!");
+    window.location.href = "index.html"; 
+    return;
+  }
+
   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
   if(carrinho.length === 0) return;
 
-  // Enviamos o carrinho estruturado completo para o checkout unificado
-  localStorage.setItem("itensCheckoutUnificado", JSON.stringify(carrinho));
+  // Captura o índice (i) através do Radio Button ativo no documento
+  const radioSelecionado = document.querySelector('input[name="produto_selecionado"]:checked');
   
-  // Opcional: Se sua página de pagamento lê a chave única anterior de um produto por vez,
-  // você pode salvar também o primeiro item para evitar quebras de retrocompatibilidade
-  localStorage.setItem("produtoSelecionado", JSON.stringify(carrinho[0]));
+  if(!radioSelecionado){
+    alert("Por favor, selecione um produto utilizando o botão de opção antes de finalizar.");
+    return;
+  }
+
+  const indiceDoProduto = parseInt(radioSelecionado.value);
+  
+  // Pegamos unicamente o item que o usuário marcou no carrinho
+  let itemSelecionado = carrinho[indiceDoProduto];
+
+  // Injeta de forma limpa o id do comprador neste item selecionado
+  itemSelecionado.usuario_id = idUsuario;
+
+  // Estrutura em formato de array para manter a retrocompatibilidade com seu Checkout Unificado
+  let pacoteCheckout = [itemSelecionado];
+
+  localStorage.setItem("itensCheckoutUnificado", JSON.stringify(pacoteCheckout));
+  localStorage.setItem("produtoSelecionado", JSON.stringify(itemSelecionado));
   
   window.location.href = "pagina_pagamento.html";
 }
