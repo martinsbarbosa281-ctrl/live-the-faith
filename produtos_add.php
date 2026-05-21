@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 $nome = trim($_POST['nome'] ?? '');
 $preco = floatval(str_replace(",", ".", $_POST['preco'] ?? 0));
 $imagem = trim($_POST['imagem'] ?? '');
-$imagem_costas = trim($_POST['imagem_costas'] ?? ''); // 🔥 Adicionado para receber a imagem traseira
+$imagem_costas = trim($_POST['imagem_costas'] ?? ''); 
 $descricao = trim($_POST['descricao'] ?? '');
 $estoque = intval($_POST['quantidade_estoque'] ?? 0);
 
@@ -36,11 +36,11 @@ if (empty($nome) || $preco <= 0) {
   exit;
 }
 
-// Prepare - Atualizado com a coluna imagem_costas e mais um "?"
+// Prepare
 $stmt = $conn->prepare("
   INSERT INTO produtos 
   (nome, preco, imagem, imagem_costas, descricao, quantidade_estoque, tipo, tamanhos)
-  VALUES (?,?,?,?,?,?,?,?)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 ");
 
 if (!$stmt) {
@@ -51,8 +51,8 @@ if (!$stmt) {
   exit;
 }
 
-// Bind - Atualizado com "sdsssiss" (adicionado um "s" para a nova string) e a variável $imagem_costas
-$stmt->bind_param("sdsssiss", $nome, $preco, $imagem, $imagem_costas, $descricao, $estoque, $tipo, $tamanhos);
+// 🔥 CORREÇÃO AQUI: Mudado de "sdsssiss" para "sdssisss" para alinhar com as variáveis
+$stmt->bind_param("sdssisss", $nome, $preco, $imagem, $imagem_costas, $descricao, $estoque, $tipo, $tamanhos);
 
 // Execute
 if ($stmt->execute()) {
