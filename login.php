@@ -34,8 +34,9 @@ if($email === $admin_email){
     if($senha === $admin_senha){
         echo json_encode([
             "status" => "ok",
+            "id" => 0, // 🌟 Admin fixo pode ter ID 0
             "nome" => "Administrador",
-            "email" => $email, // ✔ importante
+            "email" => $email, 
             "admin" => 1
         ]);
     } else {
@@ -49,11 +50,13 @@ if($email === $admin_email){
 }
 
 /* 👤 USUÁRIO NORMAL */
-$stmt = $conn->prepare("SELECT nome, senha FROM usuarios WHERE email=?");
+// 🌟 ALTERAÇÃO AQUI: Adicionado o "id" no SELECT
+$stmt = $conn->prepare("SELECT id, nome, senha FROM usuarios WHERE email=?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $stmt->store_result();
-$stmt->bind_result($nome, $senhaHash);
+// 🌟 ALTERAÇÃO AQUI: Adicionado a variável $id no bind_result
+$stmt->bind_result($id, $nome, $senhaHash);
 
 if($stmt->num_rows > 0){
     $stmt->fetch();
@@ -61,8 +64,9 @@ if($stmt->num_rows > 0){
     if(password_verify($senha, $senhaHash)){
         echo json_encode([
             "status" => "ok",
+            "id" => $id, // 🌟 ALTERAÇÃO AQUI: Agora enviamos o ID real do banco de dados!
             "nome" => $nome,
-            "email" => $email, // ✔ ESSENCIAL PRO TROCAR SENHA
+            "email" => $email, 
             "admin" => 0
         ]);
     } else {
