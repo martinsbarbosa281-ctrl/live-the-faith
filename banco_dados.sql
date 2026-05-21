@@ -105,6 +105,13 @@ CREATE TABLE IF NOT EXISTS carrinho (
         ON DELETE CASCADE
 );
 
+
+-- 1. Remove qualquer lixo que tenha ficado sem ID de usuário
+DELETE FROM carrinho WHERE usuario_id IS NULL;
+
+-- 2. Cria uma regra que impede duplicados (mesmo user + mesmo produto + mesmo tamanho)
+ALTER TABLE carrinho ADD UNIQUE INDEX unico_item_por_usuario (usuario_id, produto_id, tamanho);
+
 -- =========================================================================
 -- 🔍 CONSULTAS DE TESTE (Opcional)
 -- =========================================================================
