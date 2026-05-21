@@ -138,18 +138,40 @@
 </div>
 
 <script>
+// --- FUNÇÃO AUXILIAR DE COOKIES ---
+function lerCookie(nome) {
+    const nomeIgual = nome + "=";
+    const array = document.cookie.split(';');
+    for(let i = 0; i < array.length; i++) {
+        let c = array[i].trim();
+        if (c.indexOf(nomeIgual) == 0) return c.substring(nomeIgual.length, c.length);
+    }
+    return null;
+}
+
+// 🔐 TRAVA DE SEGURANÇA INTERNA DE SESSÃO DO ADMIN
+const adminCookie = lerCookie("usuario_admin");
+const adminLocal = localStorage.getItem("usuarioAdmin");
+
+if (adminCookie !== "1" && adminLocal !== "1") {
+    alert("Acesso negado! Área restrita para administradores.");
+    window.location.href = "index.html";
+}
+
 function voltarLoja(){
     window.location.href = "index.html";
 }
 
-// Limpa todas as credenciais do admin e sai direto
+// Limpa todas as credenciais do admin e sai direto em sincronia completa com o index.html
 function logout(){
-    // 1. Limpa o LocalStorage
+    // 1. Limpa o LocalStorage por completo
+    localStorage.removeItem("usuarioId");
     localStorage.removeItem("usuarioNome");
     localStorage.removeItem("usuarioAdmin");
     
     // 2. Limpa os cookies definindo uma data passada com path=/ idêntico ao index
     document.cookie = "usuario_logado=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "usuario_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie = "usuario_admin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     
     alert("Você saiu do painel admin");
@@ -254,7 +276,7 @@ function adicionarProduto(){
         return;
     }
 
-    // CORREÇÃO AQUI: Somar as quantidades de roupas para não enviar estoque 0 geral
+    // Somar as quantidades de roupas para não enviar estoque 0 geral
     if(tipo === "roupa"){
         const qtoP = parseInt(document.getElementById("tamP").value) || 0;
         const qtoM = parseInt(document.getElementById("tamM").value) || 0;
@@ -341,6 +363,7 @@ function editar(id, nome, preco, descricao){
     });
 }
 
+// Executa a listagem automática
 carregarProdutos();
 </script>
 </body>
