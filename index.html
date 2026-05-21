@@ -418,7 +418,8 @@ nav a:hover {
     <span class="fechar" onclick="fecharCadastro()">X</span>
     <h2>Criar conta</h2>
     <input id="nomeCad" placeholder="nome">
-    <input id="telefoneCad" placeholder="telefone">
+    <!-- MODIFICAÇÃO AQUI: Adicionado o maxlength="15" para limitar o tamanho visual da máscara -->
+    <input id="telefoneCad" placeholder="telefone" maxlength="15">
     <input id="emailCad" placeholder="email">
     <input id="senhaCad" type="password" placeholder="senha">
     <button onclick="cadastrar()">Cadastrar</button>
@@ -542,6 +543,35 @@ function fecharRecuperarSenha(){
   document.getElementById("recuperarModal").style.display = "none";
   limparFormularios("recuperarModal");
 }
+
+// --- MÁSCARA DO TELEFONE DE CADASTRO ---
+// Esta é a função que captura o que é digitado no input #telefoneCad e formata em tempo real
+document.getElementById('telefoneCad').addEventListener('input', (e) => {
+    let target = e.target;
+    let valor = target.value;
+    
+    valor = valor.replace(/\D/g, ""); // Remove letras
+    
+    if (valor.length > 11) {
+        valor = valor.slice(0, 11); // Trava em 11 dígitos puros
+    }
+
+    if (valor.length > 0) {
+        valor = "(" + valor;
+        if (valor.length > 3) {
+            valor = valor.slice(0, 3) + ") " + valor.slice(3);
+        }
+        if (valor.length > 9) {
+            if (valor.length > 13) {
+                valor = valor.slice(0, 10) + "-" + valor.slice(10); // Formato Celular: (XX) 99999-9999
+            } else {
+                valor = valor.slice(0, 9) + "-" + valor.slice(9);  // Formato Fixo: (XX) 3333-3333
+            }
+        }
+    }
+    target.value = valor;
+});
+
 
 // --- LÓGICA DE BACKEND ---
 function cadastrar(){
