@@ -411,14 +411,16 @@ function atualizarResumoValores() {
   let totalGeralCarrinho = 0;
 
   checkboxes.forEach(checkbox => {
-    if (checkbox.checked) {
-      let i = parseInt(checkbox.value);
-      let p = carrinho[i];
-      if (p) {
-        let qtd = parseInt(p.quantidade) || 1;
-        let precoUnitario = converterPreco(p.preco);
+    let i = parseInt(checkbox.value);
+    
+    if (carrinho[i]) {
+      carrinho[i].selecionadoNoCarrinho = checkbox.checked;
+
+      if (checkbox.checked) {
+        let qtd = parseInt(carrinho[i].quantidade) || 1;
+        let precoUnitario = converterPreco(carrinho[i].preco);
         let subtotalPecas = precoUnitario * qtd;
-        let valorFreteItem = parseFloat(p.valorFrete) || 0;
+        let valorFreteItem = parseFloat(carrinho[i].valorFrete) || 0;
 
         acumulaSubtotal += subtotalPecas;
         acumulaFrete += valorFreteItem;
@@ -426,6 +428,8 @@ function atualizarResumoValores() {
       }
     }
   });
+
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
 
   document.getElementById("resumoSubtotal").innerText = "R$ " + acumulaSubtotal.toFixed(2).replace('.', ',');
   document.getElementById("resumoFrete").innerText = "R$ " + acumulaFrete.toFixed(2).replace('.', ',');
@@ -456,10 +460,12 @@ function carregarCarrinho(){
     let valorFreteItem = parseFloat(p.valorFrete) || 0;
     let totalItemComFrete = subtotalPecas + valorFreteItem;
 
+    let estaChecado = (p.selecionadoNoCarrinho !== false) ? 'checked' : '';
+
     html += `
     <div class="card">
       <div class="card-selecionador">
-        <input type="checkbox" class="checkbox-produto" value="${i}" checked onchange="atualizarResumoValores()">
+        <input type="checkbox" class="checkbox-produto" value="${i}" ${estaChecado} onchange="atualizarResumoValores()">
       </div>
 
       <div class="card-img-box">
