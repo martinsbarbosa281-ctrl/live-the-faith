@@ -254,12 +254,18 @@ function adicionarProduto(){
         return;
     }
 
+    // CORREÇÃO AQUI: Somar as quantidades de roupas para não enviar estoque 0 geral
     if(tipo === "roupa"){
-        quantidade_estoque = 0; 
+        const qtoP = parseInt(document.getElementById("tamP").value) || 0;
+        const qtoM = parseInt(document.getElementById("tamM").value) || 0;
+        const qtoG = parseInt(document.getElementById("tamG").value) || 0;
+
+        quantidade_estoque = qtoP + qtoM + qtoG; 
+        
         tamanhos = JSON.stringify({
-            P: parseInt(document.getElementById("tamP").value) || 0,
-            M: parseInt(document.getElementById("tamM").value) || 0,
-            G: parseInt(document.getElementById("tamG").value) || 0
+            P: qtoP,
+            M: qtoM,
+            G: qtoG
         });
     }
 
