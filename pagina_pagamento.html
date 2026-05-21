@@ -1,77 +1,357 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Pagamento</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Pagamento - Live the Faith</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-<style>
-body {
-    font-family: Arial;
-    background: #f5f5f5;
-}
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
 
-.container {
-    width: 350px;
-    margin: 50px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px #ccc;
-}
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+            box-sizing: border-box;
+        }
 
-h2 {
-    text-align: center;
-}
+        h2, h3 {
+            margin-top: 0;
+            color: #111;
+            font-weight: 700;
+        }
+        
+        h2 { text-align: center; }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+        /* Resumo do Pedido com Imagem */
+        .resumo-pedido {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
 
-button {
-    width: 100%;
-    padding: 12px;
-    background: green;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        .resumo-pedido h3 {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-button:hover {
-    background: darkgreen;
-}
+        .linha-resumo {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #333;
+        }
 
-</style>
+        .linha-resumo.total {
+            border-top: 1px dashed #ccc;
+            padding-top: 8px;
+            margin-top: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #28a745;
+        }
+
+        /* Seleção de Formas de Pagamento */
+        .metodos-pagamento {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .metodo-btn {
+            flex: 1;
+            padding: 12px 5px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-align: center;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .metodo-btn.ativo {
+            border-color: #000;
+            background: #000;
+            color: white;
+        }
+
+        /* Abas de Conteúdo */
+        .aba-conteudo {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .aba-conteudo.ativa {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilos do Formulário do Cartão */
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #444;
+            text-transform: uppercase;
+            display: block;
+            margin-top: 12px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: #000;
+            outline: none;
+        }
+
+        .linha-dupla {
+            display: flex;
+            gap: 15px;
+        }
+
+        .linha-dupla div {
+            flex: 1;
+        }
+
+        /* Estilos do Pix e Boleto */
+        .info-box {
+            background: #f4f6f9;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .qrcode-placeholder {
+            width: 150px;
+            height: 150px;
+            background: #ddd;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+            font-weight: bold;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Botão Geral de Ação */
+        .btn-finalizar {
+            width: 100%;
+            padding: 14px;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 20px;
+            font-family: inherit;
+        }
+
+        .btn-finalizar:hover {
+            background: #222;
+        }
+
+        .btn-finalizar:active {
+            transform: scale(0.98);
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="container">
-    <h2>Pagamento</h2>
+    <h2>Finalizar Compra</h2>
 
-    <input type="text" placeholder="Nome no cartão" id="nome">
-    <input type="text" placeholder="Número do cartão" id="cartao">
-    <input type="text" placeholder="Validade (MM/AA)" id="validade">
-    <input type="text" placeholder="CVV" id="cvv">
+    <div class="resumo-pedido">
+        <h3>Resumo do Pedido</h3>
+        <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+            <img id="resumoImagem" src="" alt="Imagem do Produto" style="width: 70px; height: 70px; object-fit: contain; background: #f6f6f6; border-radius: 6px;">
+            <div>
+                <div id="resumoNome" style="font-weight: 600; font-size: 15px; color: #111;">Carregando...</div>
+                <div id="resumoQtdTam" style="font-size: 13px; color: #666; margin-top: 2px;">-</div>
+            </div>
+        </div>
+        
+        <div class="linha-resumo">
+            <span>Subtotal:</span>
+            <span id="resumoSubtotal">R$ 0,00</span>
+        </div>
+        <div class="linha-resumo">
+            <span>Frete (<span id="resumoTipoFrete">-</span>):</span>
+            <span id="resumoFrete">R$ 0,00</span>
+        </div>
+        <div class="linha-resumo total">
+            <span>Total Geral:</span>
+            <span id="resumoTotal">R$ 0,00</span>
+        </div>
+    </div>
 
-    <button onclick="pagar()">Finalizar Pagamento</button>
+    <h3>Forma de Pagamento</h3>
+    <div class="metodos-pagamento">
+        <button class="metodo-btn ativo" onclick="mudarMetodo(this, 'aba-cartao')">💳 Cartão</button>
+        <button class="metodo-btn" onclick="mudarMetodo(this, 'aba-pix')">📱 Pix</button>
+        <button class="metodo-btn" onclick="mudarMetodo(this, 'aba-boleto')">📄 Boleto</button>
+    </div>
+
+    <div id="aba-cartao" class="aba-conteudo ativa">
+        <label for="nome">Nome impresso no cartão</label>
+        <input type="text" placeholder="Ex: JOÃO A SILVA" id="nome" autocomplete="off">
+
+        <label for="cartao">Número do cartão</label>
+        <input type="text" placeholder="0000 0000 0000 0000" id="cartao" maxlength="19" autocomplete="off">
+
+        <div class="linha-dupla">
+            <div>
+                <label for="validade">Validade</label>
+                <input type="text" placeholder="MM/AA" id="validade" maxlength="5" autocomplete="off">
+            </div>
+            <div>
+                <label for="cvv">CVV</label>
+                <input type="text" placeholder="123" id="cvv" maxlength="3" autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    <div id="aba-pix" class="aba-conteudo">
+        <div class="info-box">
+            <p style="margin-top:0; font-weight:600;">Pague via Pix com aprovação imediata!</p>
+            <div class="qrcode-placeholder">QR CODE DO PIX</div>
+            <p style="font-size:12px; color:#555; margin-bottom:5px;">Ou copie o código copia e cola:</p>
+            <input type="text" value="00020101021226300014br.gov.bcb.pix2572live-the-faith-chave-ficticia" id="pixChave" readonly onclick="this.select()" style="text-align:center; background:#fff; cursor:pointer;">
+        </div>
+    </div>
+
+    <div id="aba-boleto" class="aba-conteudo">
+        <div class="info-box">
+            <p style="margin-top:0; font-weight:600;">Boleto Bancário</p>
+            <p style="font-size:13px; color:#555;">O boleto será gerado após a confirmação. O prazo para compensação é de até 3 dias úteis.</p>
+            <p style="font-size:12px; color:red; font-weight:bold;">⚠️ Atenção: Itens sem estoque não ficam reservados após o vencimento.</p>
+        </div>
+    </div>
+
+    <button class="btn-finalizar" onclick="processarPagamento()">Finalizar Pagamento</button>
 </div>
 
 <script>
-function pagar() {
-    let nome = document.getElementById("nome").value;
-    let cartao = document.getElementById("cartao").value;
+let metodoSelecionado = 'aba-cartao';
 
-    if(nome === "" || cartao === "") {
-        alert("Preencha todos os campos!");
+// Executado automaticamente ao abrir a página
+window.onload = function() {
+    let produto = JSON.parse(localStorage.getItem("produtoSelecionado"));
+
+    if (produto) {
+        // Alimenta as informações textuais e a tag de imagem com a URL do localStorage
+        document.getElementById("resumoNome").innerText = produto.nome || "Produto";
+        document.getElementById("resumoQtdTam").innerText = `Quantidade: ${produto.quantidade} | Tam: ${produto.tamanho}`;
+        document.getElementById("resumoImagem").src = produto.imagem || "";
+        
+        let subtotal = produto.subtotal || 0;
+        let frete = produto.valorFrete || 0;
+        let total = produto.valorTotalCompra || (subtotal + frete);
+
+        document.getElementById("resumoSubtotal").innerText = "R$ " + subtotal.toFixed(2).replace('.', ',');
+        document.getElementById("resumoTipoFrete").innerText = produto.tipoFrete || "Padrão";
+        document.getElementById("resumoFrete").innerText = "R$ " + frete.toFixed(2).replace('.', ',');
+        document.getElementById("resumoTotal").innerText = "R$ " + total.toFixed(2).replace('.', ',');
     } else {
-        alert("Pagamento realizado com sucesso!");
+        alert("Nenhuma informação de compra encontrada!");
+        window.location.href = "index.html"; 
     }
+}
+
+// Altera a exibição visual dependendo da aba clicada
+function mudarMetodo(botao, idAba) {
+    metodoSelecionado = idAba;
+    
+    document.querySelectorAll('.metodo-btn').forEach(btn => btn.classList.remove('ativo'));
+    botao.classList.add('ativo');
+
+    document.querySelectorAll('.aba-conteudo').forEach(aba => aba.classList.remove('ativa'));
+    document.getElementById(idAba).classList.add('ativa');
+}
+
+// Máscaras de digitação automática para os inputs do cartão
+document.getElementById('cartao').addEventListener('input', function (e) {
+    let v = e.target.value.replace(/\D/g, '');
+    v = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+    e.target.value = v;
+});
+document.getElementById('validade').addEventListener('input', function (e) {
+    let v = e.target.value.replace(/\D/g, '');
+    if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2, 4);
+    e.target.value = v;
+});
+document.getElementById('cvv').addEventListener('input', function (e) {
+    e.target.value = e.target.value.replace(/\D/g, '');
+});
+
+// Validação final e conclusão de pedido adaptada para cada aba
+function processarPagamento() {
+    let totalTexto = document.getElementById("resumoTotal").innerText;
+
+    if (metodoSelecionado === 'aba-cartao') {
+        let nome = document.getElementById("nome").value.trim();
+        let cartao = document.getElementById("cartao").value.trim();
+        let validade = document.getElementById("validade").value.trim();
+        let cvv = document.getElementById("cvv").value.trim();
+
+        if(nome === "" || cartao.length < 19 || validade.length < 5 || cvv.length < 3) {
+            alert("Por favor, preencha todos os dados do cartão corretamente.");
+            return;
+        }
+        alert(`Pagamento de ${totalTexto} aprovado no Cartão de Crédito! Obrigado por comprar na Live the Faith. ✨`);
+        
+    } else if (metodoSelecionado === 'aba-pix') {
+        alert(`Pedido registrado! Copie o código Pix para pagar ${totalTexto}. O pedido será aprovado assim que recebermos a confirmação.`);
+        
+    } else if (metodoSelecionado === 'aba-boleto') {
+        alert(`Boleto no valor de ${totalTexto} gerado com sucesso! O PDF foi enviado para o seu e-mail.`);
+    }
+
+    // Limpa a transação atual e prepara o ambiente para novas compras
+    localStorage.removeItem("produtoSelecionado");
 }
 </script>
 
