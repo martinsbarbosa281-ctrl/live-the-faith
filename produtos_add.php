@@ -51,14 +51,15 @@ if (!$stmt) {
   exit;
 }
 
-// 🔥 CORREÇÃO AQUI: Mudado de "sdsssiss" para "sdssisss" para alinhar com as variáveis
-$stmt->bind_param("sdssisss", $nome, $preco, $imagem, $imagem_costas, $descricao, $estoque, $tipo, $tamanhos);
+// CORREÇÃO: Sequência exata de tipos para as variáveis:
+// s (nome), d (preco), s (imagem), s (imagem_costas), s (descricao), i (estoque), s (tipo), s (tamanhos)
+$stmt->bind_param("sdsssiss", $nome, $preco, $imagem, $imagem_costas, $descricao, $estoque, $tipo, $tamanhos);
 
 // Execute
 if ($stmt->execute()) {
   echo json_encode([
     "status" => "ok",
-    "mensagem" => "Produto salvo com sucesso"
+    "mensagem" => "Produto profissionalmente salvo com sucesso"
   ]);
 } else {
   echo json_encode([
