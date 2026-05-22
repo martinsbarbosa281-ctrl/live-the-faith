@@ -1,7 +1,5 @@
 <?php
-// 🌟 PASSO 1: Iniciar a sessão (Obrigatório para o carrinho funcionar)
-session_start();
-
+session_start(); // 🌟 IMPORTANTE: Ativa a memória de sessão no servidor
 header('Content-Type: application/json');
 
 $conn = new mysqli("localhost","root","Home@spSENAI2025!","live_the_faith");
@@ -14,9 +12,11 @@ if($conn->connect_error){
     exit;
 }
 
+/* 🔒 EVITA ERRO DE VARIÁVEL NÃO DEFINIDA */
 $email = $_POST['email'] ?? "";
 $senha = $_POST['senha'] ?? "";
 
+/* 🔴 VALIDAÇÃO */
 if(empty($email) || empty($senha)){
     echo json_encode([
         "status"=>"erro",
@@ -29,22 +29,25 @@ if(empty($email) || empty($senha)){
 $admin_email = "admin@livefaith.com";
 $admin_senha = "admin123";
 
+/* VERIFICA SE É ADMIN */
 if($email === $admin_email){
     if($senha === $admin_senha){
-        // 🌟 PASSO 2: Salvar dados do Admin na Sessão
+        // Salva o admin na sessão
         $_SESSION['usuario_id'] = 0;
         $_SESSION['usuario_nome'] = "Administrador";
-        $_SESSION['is_admin'] = 1;
 
         echo json_encode([
             "status" => "ok",
-            "id" => 0,
+            "id" => 0, 
             "nome" => "Administrador",
             "email" => $email, 
             "admin" => 1
         ]);
     } else {
-        echo json_encode(["status" => "erro", "mensagem" => "Senha incorreta"]);
+        echo json_encode([
+            "status" => "erro",
+            "mensagem" => "Senha incorreta"
+        ]);
     }
     exit;
 }
@@ -60,24 +63,29 @@ if($stmt->num_rows > 0){
     $stmt->fetch();
 
     if(password_verify($senha, $senhaHash)){
-        
-        // 🌟 PASSO 3: Salvar dados do Usuário na Sessão (O SEGREDO DO CARRINHO)
+        // 🌟 SALVA O USUÁRIO NA SESSÃO DO SERVIDOR
         $_SESSION['usuario_id'] = $id;
         $_SESSION['usuario_nome'] = $nome;
-        $_SESSION['is_admin'] = 0;
 
         echo json_encode([
             "status" => "ok",
-            "id" => $id,
+            "id" => $id, 
             "nome" => $nome,
             "email" => $email, 
             "admin" => 0
         ]);
     } else {
-        echo json_encode(["status" => "erro", "mensagem" => "Senha incorreta"]);
+        echo json_encode([
+            "status" => "erro",
+            "mensagem" => "Senha incorreta"
+        ]);
     }
+
 } else {
-    echo json_encode(["status" => "erro", "mensagem" => "Usuário não encontrado"]);
+    echo json_encode([
+        "status" => "erro",
+        "mensagem" => "Usuário não encontrado"
+    ]);
 }
 
 $stmt->close();
