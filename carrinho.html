@@ -366,7 +366,6 @@ header::after {
 <div class="container" id="containerCarrinho">
   <div class="lista-produtos" id="lista"></div>
 
-  <!-- Bloco Lateral de Resumo Fixo -->
   <div class="painel-checkout" id="painelTotal" style="display: none;">
     <div class="checkout-titulo">Resumo do Pedido</div>
     <div class="checkout-linha">
@@ -390,6 +389,17 @@ function voltarPagina(){
   window.history.back();
 }
 
+// 🔥 FUNÇÃO CENTRALIZADA PARA PEGAR A CHAVE DO USUÁRIO LOGADO
+function obterChaveCarrinho() {
+  const idUsuario = localStorage.getItem("usuarioId");
+  if (!idUsuario) {
+    alert("Identificamos que você não está logado. Por favor, faça login.");
+    window.location.href = "login.html"; // Mude para o nome da sua tela de login se necessário
+    return null;
+  }
+  return "carrinho_user_" + idUsuario;
+}
+
 function converterPreco(precoValor) {
   if (typeof precoValor === 'number') return precoValor;
   if (!precoValor) return 0;
@@ -403,7 +413,10 @@ function converterPreco(precoValor) {
 }
 
 function atualizarResumoValores() {
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+  const chave = obterChaveCarrinho();
+  if(!chave) return;
+
+  let carrinho = JSON.parse(localStorage.getItem(chave)) || [];
   let checkboxes = document.querySelectorAll('.checkbox-produto');
   
   let acumulaSubtotal = 0;
@@ -429,7 +442,7 @@ function atualizarResumoValores() {
     }
   });
 
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  localStorage.setItem(chave, JSON.stringify(carrinho));
 
   document.getElementById("resumoSubtotal").innerText = "R$ " + acumulaSubtotal.toFixed(2).replace('.', ',');
   document.getElementById("resumoFrete").innerText = "R$ " + acumulaFrete.toFixed(2).replace('.', ',');
@@ -437,7 +450,10 @@ function atualizarResumoValores() {
 }
 
 function carregarCarrinho(){
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+  const chave = obterChaveCarrinho();
+  if(!chave) return;
+
+  let carrinho = JSON.parse(localStorage.getItem(chave)) || [];
   let html = "";
   
   const container = document.getElementById("containerCarrinho");
@@ -506,7 +522,10 @@ function carregarCarrinho(){
 }
 
 function aumentar(i){
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+  const chave = obterChaveCarrinho();
+  if(!chave) return;
+
+  let carrinho = JSON.parse(localStorage.getItem(chave)) || [];
   let qtdAtual = parseInt(carrinho[i].quantidade) || 1;
   carrinho[i].quantidade = qtdAtual + 1;
 
@@ -514,12 +533,15 @@ function aumentar(i){
   carrinho[i].subtotal = precoUnit * carrinho[i].quantidade;
   carrinho[i].valorTotalCompra = carrinho[i].subtotal + (parseFloat(carrinho[i].valorFrete) || 0);
 
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  localStorage.setItem(chave, JSON.stringify(carrinho));
   carregarCarrinho();
 }
 
 function diminuir(i){
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+  const chave = obterChaveCarrinho();
+  if(!chave) return;
+
+  let carrinho = JSON.parse(localStorage.getItem(chave)) || [];
   let qtdAtual = parseInt(carrinho[i].quantidade) || 1;
 
   if(qtdAtual > 1){
@@ -529,27 +551,31 @@ function diminuir(i){
     carrinho[i].valorTotalCompra = carrinho[i].subtotal + (parseFloat(carrinho[i].valorFrete) || 0);
   }
 
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  localStorage.setItem(chave, JSON.stringify(carrinho));
   carregarCarrinho();
 }
 
 function remover(i){
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+  const chave = obterChaveCarrinho();
+  if(!chave) return;
+
+  let carrinho = JSON.parse(localStorage.getItem(chave)) || [];
   carrinho.splice(i, 1);
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  localStorage.setItem(chave, JSON.stringify(carrinho));
   carregarCarrinho();
 }
 
 function comprarTodos(){
   const idUsuario = localStorage.getItem("usuarioId");
+  const chave = obterChaveCarrinho();
 
-  if(!idUsuario){
-    alert("Identificamos que você não está logado. Por favor, faça login na página inicial antes de finalizar sua compra!");
-    window.location.href = "index.html"; 
+  if(!idUsuario || !chave){
+    alert("Identificamos que você não está logado. Por favor, faça login!");
+    window.location.href = "login.php"; 
     return;
   }
 
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+  let carrinho = JSON.parse(localStorage.getItem(chave)) || [];
   if(carrinho.length === 0) return;
 
   const checkboxesMarcados = document.querySelectorAll('.checkbox-produto:checked');
@@ -575,6 +601,7 @@ function comprarTodos(){
   window.location.href = "pagina_pagamento.html";
 }
 
+// Inicializa a página do carrinho exclusivo
 carregarCarrinho();
 </script>
 
