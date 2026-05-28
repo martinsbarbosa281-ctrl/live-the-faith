@@ -26,7 +26,7 @@ if(!$nome || !$telefone || !$email || !$senha){
 
 $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
-/* 👑 ADMIN FIXO */
+/*  ADMIN FIXO */
 $is_admin = 0;
 if($email === "admin@livefaith.com"){
     $is_admin = 1;
