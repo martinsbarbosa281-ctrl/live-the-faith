@@ -1,5 +1,4 @@
 <?php
-session_start(); // 🌟 IMPORTANTE: Ativa a memória de sessão no servidor
 header('Content-Type: application/json');
 
 $conn = new mysqli("localhost","root","Home@spSENAI2025!","live_the_faith");
@@ -31,14 +30,11 @@ $admin_senha = "admin123";
 
 /* VERIFICA SE É ADMIN */
 if($email === $admin_email){
-    if($senha === $admin_senha){
-        // Salva o admin na sessão
-        $_SESSION['usuario_id'] = 0;
-        $_SESSION['usuario_nome'] = "Administrador";
 
+    if($senha === $admin_senha){
         echo json_encode([
             "status" => "ok",
-            "id" => 0, 
+            "id" => 0, // 🌟 Admin fixo pode ter ID 0
             "nome" => "Administrador",
             "email" => $email, 
             "admin" => 1
@@ -49,27 +45,26 @@ if($email === $admin_email){
             "mensagem" => "Senha incorreta"
         ]);
     }
+
     exit;
 }
 
 /* 👤 USUÁRIO NORMAL */
+// 🌟 ALTERAÇÃO AQUI: Adicionado o "id" no SELECT
 $stmt = $conn->prepare("SELECT id, nome, senha FROM usuarios WHERE email=?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $stmt->store_result();
+// 🌟 ALTERAÇÃO AQUI: Adicionado a variável $id no bind_result
 $stmt->bind_result($id, $nome, $senhaHash);
 
 if($stmt->num_rows > 0){
     $stmt->fetch();
 
     if(password_verify($senha, $senhaHash)){
-        // 🌟 SALVA O USUÁRIO NA SESSÃO DO SERVIDOR
-        $_SESSION['usuario_id'] = $id;
-        $_SESSION['usuario_nome'] = $nome;
-
         echo json_encode([
             "status" => "ok",
-            "id" => $id, 
+            "id" => $id, // 🌟 ALTERAÇÃO AQUI: Agora enviamos o ID real do banco de dados!
             "nome" => $nome,
             "email" => $email, 
             "admin" => 0
