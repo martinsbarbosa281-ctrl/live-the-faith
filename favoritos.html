@@ -1,502 +1,293 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Produto Premium</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Favoritos - Live the Faith</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f5f7;
+            color: #1e293b;
+            margin: 0;
+            padding-bottom: 60px;
+        }
 
-<style>
-/* VARIÁVEIS DE DESIGN */
-:root {
-  --bg-primary: #f1f5f9;
-  --bg-card: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --primary: #000000;
-  --accent: #eab308; /* Amarelo moderno */
-  --accent-hover: #ca8a04;
-  --border-color: #cbd5e1;
-  --radius-lg: 16px;
-  --radius-md: 10px;
-  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
-  --transition: all 0.25s ease;
-}
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 16px 40px;
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 18px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-sizing: border-box;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
 
-body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  background-color: var(--bg-primary);
-  color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
-}
+        .header-titulo { flex: 1; text-align: center; }
 
-/* HEADER OTIMIZADO */
-header {
-  padding: 16px 8%;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
+        .voltar {
+            background: #f1f5f9;
+            color: #0f172a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+        .voltar:hover { background: #e2e8f0; }
 
-.voltar {
-  background: var(--bg-card);
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
-  padding: 10px 18px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 14px;
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+        .container {
+            max-width: 900px;
+            margin: 100px auto 0;
+            padding: 0 20px;
+        }
 
-.voltar:hover {
-  background: var(--text-main);
-  color: white;
-  border-color: var(--text-main);
-  transform: translateX(-2px);
-}
+        .lista-produtos { display: flex; flex-direction: column; gap: 16px; }
 
-.header-fav-text {
-  font-weight: 500;
-  color: var(--text-muted);
-  font-size: 14px;
-}
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            border: 1px solid #edf2f7;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.2s;
+        }
 
-/* CONTAINER PRINCIPAL */
-.container {
-  display: flex;
-  gap: 60px;
-  padding: 60px 8%;
-  max-width: 1200px;
-  margin: 0 auto;
-  align-items: flex-start;
-  justify-content: center;
-}
+        .card:hover { transform: translateY(-2px); }
 
-/* BOX DA IMAGEM */
-.img-box {
-  position: relative;
-  background: var(--bg-card);
-  padding: 30px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  flex: 1;
-  max-width: 450px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+        .card-img-box {
+            width: 120px;
+            height: 120px;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
 
-.img-box img {
-  width: 100%;
-  max-height: 400px;
-  object-fit: contain;
-  border-radius: calc(var(--radius-lg) - 4px);
-}
+        .card img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-/* ❤️ CORAÇÃO (FAVORITO) */
-.fav {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: var(--bg-card);
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: var(--transition);
-  user-select: none;
-  border: 1px solid rgba(0,0,0,0.05);
-}
+        .card-conteudo {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-.fav:hover {
-  transform: scale(1.1);
-}
+        .nome {
+            font-weight: 600;
+            font-size: 17px;
+            color: #0f172a;
+            margin: 0 0 6px 0;
+        }
 
-.fav.ativo {
-  color: #ef4444;
-  background: #fef2f2;
-  border-color: #fca5a5;
-}
+        .preco {
+            font-weight: 700;
+            font-size: 18px;
+            color: #000;
+            margin: 5px 0;
+        }
 
-/* SEÇÃO DE INFORMAÇÕES */
-.info {
-  flex: 1;
-  max-width: 500px;
-}
+        .card-acoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
 
-.info h1 {
-  font-size: 32px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-}
+        .btn-acao {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
 
-.preco {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--primary);
-  margin: 16px 0;
-}
+        .btn-comprar { background: #000; color: #fff; }
+        .btn-comprar:hover { background: #334155; }
 
-.estoque {
-  display: inline-block;
-  padding: 6px 12px;
-  background: #e2e8f0;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #475569;
-  margin-bottom: 24px;
-}
+        .btn-remover { background: #fee2e2; color: #ef4444; }
+        .btn-remover:hover { background: #fca5a5; }
 
-/* SELEÇÃO DE TAMANHOS */
-.area-titulo {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+        .aviso-vazio {
+            text-align: center;
+            font-size: 18px;
+            color: #64748b;
+            padding: 80px 20px;
+        }
 
-.tamanhos {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.tamanho {
-  min-width: 50px;
-  height: 46px;
-  border: 2px solid var(--border-color);
-  cursor: pointer;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 14px;
-  transition: var(--transition);
-  background: var(--bg-card);
-}
-
-.tamanho:hover {
-  border-color: var(--primary);
-  background: #f8fafc;
-}
-
-.tamanho.ativo {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
-
-/* SEÇÃO CONTADOR DE QUANTIDADE */
-.contador {
-  margin-bottom: 32px;
-}
-
-.contador-box {
-  display: inline-flex;
-  align-items: center;
-  background: #e2e8f0;
-  padding: 4px;
-  border-radius: var(--radius-md);
-  gap: 8px;
-}
-
-.contador-box button {
-  width: 38px;
-  height: 38px;
-  font-size: 20px;
-  font-weight: 500;
-  background: var(--bg-card);
-  border: none;
-  border-radius: calc(var(--radius-md) - 2px);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-}
-
-.contador-box button:hover {
-  background: #f8fafc;
-  transform: translateY(-1px);
-}
-
-#qtd {
-  font-weight: 600;
-  font-size: 16px;
-  min-width: 30px;
-  text-align: center;
-}
-
-/* BOTÕES DE AÇÃO */
-.botoes {
-  display: flex;
-  gap: 16px;
-}
-
-.botoes button {
-  padding: 16px 24px;
-  border: none;
-  cursor: pointer;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 15px;
-  transition: var(--transition);
-  flex: 1;
-}
-
-.btn-carrinho {
-  background: var(--accent);
-  color: #000;
-}
-
-.btn-carrinho:hover {
-  background: var(--accent-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2);
-}
-
-.btn-comprar {
-  background: var(--primary);
-  color: white;
-}
-
-.btn-comprar:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* RESPONSIVIDADE */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    padding: 30px 20px;
-    align-items: center;
-    gap: 30px;
-  }
-  header {
-    padding: 16px 20px;
-  }
-  .img-box, .info {
-    max-width: 100%;
-    width: 100%;
-  }
-  .botoes {
-    flex-direction: column;
-  }
-}
-</style>
+        @media(max-width: 600px) {
+            header { padding: 16px 20px; }
+            .card { flex-direction: column; text-align: center; }
+            .card-img-box { width: 100%; height: 200px; }
+            .card-acoes { justify-content: center; width: 100%; flex-wrap: wrap; }
+            .btn-acao { width: 100%; }
+        }
+    </style>
 </head>
 <body>
 
 <header>
-  <div class="header-left">
-    <button class="voltar" onclick="voltarPagina()">
-      ← Voltar
-    </button>
-  </div>
-  <span class="header-fav-text">❤️ Seu favorito</span>
+    <button class="voltar" onclick="voltarPagina()">← Voltar</button>
+    <div class="header-titulo">❤️ Meus Favoritos</div>
 </header>
 
-<div class="container">
-
-  <div class="img-box">
-    <img id="imgProduto" alt="Imagem do produto">
-    <!-- ❤️ coração -->
-    <div class="fav ativo" id="btnFav">❤️</div>
-  </div>
-
-  <div class="info">
-    <h1 id="nome"></h1>
-    <div class="preco" id="preco"></div>
-    <div class="estoque" id="estoque"></div>
-
-    <div id="areaTamanho" style="display: none;">
-      <p class="area-titulo">Escolha o tamanho</p>
-      <div class="tamanhos">
-        <div class="tamanho" onclick="selecionarTamanho(this,'P')">P</div>
-        <div class="tamanho" onclick="selecionarTamanho(this,'M')">M</div>
-        <div class="tamanho" onclick="selecionarTamanho(this,'G')">G</div>
-        <div class="tamanho" onclick="selecionarTamanho(this,'GG')">GG</div>
-      </div>
-    </div>
-
-    <!-- contador -->
-    <div class="contador">
-      <p class="area-titulo">Quantidade</p>
-      <div class="contador-box">
-        <button onclick="diminuirQtd()">-</button>
-        <span id="qtd">1</span>
-        <button onclick="aumentarQtd()">+</button>
-      </div>
-    </div>
-
-    <div class="botoes">
-      <button class="btn-carrinho" onclick="addCarrinho()">Adicionar ao carrinho</button>
-      <button class="btn-comprar" onclick="comprarAgora()">Comprar agora</button>
-    </div>
-
-  </div>
-
+<div class="container" id="containerFavoritos">
+    <div class="lista-produtos" id="listaFavoritos"></div>
 </div>
 
 <script>
-/* VOLTAR */
-function voltarPagina(){
-  window.history.back();
-}
+    // --- UTILITÁRIOS ---
+    function voltarPagina() {
+        window.history.back();
+    }
 
-let produto = JSON.parse(localStorage.getItem("produtoSelecionado"));
-let tamanhoSelecionado = null;
-let quantidadeSelecionada = 1;
+    // Identifica a chave única baseada no usuário logado
+    function obterChaveUsuario(prefixo) {
+        const idUsuario = localStorage.getItem("usuarioId");
+        if (!idUsuario) return null;
+        return `${prefixo}_user_${idUsuario}`;
+    }
 
-if(!produto){
-  alert("Nenhum produto selecionado");
-  window.location.href = "index.html";
-} else {
-  document.getElementById("nome").innerText = produto.nome || "Produto sem nome";
-  
-  // Limpeza e formatação confiável do preço visual
-  let precoLimpo = produto.preco ? produto.preco.toString().replace("R$", "").trim() : "0,00";
-  document.getElementById("preco").innerText = "R$ " + precoLimpo;
-  document.getElementById("imgProduto").src = produto.imagem || "";
+    // --- FUNÇÃO PARA O BOTÃO DE CORAÇÃO (Favoritar) ---
+    function favoritarProduto(nome, preco, imagem) {
+        const idUsuario = localStorage.getItem("usuarioId");
 
-  document.getElementById("estoque").innerText = "Estoque disponível: " + (produto.quantidade_estoque || 0);
+        if (!idUsuario) {
+            alert("Por favor, faça login para salvar seus favoritos! ❤️");
+            window.location.href = "login.html"; 
+            return;
+        }
 
-  // Exibe a seleção de tamanhos apenas se o produto for do tipo roupa
-  if(produto.tipo === "roupa") {
-    document.getElementById("areaTamanho").style.display = "block";
-  }
-}
+        const chaveFav = `favoritos_user_${idUsuario}`;
+        let favoritos = JSON.parse(localStorage.getItem(chaveFav)) || [];
 
-/* ❤️ CONTROLE INTERATIVO DO FAVORITO */
-document.addEventListener("DOMContentLoaded", () => {
-  const btnFav = document.getElementById("btnFav");
-  if(btnFav) {
-    btnFav.addEventListener("click", () => {
-      btnFav.classList.toggle("ativo");
-      if(btnFav.classList.contains("ativo")){
-        btnFav.innerHTML = "❤️";
-      } else {
-        btnFav.innerHTML = "♡";
-        alert("Item removido dos favoritos.");
-      }
-    });
-  }
-});
+        const index = favoritos.findIndex(item => item.nome === nome);
 
-/* selecionar tamanho */
-function selecionarTamanho(el, tamanho){
-  tamanhoSelecionado = tamanho;
-  document.querySelectorAll(".tamanho").forEach(t => t.classList.remove("ativo"));
-  el.classList.add("ativo");
-}
+        if (index === -1) {
+            favoritos.push({ nome, preco, imagem });
+            alert("❤️ Adicionado aos favoritos!");
+        } else {
+            favoritos.splice(index, 1);
+            alert("💔 Removido dos favoritos.");
+        }
 
-/* gerenciador do contador */
-function atualizarQtd(){
-  document.getElementById("qtd").innerText = quantidadeSelecionada;
-}
+        localStorage.setItem(chaveFav, JSON.stringify(favoritos));
+        
+        // Se estiver na página de favoritos, recarrega a lista
+        if(document.getElementById("listaFavoritos")) carregarFavoritos();
+    }
 
-function aumentarQtd(){
-  let estoqueMax = produto ? parseInt(produto.quantidade_estoque || 0) : 0;
-  if(quantidadeSelecionada < estoqueMax){
-    quantidadeSelecionada++;
-    atualizarQtd();
-  } else {
-    alert("Quantidade máxima disponível em estoque atingida!");
-  }
-}
+    // --- LÓGICA DE CARREGAMENTO DA PÁGINA ---
+    function carregarFavoritos() {
+        const chaveFav = obterChaveUsuario("favoritos");
+        const listaContainer = document.getElementById("listaFavoritos");
 
-function diminuirQtd(){
-  if(quantidadeSelecionada > 1){
-    quantidadeSelecionada--;
-    atualizarQtd();
-  }
-}
+        if (!chaveFav) {
+            listaContainer.innerHTML = `
+                <div class="aviso-vazio">
+                    <p>Você precisa estar logado para ver seus favoritos.</p>
+                    <button class="voltar" onclick="location.href='login.html'">Fazer Login</button>
+                </div>`;
+            return;
+        }
 
-/* adicionar ao carrinho */
-function addCarrinho(){
-  if(!produto) return;
+        const favoritos = JSON.parse(localStorage.getItem(chaveFav)) || [];
 
-  if(produto.tipo === "roupa" && !tamanhoSelecionado) {
-    alert("Por favor, selecione um tamanho antes de adicionar ao carrinho!");
-    return;
-  }
+        if (favoritos.length === 0) {
+            listaContainer.innerHTML = `
+                <div class="aviso-vazio">
+                    <p>Sua lista de desejos está vazia. ❤️</p>
+                    <button class="voltar" onclick="location.href='index.html'">Explorar Produtos</button>
+                </div>`;
+            return;
+        }
 
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+        listaContainer.innerHTML = favoritos.map((p, i) => `
+            <div class="card">
+                <div class="card-img-box">
+                    <img src="${p.imagem || 'placeholder.jpg'}" alt="${p.nome}">
+                </div>
+                <div class="card-conteudo">
+                    <h3 class="nome">${p.nome || 'Produto Sem Nome'}</h3>
+                    <div class="preco">${p.preco || 'R$ 0,00'}</div>
+                    <div style="font-size: 12px; color: #64748b;">Item exclusivo da sua conta</div>
 
-  carrinho.push({
-    ...produto,
-    tamanho: produto.tipo === "roupa" ? tamanhoSelecionado : "-",
-    quantidade: quantidadeSelecionada
-  });
+                    <div class="card-acoes">
+                        <button class="btn-acao btn-comprar" onclick="moverParaCarrinho(${i})">Adicionar ao Carrinho</button>
+                        <button class="btn-acao btn-remover" onclick="removerFavorito(${i})">Remover</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
 
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
-  alert("Adicionado ao carrinho com sucesso! 🛒");
-}
+    function removerFavorito(index) {
+        const chaveFav = obterChaveUsuario("favoritos");
+        if (!chaveFav) return;
 
-/* compra imediata direcionada */
-function comprarAgora(){
-  if(!produto) return;
+        let favoritos = JSON.parse(localStorage.getItem(chaveFav)) || [];
+        favoritos.splice(index, 1);
+        localStorage.setItem(chaveFav, JSON.stringify(favoritos));
+        carregarFavoritos();
+    }
 
-  const idUsuario = localStorage.getItem("usuarioId");
-  if(!idUsuario){
-    alert("Você precisa estar logado para realizar uma compra. Por favor, entre na sua conta!");
-    window.location.href = "index.html";
-    return;
-  }
+    function moverParaCarrinho(index) {
+        const chaveFav = obterChaveUsuario("favoritos");
+        const chaveCart = obterChaveUsuario("carrinho");
+        
+        if (!chaveFav || !chaveCart) return;
 
-  if(produto.tipo === "roupa" && !tamanhoSelecionado) {
-    alert("Por favor, selecione um tamanho antes de comprar!");
-    return;
-  }
+        let favoritos = JSON.parse(localStorage.getItem(chaveFav)) || [];
+        let carrinho = JSON.parse(localStorage.getItem(chaveCart)) || [];
+        
+        const produto = favoritos[index];
 
-  // Gera a estrutura padrão de item único para o checkout direto
-  const itemCompra = {
-    ...produto,
-    tamanho: produto.tipo === "roupa" ? tamanhoSelecionado : "-",
-    quantidade: quantidadeSelecionada,
-    usuario_id: idUsuario
-  };
+        const itemParaCarrinho = {
+            ...produto,
+            quantidade: 1,
+            selecionadoNoCarrinho: true,
+            valorFrete: 0,
+            tipoFrete: "A calcular",
+            subtotal: converterPrecoParaNumero(produto.preco)
+        };
 
-  localStorage.setItem("itensCheckoutUnificado", JSON.stringify([itemCompra]));
-  localStorage.setItem("produtoSelecionado", JSON.stringify(itemCompra));
+        carrinho.push(itemParaCarrinho);
+        favoritos.splice(index, 1);
 
-  window.location.href = "pagina_pagamento.html";
-}
+        localStorage.setItem(chaveCart, JSON.stringify(carrinho));
+        localStorage.setItem(chaveFav, JSON.stringify(favoritos));
+
+        alert("🛒 Movido para o carrinho com sucesso!");
+        carregarFavoritos();
+    }
+
+    function converterPrecoParaNumero(preco) {
+        if (typeof preco === 'number') return preco;
+        let p = preco.replace("R$", "").replace(/\./g, "").replace(",", ".").trim();
+        return parseFloat(p) || 0;
+    }
+
+    window.onload = carregarFavoritos;
 </script>
 
 </body>
