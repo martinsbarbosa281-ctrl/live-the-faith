@@ -6,7 +6,6 @@
 <title>Detalhes do Produto - Live the Faith</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-<!-- Arquivo de Estilos do Mapa (Leaflet) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
 <style>
@@ -451,7 +450,6 @@ body{
       </div>
       <div id="resultadoFrete" class="resultado-frete"></div>
       
-      <!-- Painel de valores somados -->
       <div id="resumoValores" class="resumo-valores">
         <div class="linha-resumo">
           <span>Subtotal Produtos:</span>
@@ -467,7 +465,6 @@ body{
         </div>
       </div>
 
-      <!-- Elemento do mapa compacto -->
       <div id="mapa" class="mapa-container"></div>
     </div>
 
@@ -490,7 +487,6 @@ body{
   <div class="grid-produtos" id="produtosRelacionados"></div>
 </div>
 
-<!-- Scripts do Mapa (Leaflet) -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
@@ -504,7 +500,7 @@ let tamanhoSelecionado = null;
 let freteSelecionado = null; 
 let valorFreteSelecionado = 0;
 let precoBaseProduto = 0; 
-let estoqueMaximoDisponivel = 0; // Controlará o estoque dinâmico com base no tamanho
+let estoqueMaximoDisponivel = 0; 
 
 let produto = JSON.parse(localStorage.getItem("produtoSelecionated")) || JSON.parse(localStorage.getItem("produtoSelecionado"));
 
@@ -518,7 +514,6 @@ if (!produto) {
   document.getElementById("imgProdutoCostas").src = produto.imagem_costas || produto.imagem || ""; 
   document.getElementById("descricaoProduto").innerText = produto.descricao || "Sem descrição disponível.";
   
-  // Se for produto comum, o estoque máximo é o estoque geral direto
   if(produto.tipo !== "roupa") {
       document.getElementById("boxSelecaoTamanho").style.display = "none";
       estoqueMaximoDisponivel = parseInt(produto.quantidade_estoque) || 0;
@@ -547,21 +542,67 @@ function trocarImagem() {
     }
 }
 
+// 🔥 SISTEMA DE FAVORITOS EXCLUSIVO POR USUÁRIO LOGADO
 if (produto) {
   const favBtn = document.getElementById("btnFav");
-  const favKey = "fav_" + produto.id;
+  const idUsuario = localStorage.getItem("usuarioId");
+  
+  // Define uma chave única caso o usuário esteja logado, senão usa uma temporária
+  const favKey = idUsuario ? `fav_user_${idUsuario}_${produto.id}` : `fav_temp_${produto.id}`;
+
+  // Verifica estado inicial
   if(localStorage.getItem(favKey) === "true"){
     favBtn.classList.add("ativo");
     favBtn.innerHTML = "❤️";
   }
+
   favBtn.onclick = () => {
+    const idUsuarioAtual = localStorage.getItem("usuarioId");
+    if (!idUsuarioAtual) {
+      alert("Por favor, faça login para favoritar produtos!");
+      window.location.href = "login.html";
+      return;
+    }
+
+    const chaveExclusiva = `fav_user_${idUsuarioAtual}_${produto.id}`;
     const ativo = favBtn.classList.toggle("ativo");
     favBtn.innerHTML = ativo ? "❤️" : "♡";
-    localStorage.setItem(favKey, ativo);
+    
+    if (ativo) {
+      localStorage.setItem(chaveExclusiva, "true");
+      // Opcional: Salva também em uma lista compacta para facilitar a leitura na tela de favoritos
+      salvarNaListaFavoritos(produto);
+    } else {
+      localStorage.removeItem(chaveExclusiva);
+      removerDaListaFavoritos(produto.id);
+    }
   };
 }
 
-// 🔥 Altera o teto do estoque dependendo do tamanho escolhido
+// Funções auxiliares para manter uma lista limpa de favoritos por usuário
+function obterChaveListaFavoritos() {
+  const idUsuario = localStorage.getItem("usuarioId");
+  return idUsuario ? `lista_fav_user_${idUsuario}` : null;
+}
+
+function salvarNaListaFavoritos(prod) {
+  const chaveLista = obterChaveListaFavoritos();
+  if(!chaveLista) return;
+  let favoritos = JSON.parse(localStorage.getItem(chaveLista)) || [];
+  if(!favoritos.some(p => p.id === prod.id)) {
+    favoritos.push(prod);
+    localStorage.setItem(chaveLista, JSON.stringify(favoritos));
+  }
+}
+
+function removerDaListaFavoritos(idProd) {
+  const chaveLista = obterChaveListaFavoritos();
+  if(!chaveLista) return;
+  let favoritos = JSON.parse(localStorage.getItem(chaveLista)) || [];
+  favoritos = favoritos.filter(p => p.id !== idProd);
+  localStorage.setItem(chaveLista, JSON.stringify(favoritos));
+}
+
 function selecionarTamanho(el, t){
   tamanhoSelecionado = t;
   document.querySelectorAll(".tamanho").forEach(x => x.classList.remove("active"));
@@ -599,7 +640,7 @@ function aumentarQtd(){
   }
 }
 
-function disminuirQtd(){ 
+function diminuirQtd(){ 
   if(quantidadeSelecionada > 1){ 
     quantidadeSelecionada--; 
     atualizarQtd(); 
@@ -635,6 +676,14 @@ function selecionarFrete(elemento, tipo, valor) {
 
 function addCarrinho(){
   if (!produto) return;
+
+  const idUsuario = localStorage.getItem("usuarioId");
+  if (!idUsuario) {
+    alert("Por favor, faça login para adicionar itens ao seu carrinho!");
+    window.location.href = "login.html"; 
+    return;
+  }
+
   if (produto.tipo === "roupa" && !tamanhoSelecionado) {
     alert("Por favor, selecione um tamanho antes de adicionar ao carrinho!");
     return;
@@ -651,7 +700,9 @@ function addCarrinho(){
   let subtotalProdutos = precoBaseProduto * quantidadeSelecionada;
   let totalGeralComFrete = subtotalProdutos + valorFreteSelecionado;
 
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+  const chaveCarrinho = "carrinho_user_" + idUsuario;
+
+  let carrinho = JSON.parse(localStorage.getItem(chaveCarrinho)) || [];
   carrinho.push({
     ...produto, 
     tamanho: tamanhoSelecionado || 'N/A', 
@@ -659,11 +710,11 @@ function addCarrinho(){
     tipoFrete: freteSelecionado,
     valorFrete: valorFreteSelecionado,
     subtotal: subtotalProdutos,
-    valorTotalCompra: totalGeralComFrete // 🔥 VALOR TOTAL DO PRODUTO + FRETE INCLUSO
+    valorTotalCompra: totalGeralComFrete 
   });
   
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
-  alert("Adicionado ao carrinho com sucesso! 🛒");
+  localStorage.setItem(chaveCarrinho, JSON.stringify(carrinho));
+  alert("Adicionado ao seu carrinho com sucesso! 🛒");
 }
 
 function comprarAgora(){
@@ -690,7 +741,7 @@ function comprarAgora(){
     tipoFrete: freteSelecionado,
     valorFrete: valorFreteSelecionado,
     subtotal: subtotalProdutos,
-    valorTotalCompra: totalGeralComFrete // 🔥 VALOR TOTAL DO PRODUTO + FRETE INCLUSO
+    valorTotalCompra: totalGeralComFrete 
   };
   localStorage.setItem("produtoSelecionado", JSON.stringify(compraImediata));
   
