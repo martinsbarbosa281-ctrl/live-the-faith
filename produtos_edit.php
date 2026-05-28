@@ -1,59 +1,47 @@
 <?php
+
 header("Content-Type: application/json; charset=UTF-8");
 
-$conn = new mysqli("localhost","root","Home@spSENAI2025!","live_the_faith");
+$conn = new mysqli("localhost", "root", "Home@spSENAI2025!", "live_the_faith");
 
-if($conn->connect_error){
-  echo json_encode([
-    "status" => "erro",
-    "mensagem" => "Erro conexão: " . $conn->connect_error
-  ]);
-  exit;
+if ($conn->connect_error) {
+    echo json_encode(["status" => "erro", "mensagem" => "Erro na conexão"]);
+    exit;
 }
 
-$id = $_POST['id'] ?? 0;
-$nome = $_POST['nome'] ?? '';
-$preco = $_POST['preco'] ?? 0;
-$descricao = $_POST['descricao'] ?? '';
+$email = $_POST["email"] ?? "";
+$novaSenha = $_POST["novaSenha"] ?? "";
 
-$preco = str_replace(",", ".", $preco);
-
-if(!$id || !$nome || !$preco || !$descricao){
-  echo json_encode([
-    "status" => "erro",
-    "mensagem" => "Campos inválidos"
-  ]);
-  exit;
+/* 🔴 VALIDAÇÃO CORRETA */
+if (empty($email) || empty($novaSenha)) {
+    echo json_encode(["status" => "erro", "mensagem" => "Preencha todos os campos"]);
+    exit;
 }
 
-$stmt = $conn->prepare("
-  UPDATE produtos 
-  SET nome=?, preco=?, descricao=? 
-  WHERE id=?
-");
+/* 🔍 VERIFICA SE USUÁRIO EXISTE */
+$stmt = $conn->prepare("SELECT id FROM usuarios WHERE email=?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
 
-if(!$stmt){
-  echo json_encode([
-    "status" => "erro",
-    "mensagem" => "Erro prepare: " . $conn->error
-  ]);
-  exit;
+if ($result->num_rows === 0) {
+    echo json_encode(["status" => "erro", "mensagem" => "Usuário não encontrado"]);
+    exit;
 }
 
-$stmt->bind_param("sdsi", $nome, $preco, $descricao, $id);
+/* 🔒 NOVA SENHA */
+$novaSenhaHash = password_hash($novaSenha, PASSWORD_DEFAULT);
 
-if($stmt->execute()){
-  echo json_encode([
-    "status" => "ok",
-    "mensagem" => "Produto atualizado com sucesso"
-  ]);
+/* 🔄 ATUALIZA */
+$stmt2 = $conn->prepare("UPDATE usuarios SET senha=? WHERE email=?");
+$stmt2->bind_param("ss", $novaSenhaHash, $email);
+
+if ($stmt2->execute()) {
+    echo json_encode(["status" => "ok"]);
 } else {
-  echo json_encode([
-    "status" => "erro",
-    "mensagem" => "Erro execute: " . $stmt->error
-  ]);
+    echo json_encode(["status" => "erro", "mensagem" => "Erro ao atualizar"]);
 }
 
-$stmt->close();
 $conn->close();
+
 ?>
