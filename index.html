@@ -198,22 +198,29 @@ nav a:hover {
 }
 
 .product-card{
-  background: white;
-  border: 2px solid #d1d5db; /* borda cinza */
+  background: transparent; /* Mudado de white para transparente */
+  border: none;             /* Removida a borda antiga */
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;        /* Mudado para não cortar os blocos separados */
   transition: 0.3s;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;                /* 🌟 Esse gap cria o espaço em branco entre as duas caixas */
 }
 
 .product-card:hover{
   transform: translateY(-5px);
   border-color: #9ca3af; /* cinza um pouco mais escuro ao passar o mouse */
 }
+
 .img-container {
   position: relative;
   background: #f3f4f6;
   height: 260px;
+  border: 2px solid #d1d5db;   /* 🌟 Adiciona a borda na caixa da imagem */
+  border-radius: 12px;         /* Arredonda os cantos da caixa da imagem */
+  overflow: hidden;            /* Garante que a imagem respeite o arredondamento */
 }
 
 .img-container img {
@@ -279,7 +286,12 @@ nav a:hover {
 
 .product-info{
   padding: 15px;
-  border-top: 4px solid black;
+  background: white;
+  border-radius: 12px;
+  border: 2px solid #d1d5db;
+  
+  /* 🌟 AJUSTE ESTE VALOR: Aumente o '25px' se quiser ainda mais longe */
+  margin-top: 15px; 
 }
 .product-info h3{
   font-size:16px;
