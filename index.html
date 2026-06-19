@@ -5,19 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Live the Faith</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Herr+Von+Muellerhoff&family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
+
+  @font-face {
+    font-family: 'Faith';
+    src: url(fontefaith.zip) format('truetype');
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  /* 🌟 FONTE GLOBAL ATUALIZADA PARA CORPO DE TEXTO */
+  font-family: 'Open Sans', sans-serif;
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #f8fafc;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'fontefaith', sans-serif;
+  scroll-behavior: smooth;
+  background-image: url('image_2.png'); /* Usa o nome do arquivo gerado verbatim */
+  background-size: cover;         
+  background-position: center;    
+  background-attachment: fixed;   
+  background-repeat: no-repeat;
   color: #333;
 }
 
@@ -35,8 +51,10 @@ header {
 }
 
 .logo {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 34px; /* 🌟 Aumentado um pouco para a script */
+  /* 🌟 FONTE ATUALIZADA PARA O ESTILO CALIGRÁFICO NO LOGOTIPO */
+  font-family: 'Herr Von Muellerhoff', cursive;
+  font-weight: 400;
   color: #facc15;
   white-space: nowrap;
 }
@@ -168,26 +186,73 @@ nav a:hover {
   nav.active {
     display: flex;
   }
+
+ .hero h2{
+    font-size:2.8rem !important;
+    top:25px !important;
+    left:25px !important;
+}
+
+.faith-text{
+    font-size:6rem !important;
+}
 }
 
 .hero {
   height: 80vh;
   background: linear-gradient(rgba(15,23,42,0.75), rgba(15,23,42,0.75)),
-  url('https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d');
+  url('fundo.png');
   background-size: cover;
   background-position: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   color: white;
-  text-align: center;
   margin-top: 60px;
+  position: relative; /* Permite o posicionamento absoluto do h2 baseado nos limites do hero */
 }
 
-.hero h2 {
-  font-size: 3em;
-  margin-bottom: 20px;
+.hero h2{
+    position:absolute;
+    top:50px;
+    left:60px;
+
+    display:flex;
+    flex-direction:column;
+
+    color:white;
+
+    font-family:'Faith', serif;
+    font-size:4.5rem;
+    font-weight:700;
+    line-height:0.9;
+
+    text-shadow:
+        0 4px 15px rgba(0,0,0,.4),
+        0 8px 30px rgba(0,0,0,.5);
+}
+
+.faith-text{
+    font-family:'Faith', cursive;
+    font-size:10rem;
+    font-weight:normal;
+
+    color:#facc15;
+
+    line-height:.8;
+
+    text-shadow:
+        0 0 10px rgba(250,204,21,.4),
+        0 0 25px rgba(250,204,21,.3),
+        0 10px 30px rgba(0,0,0,.5);
+}
+
+.faith-text {
+    display: block;
+    font-family: fontefaith, cursive;
+    font-size: 9rem;
+    font-weight: normal;
+    color: #facc15;
+    line-height: 0.8;
 }
 
 .products{
@@ -198,86 +263,93 @@ nav a:hover {
 }
 
 .product-card{
-  background: transparent; /* Mudado de white para transparente */
-  border: none;             /* Removida a borda antiga */
-  border-radius: 12px;
-  overflow: visible;        /* Mudado para não cortar os blocos separados */
+  background: white;        
+  border: 2px solid #d1d5db; 
+  border-radius: 12px;       
+  overflow: hidden;          
   transition: 0.3s;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 15px;                /* 🌟 Esse gap cria o espaço em branco entre as duas caixas */
+  gap: 0;                    
 }
 
 .product-card:hover{
   transform: translateY(-5px);
-  border-color: #9ca3af; /* cinza um pouco mais escuro ao passar o mouse */
+  border-color: #9ca3af; 
 }
 
 .img-container {
   position: relative;
   background: #f3f4f6;
-  height: 260px;
-  border: 2px solid #d1d5db;   /* 🌟 Adiciona a borda na caixa da imagem */
-  border-radius: 12px;         /* Arredonda os cantos da caixa da imagem */
-  overflow: hidden;            /* Garante que a imagem respeite o arredondamento */
+  height: 280px;
+  border: none;              
+  border-radius: 0;          
+  overflow: hidden;          
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .img-container img {
   width: 100%;
-  height: 260px;
-  object-fit: contain;
+  height: 100%;
+  object-fit: contain; 
+  object-position: center;
+  padding: 15px;       
+  display: none;
   position: absolute;
   top: 0;
   left: 0;
-  opacity: 0;
-  transition: 0.4s ease;
 }
 
 .img-container img.active {
-  opacity: 1;
+  display: block;
 }
 
 .seta {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.4);
-  color: white;
+  background: rgba(255, 255, 255, 0.8);
   border: none;
+  border-radius: 50%;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
   cursor: pointer;
-  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
-  transition: background 0.2s;
+  font-weight: bold;
+  z-index: 5;
+  transition: 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .seta:hover {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(255, 255, 255, 1);
 }
 
-.prev { left: 8px; }
-.next { right: 8px; }
+.seta.prev { left: 8px; }
+.seta.next { right: 8px; }
 
-.fav{
-  position:absolute;
-  top:10px;
-  right:10px;
-  background:white;
-  width:35px;
-  height:35px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:18px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
+.fav {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 5;
+  font-size: 18px;
+  color: #333;
+  transition: 0.2s;
 }
 
 .fav:hover {
@@ -286,16 +358,17 @@ nav a:hover {
 
 .product-info{
   padding: 15px;
-  background: white;
-  border-radius: 12px;
-  border: 2px solid #d1d5db;
-  
-  /* 🌟 AJUSTE ESTE VALOR: Aumente o '25px' se quiser ainda mais longe */
-  margin-top: 15px; 
+  background: transparent;   
+  border: none;              
+  margin-top: 0;             
 }
-.product-info h3{
-  font-size:16px;
-  margin-bottom:5px;
+
+.product-info h3 {
+  /* 🌟 FONTE ATUALIZADA PARA O TÍTULO DO PRODUTO (Subtítulo robusto) */
+  font-family: 'Faith', serif;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 5px;
 }
 
 .categoria{
@@ -345,6 +418,13 @@ nav a:hover {
   border-radius: 14px;
   text-align: center;
   position: relative;
+}
+
+.login-box h2 {
+  /* 🌟 FONTE ATUALIZADA PARA O TÍTULO DO MODAL */
+  font-family: 'Faith', serif;
+  font-weight: 700;
+  margin-bottom: 15px;
 }
 
 .login-box input {
@@ -412,7 +492,10 @@ nav a:hover {
 </header>
 
 <section class="hero">
-  <h2>Vista sua fé</h2>
+  <h2>
+    Vista sua<br>
+    <span class="faith-text">Fé</span>
+  </h2>
 </section>
 
 <section id="produtos" class="products"></section>
@@ -464,8 +547,6 @@ nav a:hover {
 </div>
 
 <script>
-
-// --- FUNÇÕES DE COOKIES ---
 function criarCookie(nome, valor, dias) {
     const data = new Date();
     data.setTime(data.getTime() + (dias * 24 * 60 * 60 * 1000));
@@ -482,12 +563,10 @@ function lerCookie(nome) {
     return null;
 }
 
-// --- FUNÇÃO MENU HAMBÚRGUER ---
 function toggleMenu() {
   document.getElementById("navLinks").classList.toggle("active");
 }
 
-// --- FUNÇÃO DE PESQUISA (RESETÁVEL) ---
 function filtrarProdutos() {
   const termo = document.getElementById("searchInput").value.toLowerCase();
   const cards = document.querySelectorAll(".product-card");
@@ -502,7 +581,6 @@ function filtrarProdutos() {
   });
 }
 
-// --- FUNÇÃO PARA MANTER A BARRA LIMPA ---
 function limparBusca() {
   const searchInput = document.getElementById("searchInput");
   if (searchInput) {
@@ -518,7 +596,6 @@ function limparFormularios(modalId) {
   });
 }
 
-// --- CONTROLE DOS MODAIS ---
 function abrirLogin(){ 
   limparBusca();
   limparFormularios("loginModal");
@@ -561,17 +638,13 @@ function fecharRecuperarSenha(){
   limparFormularios("recuperarModal");
 }
 
-// --- MÁSCARA DO TELEFONE DE CADASTRO ---
 document.getElementById('telefoneCad').addEventListener('input', (e) => {
     let target = e.target;
     let valor = target.value;
-    
-    valor = valor.replace(/\D/g, ""); // Remove letras
-    
+    valor = valor.replace(/\D/g, ""); 
     if (valor.length > 11) {
-        valor = valor.slice(0, 11); // Trava em 11 dígitos puros
+        valor = valor.slice(0, 11); 
     }
-
     if (valor.length > 0) {
         valor = "(" + valor;
         if (valor.length > 3) {
@@ -579,17 +652,15 @@ document.getElementById('telefoneCad').addEventListener('input', (e) => {
         }
         if (valor.length > 9) {
             if (valor.length > 13) {
-                valor = valor.slice(0, 10) + "-" + valor.slice(10); // Formato Celular: (XX) 99999-9999
+                valor = valor.slice(0, 10) + "-" + valor.slice(10); 
             } else {
-                valor = valor.slice(0, 9) + "-" + valor.slice(9);  // Formato Fixo: (XX) 3333-3333
+                valor = valor.slice(0, 9) + "-" + valor.slice(9);  
             }
         }
     }
     target.value = valor;
 });
 
-
-// --- LÓGICA DE BACKEND ---
 function cadastrar(){
   const nome=document.getElementById("nomeCad").value;
   const telefone=document.getElementById("telefoneCad").value;
@@ -625,7 +696,7 @@ function trocarSenha(){
   .then(r=>r.json())
   .then(data=>{
     if(data.status==="ok"){
-      alert("Senha updated com sucesso!");
+      alert("Senha atualizada com sucesso!");
       fecharTrocarSenha();
     }else{
       alert(data.mensagem);
@@ -666,7 +737,6 @@ function simularLogin(){
   .then(r=>r.json())
   .then(data=>{
     if(data.status==="ok"){
-      // 🌟 MODIFICAÇÃO: Salvando também o ID único do usuário retornado pelo login.php
       localStorage.setItem("usuarioId", data.id);
       localStorage.setItem("usuarioNome", data.nome);
       criarCookie("usuario_logado", data.nome, 7);
@@ -674,7 +744,6 @@ function simularLogin(){
 
       fecharLogin();
 
-      // 👑 VERIFICAÇÃO ATUALIZADA SE FOR ADMIN NO LOGIN
       if(data.admin == 1 || data.admin == "1"){
         localStorage.setItem("usuarioAdmin", "1");
         criarCookie("usuario_admin", "1", 7);
@@ -682,7 +751,6 @@ function simularLogin(){
         return;
       }
 
-      // Se for cliente comum
       localStorage.setItem("usuarioAdmin", "0");
       criarCookie("usuario_admin", "0", 7);
 
@@ -705,12 +773,10 @@ function simularLogin(){
 }
 
 function logout(){
-  // 🌟 MODIFICAÇÃO: Removendo todos os dados e cookies de ID vinculados ao usuário
   localStorage.removeItem("usuarioId");
   localStorage.removeItem("usuarioNome");
   localStorage.removeItem("usuarioAdmin");
   
-  // MATA OS COOKIES AO SAIR
   document.cookie = "usuario_logado=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   document.cookie = "usuario_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   document.cookie = "usuario_admin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -728,7 +794,6 @@ window.onload=()=>{
 
   if(userCookie){
       if(adminCookie === "1"){
-          // Layout limpo para o Administrador (Sem carrinho, sem favoritos)
           document.getElementById("areaUsuario").innerHTML = `
             <div class="user-menu">
               <div class="user-icon">
@@ -741,13 +806,13 @@ window.onload=()=>{
             </div>
           `;
       } else {
-          // Layout para o cliente tradicional
           document.getElementById("areaUsuario").innerHTML = `
             <div class="user-menu">
               <div class="user-icon">
                 ${userCookie.charAt(0).toUpperCase()}
               </div>
               <div class="dropdown">
+                <a href="perfil.html">👤 Meu Perfil</a>
                 <a href="carrinho.html">🛒 Carrinho</a>
                 <a href="favoritos.html">❤️ Favoritos</a>
                 <a href="#" onclick="logout()">🚪 Sair</a>
@@ -771,7 +836,6 @@ function carregarProdutos(){
             <img src="${p.imagem_costas || p.imagem}" id="img-costas-${p.id}">
             <button class="seta prev" onclick="event.stopPropagation(); trocar(-1, ${p.id})">&#10094;</button>
             <button class="seta next" onclick="event.stopPropagation(); trocar(1, ${p.id})">&#10095;</button>
-            <!-- 🌟 MODIFICAÇÃO: event.stopPropagation() evita abrir a tela do produto ao clicar no coração -->
             <div class="fav" onclick="event.stopPropagation(); alternarFavorito(${p.id})">♡</div>
           </div>
           <div class="product-info">
@@ -808,7 +872,6 @@ function trocar(direcao, idProduto) {
     }
 }
 
-// 🌟 NOVA FUNÇÃO: Gerencia a adição de produtos aos favoritos de forma única para cada ID de usuário
 function alternarFavorito(idProduto) {
     const idUsuario = localStorage.getItem("usuarioId");
 
@@ -826,7 +889,7 @@ function alternarFavorito(idProduto) {
     .then(r => r.json())
     .then(data => {
         if (data.status === "ok") {
-            alert(data.mensagem); // Mensagem enviada pelo back-end (ex: "Adicionado aos favoritos!")
+            alert(data.mensagem); 
         } else {
             alert(data.mensagem || "Erro ao processar sua solicitação.");
         }
@@ -839,3 +902,5 @@ function alternarFavorito(idProduto) {
 </script>
 </body>
 </html>
+
+```
