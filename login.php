@@ -1,99 +1,119 @@
 <?php
-session_start();
+// ==========================================
+// Segurança de Sessão e API
+// ==========================================
+session_start([
+    'cookie_httponly' => true,
+    'cookie_samesite' => 'Strict'
+]);
 
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
+header("X-Frame-Options: DENY");
+header("X-Content-Type-Options: nosniff");
 
-$conn = new mysqli("localhost","root","Home@spSENAI2025!","live_the_faith");
+// ==========================================
+// Rate Limiting / Força Bruta
+// ==========================================
+if (!isset($_SESSION['tentativas'])) {
+    $_SESSION['tentativas'] = 0;
+    $_SESSION['ultimo_acesso'] = time();
+}
 
-if($conn->connect_error){
+if ($_SESSION['tentativas'] >= 5 && (time() - $_SESSION['ultimo_acesso']) < 300) {
+    echo json_encode(["status" => "erro", "code" => 429]);
+    exit;
+}
+
+// ==========================================
+// Sanitização e Validação
+// ==========================================
+$email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+$senha = filter_input(INPUT_POST, 'senha', FILTER_DEFAULT);
+
+if (!$email || !$senha) {
+    echo json_encode(["status" => "erro", "code" => 400]);
+    exit;
+}
+
+// ==========================================
+// 👑 VERIFICAÇÃO FIXA DE ADMIN
+// ==========================================
+if ($email === 'admin@livefaith.com' && $senha === 'admin123') {
+    unset($_SESSION['tentativas']);
+
+    $usuarioAdmin = [
+        "id" => 1,
+        "nome" => "Administrador",
+        "email" => $email,
+        "admin" => 1
+    ];
+
+    $_SESSION['usuario_temp'] = $usuarioAdmin;
+
     echo json_encode([
-        "status"=>"erro",
-        "mensagem"=>$conn->connect_error
+        "status" => "ok",
+        "usuario" => $usuarioAdmin
     ]);
     exit;
 }
 
-$email = $_POST['email'] ?? "";
-$senha = $_POST['senha'] ?? "";
+// ==========================================
+// CONEXÃO COM O BANCO DE DADOS (Para outros usuários)
+// ==========================================
+$conn = new mysqli("localhost", "root", "Home@spSENAI2025!", "live_the_faith");
 
-if(empty($email) || empty($senha)){
-    echo json_encode([
-        "status"=>"erro",
-        "mensagem"=>"Preencha todos os campos"
-    ]);
+if ($conn->connect_error) {
+    echo json_encode(["status" => "erro", "code" => 500]);
     exit;
 }
 
-$admin_email = "admin@livefaith.com";
-$admin_senha = "admin123";
-
-if($email === $admin_email){
-
-    if($senha === $admin_senha){
-
-        $_SESSION['usuario_id'] = 0;
-        $_SESSION['usuario_nome'] = "Administrador";
-        $_SESSION['admin'] = 1;
-
-        echo json_encode([
-            "status" => "ok",
-            "id" => 0,
-            "nome" => "Administrador",
-            "email" => $email,
-            "admin" => 1
-        ]);
-    } else {
-        echo json_encode([
-            "status" => "erro",
-            "mensagem" => "Senha incorreta"
-        ]);
-    }
-
-    exit;
+// Verifica no banco se a coluna se chama 'is_admin' ou 'admin'
+$sqlCheck = $conn->query("SHOW COLUMNS FROM usuarios LIKE 'is_admin'");
+if ($sqlCheck && $sqlCheck->num_rows > 0) {
+    $stmt = $conn->prepare("SELECT id, nome, senha, is_admin FROM usuarios WHERE email = ?");
+} else {
+    $stmt = $conn->prepare("SELECT id, nome, senha, admin FROM usuarios WHERE email = ?");
 }
 
-$stmt = $conn->prepare("SELECT id, nome, senha FROM usuarios WHERE email=?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
-$stmt->store_result();
+$result = $stmt->get_result();
 
-$stmt->bind_result($id, $nome, $senhaHash);
+if ($result && $row = $result->fetch_assoc()) {
 
-if($stmt->num_rows > 0){
+    if (password_verify($senha, $row['senha'])) {
 
-    $stmt->fetch();
+        session_regenerate_id(true);
+        unset($_SESSION['tentativas']);
 
-    if(password_verify($senha, $senhaHash)){
+        $isAdmin = 0;
+        if (isset($row['is_admin'])) {
+            $isAdmin = (int)$row['is_admin'];
+        } elseif (isset($row['admin'])) {
+            $isAdmin = (int)$row['admin'];
+        }
 
-        /* SALVA SESSÃO */
-        $_SESSION['usuario_id'] = $id;
-        $_SESSION['usuario_nome'] = $nome;
-        $_SESSION['admin'] = 0;
+        $usuarioDados = [
+            "id" => $row['id'],
+            "nome" => htmlspecialchars($row['nome'], ENT_QUOTES, 'UTF-8'),
+            "email" => $email,
+            "admin" => $isAdmin
+        ];
+
+        $_SESSION['usuario_temp'] = $usuarioDados;
 
         echo json_encode([
             "status" => "ok",
-            "id" => $id,
-            "nome" => $nome,
-            "email" => $email,
-            "admin" => 0
+            "usuario" => $usuarioDados
         ]);
-
-    } else {
-
-        echo json_encode([
-            "status" => "erro",
-            "mensagem" => "Senha incorreta"
-        ]);
+        exit;
     }
-
-} else {
-
-    echo json_encode([
-        "status" => "erro",
-        "mensagem" => "Usuário não encontrado"
-    ]);
 }
 
-$stmt->close();
-$conn->close();
+// Registro de tentativa inválida
+$_SESSION['tentativas']++;
+$_SESSION['ultimo_acesso'] = time();
+
+echo json_encode(["status" => "erro", "code" => 401]);
+exit;
 ?>
