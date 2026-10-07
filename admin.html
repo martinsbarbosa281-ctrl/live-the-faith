@@ -2,26 +2,54 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Gerenciamento de Produtos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-body: #f1f5f9;
+            --header-bg: #1e293b;
+            --white: #ffffff;
+            --text-main: #1e293b;
+            --border-color: #475569; /* Borda bem mais forte e escura */
+            --border-focus: #0284c7;  /* Azul forte para destaque ao focar */
+            --primary-yellow: #ca8a04;
+            --primary-yellow-hover: #a16207;
+            --badge-green: #15803d;
+            --btn-voltar: #0284c7;
+            --btn-voltar-hover: #0369a1;
+            --btn-logout: #b91c1c;
+            --btn-logout-hover: #991b1b;
+            --table-header-bg: #f8fafc;
+            --transition: all 0.25s ease;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
-            background: #f1f5f9;
+            background: var(--bg-body);
+            color: var(--text-main);
             margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a:focus, button:focus, input:focus, textarea:focus, select:focus {
+            outline: 3px solid #38bdf8 !important;
+            outline-offset: 2px !important;
         }
 
         header {
-            background: #1e293b;
-            color: white;
-            padding: 15px 30px;
+            background: var(--header-bg);
+            color: var(--white);
+            padding: 18px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
 
         .header-left {
             font-size: 20px;
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .header-right {
@@ -31,114 +59,304 @@
         }
 
         .badge {
-            background: #22c55e;
-            padding: 5px 10px;
+            background: var(--badge-green);
+            color: var(--white);
+            padding: 6px 12px;
             border-radius: 8px;
             font-size: 12px;
+            font-weight: 600;
         }
 
         .btn {
-            padding: 8px 14px;
+            padding: 10px 16px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
-        .voltar { background: #38bdf8; color: white; }
-        .logout { background: #ef4444; color: white; }
+        .voltar { background: var(--btn-voltar); color: white; }
+        .voltar:hover { background: var(--btn-voltar-hover); transform: translateY(-1px); }
+
+        .logout { background: var(--btn-logout); color: white; }
+        .logout:hover { background: var(--btn-logout-hover); transform: translateY(-1px); }
 
         .container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background: var(--white);
+            padding: 30px;
+            border-radius: 16px;
+            margin: 25px auto;
+            max-width: 1100px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            border: 2px solid #cbd5e1; /* Borda externa do container mais firme */
         }
 
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #0f172a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-full {
+            grid-column: span 2;
+        }
+
+        .input-group {
+            margin-bottom: 8px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        /* Campos com bordas fortes e espessura maior */
         input, textarea, select {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 12px 14px;
             border-radius: 8px;
-            border: 1px solid #ddd;
+            border: 2px solid var(--border-color);
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            color: var(--text-main);
+            background: #ffffff; /* Fundo limpo para destacar a borda */
+            transition: var(--transition);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--border-focus);
+            background: var(--white);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        #tamanhosBox {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed var(--border-color);
+            margin: 10px 0;
         }
 
         .salvar {
-            background: #facc15;
-            width: 150px;
+            background: var(--primary-yellow);
+            color: #ffffff;
+            width: 100%;
+            max-width: 200px;
+            padding: 12px 20px;
+            font-size: 15px;
+            margin-top: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .salvar:hover {
+            background: var(--primary-yellow-hover);
+            transform: translateY(-1px);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 2px solid #cbd5e1;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            white-space: nowrap;
         }
 
         th {
-            background: #f8fafc;
+            background: var(--table-header-bg);
+            color: #1e293b;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #cbd5e1;
         }
 
         th, td {
-            padding: 12px;
+            padding: 14px 16px;
             text-align: center;
+            font-size: 14px;
+            border-bottom: 1px solid #cbd5e1;
+            vertical-align: middle;
         }
 
         td:first-child, th:first-child {
             text-align: left;
         }
 
-        .edit { background: #22c55e; color: white; }
-        .delete { background: #ef4444; color: white; }
+        tbody tr:hover {
+            background: #f8fafc;
+        }
 
-        button { margin: 3px; }
+        .produto-img-mini {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 2px solid #94a3b8;
+            background: #94a3b8;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        .produto-nome-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .edit { background: var(--badge-green); color: white; }
+        .edit:hover { background: #166534; }
+
+        .delete { background: var(--btn-logout); color: white; }
+        .delete:hover { background: #7f1d1d; }
+
+        .btn-action-group {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-action-group button {
+            margin: 0;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-full {
+                grid-column: span 1;
+            }
+            header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            .container {
+                margin: 15px;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
 
-<header>
+<header role="banner">
     <div class="header-left">Painel Admin</div>
     <div class="header-right">
-        <span class="badge">Logado como Admin</span>
-        <button class="btn voltar" onclick="voltarLoja()">Voltar à loja</button>
-        <button class="btn logout" onclick="logout()">Sair</button>
+        <span class="badge" aria-label="Status: Logado como Administrador">Logado como Admin</span>
+        <button class="btn voltar" onclick="voltarLoja()" aria-label="Voltar para a página da loja">Voltar à loja</button>
+        <button class="btn logout" onclick="logout()" aria-label="Sair do painel administrativo">Sair</button>
     </div>
 </header>
 
-<div class="container">
-    <h2>Adicionar Produto</h2>
+<main role="main">
+    <div class="container">
+        <h2>Adicionar Produto</h2>
 
-    <input id="nome" placeholder="Nome do produto">
-    <input id="preco" placeholder="Preço (Ex: 59.90)">
-    <input id="imagem" placeholder="URL da imagem (Frente)">
-    <input id="imagem_costas" placeholder="URL da imagem (Costas) - Opcional"> 
-    <textarea id="descricao" placeholder="Descrição"></textarea>
+        <div class="form-grid">
+            <div class="input-group">
+                <label for="nome">Nome do produto</label>
+                <input id="nome" type="text" placeholder="Ex: Camiseta Básica" aria-required="true">
+            </div>
 
-    <select id="tipoProduto">
-        <option value="simples">Produto comum</option>
-        <option value="roupa">Roupa (com tamanhos)</option>
-    </select>
+            <div class="input-group">
+                <label for="preco">Preço (R$)</label>
+                <input id="preco" type="text" placeholder="Ex: 59.90" aria-required="true">
+            </div>
 
-    <div id="estoqueBox">
-        <input id="estoque" type="number" placeholder="Quantidade em estoque geral">
+            <div class="input-group">
+                <label for="imagem">URL da imagem (Frente)</label>
+                <input id="imagem" type="url" placeholder="https://exemplo.com/frente.jpg" aria-required="true">
+            </div>
+
+            <div class="input-group">
+                <label for="imagem_costas">URL da imagem (Costas - Opcional)</label>
+                <input id="imagem_costas" type="url" placeholder="https://exemplo.com/costas.jpg">
+            </div>
+
+            <div class="input-group form-full">
+                <label for="descricao">Descrição</label>
+                <textarea id="descricao" placeholder="Descreva os detalhes e diferenciais do produto..." aria-required="true"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="tipoProduto">Tipo de Produto</label>
+                <select id="tipoProduto">
+                    <option value="simples">Produto comum</option>
+                    <option value="roupa">Roupa (com tamanhos)</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="estoqueBoxContainer">
+                <label for="estoque">Quantidade em Estoque</label>
+                <div id="estoqueBox">
+                    <input id="estoque" type="number" min="0" placeholder="Ex: 50">
+                </div>
+            </div>
+
+            <div class="input-group form-full" id="tamanhosContainer" style="display:none;">
+                <label>Grades de Tamanhos (P, M, G)</label>
+                <div id="tamanhosBox">
+                    <div>
+                        <label for="tamP" style="font-size:11px; margin-bottom:2px;">Qtd P</label>
+                        <input id="tamP" type="number" min="0" placeholder="0">
+                    </div>
+                    <div>
+                        <label for="tamM" style="font-size:11px; margin-bottom:2px;">Qtd M</label>
+                        <input id="tamM" type="number" min="0" placeholder="0">
+                    </div>
+                    <div>
+                        <label for="tamG" style="font-size:11px; margin-bottom:2px;">Qtd G</label>
+                        <input id="tamG" type="number" min="0" placeholder="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn salvar" onclick="adicionarProduto()">Salvar Produto</button>
     </div>
 
-    <div id="tamanhosBox" style="display:none;">
-        <input id="tamP" type="number" placeholder="Quantidade P">
-        <input id="tamM" type="number" placeholder="Quantidade M">
-        <input id="tamG" type="number" placeholder="Quantidade G">
+    <div class="container">
+        <h2>Produtos Cadastrados</h2>
+        <div class="table-responsive" id="lista" tabindex="0" aria-label="Tabela de produtos cadastrados"></div>
     </div>
-
-    <button class="btn salvar" onclick="adicionarProduto()">Salvar</button>
-</div>
-
-<div class="container">
-    <h2>Produtos cadastrados</h2>
-    <div id="lista"></div>
-</div>
+</main>
 
 <script>
-// --- FUNÇÃO AUXILIAR DE COOKIES ---
 function lerCookie(nome) {
     const nomeIgual = nome + "=";
     const array = document.cookie.split(';');
@@ -149,7 +367,6 @@ function lerCookie(nome) {
     return null;
 }
 
-// 🔐 TRAVA DE SEGURANÇA INTERNA DE SESSÃO DO ADMIN
 const adminCookie = lerCookie("usuario_admin");
 const adminLocal = localStorage.getItem("usuarioAdmin");
 
@@ -162,14 +379,11 @@ function voltarLoja(){
     window.location.href = "index.html";
 }
 
-// Limpa todas as credenciais do admin e sai direto em sincronia completa com o index.html
 function logout(){
-    // 1. Limpa o LocalStorage por completo
     localStorage.removeItem("usuarioId");
     localStorage.removeItem("usuarioNome");
     localStorage.removeItem("usuarioAdmin");
     
-    // 2. Limpa os cookies definindo uma data passada com path=/ idêntico ao index
     document.cookie = "usuario_logado=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie = "usuario_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie = "usuario_admin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -178,18 +392,16 @@ function logout(){
     window.location.href = "index.html";
 }
 
-// Alternar exibição de estoque/tamanhos dinamicamente
 document.getElementById("tipoProduto").addEventListener("change", function(){
     if(this.value === "roupa") {
-        document.getElementById("tamanhosBox").style.display = "block";
-        document.getElementById("estoqueBox").style.display = "none";
+        document.getElementById("tamanhosContainer").style.display = "block";
+        document.getElementById("estoqueBoxContainer").style.display = "none";
     } else {
-        document.getElementById("tamanhosBox").style.display = "none";
-        document.getElementById("estoqueBox").style.display = "block";
+        document.getElementById("tamanhosContainer").style.display = "none";
+        document.getElementById("estoqueBoxContainer").style.display = "block";
     }
 });
 
-// Listar produtos cadastrados
 function carregarProdutos(){
     fetch("listar.php")
     .then(r => r.json())
@@ -201,13 +413,16 @@ function carregarProdutos(){
 
         let html = `
         <table>
-            <tr>
-                <th>Nome</th>
-                <th>Preço</th>
-                <th>Estoque / Grades</th>
-                <th>Descrição</th>
-                <th>Ações</th>
-            </tr>`;
+            <thead>
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Preço</th>
+                    <th scope="col">Estoque / Grades</th>
+                    <th scope="col">Descrição</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>`;
 
         data.forEach(p => {
             let infoEstoque = p.quantidade_estoque || 0;
@@ -223,30 +438,38 @@ function carregarProdutos(){
                 }
             }
 
+            let imgTag = p.imagem ? `<img src="${p.imagem}" alt="Foto do produto ${p.nome}" class="produto-img-mini" onerror="this.style.display='none'">` : '';
+
             html += `
             <tr>
-                <td>${p.nome}</td>
+                <td>
+                    <div class="produto-nome-wrapper">
+                        ${imgTag}
+                        <strong>${p.nome}</strong>
+                    </div>
+                </td>
                 <td>R$ ${parseFloat(p.preco).toFixed(2)}</td>
                 <td>${infoEstoque}</td>
-                <td>${p.descricao}</td>
+                <td style="max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${p.descricao}">${p.descricao}</td>
                 <td>
-                    <button class="btn edit" onclick='editar(${p.id}, ${JSON.stringify(p.nome)}, ${JSON.stringify(p.preco)}, ${JSON.stringify(p.descricao)})'>
-                        Editar
-                    </button>
-                    <button class="btn delete" onclick="deletar(${p.id})">
-                        Excluir
-                    </button>
+                    <div class="btn-action-group">
+                        <button class="btn edit" aria-label="Editar produto ${p.nome}" onclick='editar(${p.id}, ${JSON.stringify(p.nome)}, ${JSON.stringify(p.preco)}, ${JSON.stringify(p.descricao)})'>
+                            Editar
+                        </button>
+                        <button class="btn delete" aria-label="Excluir produto ${p.nome}" onclick="deletar(${p.id})">
+                            Excluir
+                        </button>
+                    </div>
                 </td>
             </tr>`;
         });
 
-        html += "</table>";
+        html += "</tbody></table>";
         document.getElementById("lista").innerHTML = html;
     })
     .catch(err => console.error("Erro fetch:", err));
 }
 
-// Enviar novos dados ao PHP
 function adicionarProduto(){
     const nomeEl = document.getElementById("nome");
     const precoEl = document.getElementById("preco");
@@ -270,13 +493,11 @@ function adicionarProduto(){
     let quantidade_estoque = parseInt(estoqueEl.value) || 0;
     let tamanhos = "";
 
-    // Validação inteligente (Apenas campos obrigatórios cruciais)
     if(!nome || !preco || !imagem || !descricao){
         alert("Por favor, preencha Nome, Preço, Imagem da Frente e Descrição!");
         return;
     }
 
-    // Somar as quantidades de roupas para não enviar estoque 0 geral
     if(tipo === "roupa"){
         const qtoP = parseInt(document.getElementById("tamP").value) || 0;
         const qtoM = parseInt(document.getElementById("tamM").value) || 0;
@@ -312,7 +533,6 @@ function adicionarProduto(){
             alert(data.mensagem);
 
             if(data.status === "ok"){
-                // Limpa o formulário perfeitamente após o sucesso
                 nomeEl.value = "";
                 precoEl.value = "";
                 imagemEl.value = "";
@@ -363,7 +583,6 @@ function editar(id, nome, preco, descricao){
     });
 }
 
-// Executa a listagem automática
 carregarProdutos();
 </script>
 </body>
