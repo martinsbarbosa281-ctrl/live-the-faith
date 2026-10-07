@@ -5,35 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Live the Faith</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Herr+Von+Muellerhoff&family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Importando FontAwesome para os ícones oficiais das redes sociais -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-
-  @font-face {
-    font-family: 'Faith';
-    src: url(fontefaith.zip) format('truetype');
-}
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  /* 🌟 FONTE GLOBAL ATUALIZADA PARA CORPO DE TEXTO */
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'fontefaith', sans-serif;
-  scroll-behavior: smooth;
-  background-image: url('image_2.png'); /* Usa o nome do arquivo gerado verbatim */
-  background-size: cover;         
-  background-position: center;    
-  background-attachment: fixed;   
-  background-repeat: no-repeat;
+  background-color: #f8fafc;
   color: #333;
 }
 
@@ -51,10 +37,8 @@ header {
 }
 
 .logo {
-  font-size: 34px; /* 🌟 Aumentado um pouco para a script */
-  /* 🌟 FONTE ATUALIZADA PARA O ESTILO CALIGRÁFICO NO LOGOTIPO */
-  font-family: 'Herr Von Muellerhoff', cursive;
-  font-weight: 400;
+  font-size: 22px;
+  font-weight: 700;
   color: #facc15;
   white-space: nowrap;
 }
@@ -67,13 +51,18 @@ header {
   align-items: center;
 }
 
+/* ACESSIBILIDADE MELHORADA: Bordas mais fortes e espessas nos inputs de busca */
 .search-box input {
   width: 100%;
   padding: 8px 15px;
   border-radius: 20px;
-  border: none;
+  border: 2px solid #475569;
   outline: none;
   font-size: 14px;
+}
+
+.search-box input:focus {
+  border-color: #0284c7;
 }
 
 .menu-toggle {
@@ -105,6 +94,50 @@ nav a {
 
 nav a:hover {
   color: #facc15;
+}
+
+/* Estilo do Dropdown "Sobre Nós" ativado ao passar o mouse */
+.dropdown-sobre {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-sobre-content {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: white;
+  width: 320px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  color: #333;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1100;
+  text-align: left;
+  cursor: default;
+}
+
+.dropdown-sobre-content h3 {
+  font-size: 16px;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.dropdown-sobre-content p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.dropdown-sobre:hover .dropdown-sobre-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 .user-menu {
@@ -187,72 +220,40 @@ nav a:hover {
     display: flex;
   }
 
- .hero h2{
-    font-size:2.8rem !important;
-    top:25px !important;
-    left:25px !important;
-}
-
-.faith-text{
-    font-size:6rem !important;
-}
+  .dropdown-sobre-content {
+    position: static;
+    transform: none;
+    width: 100%;
+    background: #3a3a3a;
+    color: white;
+    box-shadow: none;
+    padding: 10px 0;
+    opacity: 1;
+    visibility: visible;
+  }
+  .dropdown-sobre-content h3, .dropdown-sobre-content p {
+    color: #ddd;
+  }
 }
 
 .hero {
   height: 80vh;
   background: linear-gradient(rgba(15,23,42,0.75), rgba(15,23,42,0.75)),
-  url('fundo.png');
+  url('https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d');
   background-size: cover;
   background-position: center;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   color: white;
+  text-align: center;
   margin-top: 60px;
-  position: relative; /* Permite o posicionamento absoluto do h2 baseado nos limites do hero */
 }
 
-.hero h2{
-    position:absolute;
-    top:50px;
-    left:60px;
-
-    display:flex;
-    flex-direction:column;
-
-    color:white;
-
-    font-family:'Faith', serif;
-    font-size:4.5rem;
-    font-weight:700;
-    line-height:0.9;
-
-    text-shadow:
-        0 4px 15px rgba(0,0,0,.4),
-        0 8px 30px rgba(0,0,0,.5);
-}
-
-.faith-text{
-    font-family:'Faith', cursive;
-    font-size:10rem;
-    font-weight:normal;
-
-    color:#facc15;
-
-    line-height:.8;
-
-    text-shadow:
-        0 0 10px rgba(250,204,21,.4),
-        0 0 25px rgba(250,204,21,.3),
-        0 10px 30px rgba(0,0,0,.5);
-}
-
-.faith-text {
-    display: block;
-    font-family: fontefaith, cursive;
-    font-size: 9rem;
-    font-weight: normal;
-    color: #facc15;
-    line-height: 0.8;
+.hero h2 {
+  font-size: 3em;
+  margin-bottom: 20px;
 }
 
 .products{
@@ -263,93 +264,78 @@ nav a:hover {
 }
 
 .product-card{
-  background: white;        
-  border: 2px solid #d1d5db; 
-  border-radius: 12px;       
-  overflow: hidden;          
-  transition: 0.3s;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 0;                    
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  transition:0.3s;
+  cursor:pointer;
 }
 
 .product-card:hover{
-  transform: translateY(-5px);
-  border-color: #9ca3af; 
+  transform:translateY(-5px);
 }
 
 .img-container {
   position: relative;
   background: #f3f4f6;
-  height: 280px;
-  border: none;              
-  border-radius: 0;          
-  overflow: hidden;          
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 260px;
 }
 
 .img-container img {
   width: 100%;
-  height: 100%;
-  object-fit: contain; 
-  object-position: center;
-  padding: 15px;       
-  display: none;
+  height: 260px;
+  object-fit: contain;
   position: absolute;
   top: 0;
   left: 0;
+  opacity: 0;
+  transition: 0.4s ease;
 }
 
 .img-container img.active {
-  display: block;
+  opacity: 1;
 }
 
 .seta {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
   border: none;
-  border-radius: 50%;
   width: 32px;
   height: 32px;
+  border-radius: 50%;
   cursor: pointer;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  z-index: 5;
-  transition: 0.2s;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 10;
+  transition: background 0.2s;
 }
 
 .seta:hover {
-  background: rgba(255, 255, 255, 1);
+  background: rgba(0, 0, 0, 0.7);
 }
 
-.seta.prev { left: 8px; }
-.seta.next { right: 8px; }
+.prev { left: 8px; }
+.next { right: 8px; }
 
-.fav {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: white;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  z-index: 5;
-  font-size: 18px;
-  color: #333;
-  transition: 0.2s;
+.fav{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:white;
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
 }
 
 .fav:hover {
@@ -357,18 +343,12 @@ nav a:hover {
 }
 
 .product-info{
-  padding: 15px;
-  background: transparent;   
-  border: none;              
-  margin-top: 0;             
+  padding:15px;
 }
 
-.product-info h3 {
-  /* 🌟 FONTE ATUALIZADA PARA O TÍTULO DO PRODUTO (Subtítulo robusto) */
-  font-family: 'Faith', serif;
-  font-weight: 700;
-  font-size: 16px;
-  margin-bottom: 5px;
+.product-info h3{
+  font-size:16px;
+  margin-bottom:5px;
 }
 
 .categoria{
@@ -413,26 +393,26 @@ nav a:hover {
 
 .login-box {
   background: #fff;
-  width: 320px;
+  width: 340px;
   padding: 30px;
   border-radius: 14px;
   text-align: center;
   position: relative;
 }
 
-.login-box h2 {
-  /* 🌟 FONTE ATUALIZADA PARA O TÍTULO DO MODAL */
-  font-family: 'Faith', serif;
-  font-weight: 700;
-  margin-bottom: 15px;
-}
-
-.login-box input {
+/* ACESSIBILIDADE MELHORADA: Bordas fortes nos campos de formulário/inputs de modais */
+.login-box input, .login-box select, .login-box textarea {
   width: 100%;
   padding: 12px;
   margin: 10px 0;
-  border: 1px solid #ddd;
+  border: 2px solid #475569;
   border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+}
+
+.login-box input:focus {
+  border-color: #0284c7;
 }
 
 .login-box button {
@@ -443,6 +423,11 @@ nav a:hover {
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.login-box button:hover {
+  background: #eab308;
 }
 
 .fechar {
@@ -451,6 +436,7 @@ nav a:hover {
   top: 10px;
   font-size: 20px;
   cursor: pointer;
+  color: #666;
 }
 
 .btn-login {
@@ -460,6 +446,177 @@ nav a:hover {
   border-radius: 20px;
   font-weight: 600;
   cursor: pointer;
+}
+
+/* Estilos refinados para os ícones de redes sociais no Modal de Contato */
+.social-icons-grid {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 25px 0 10px 0;
+}
+
+.social-icon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  color: white;
+  font-size: 26px;
+  text-decoration: none;
+  transition: transform 0.2s, opacity 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.social-icon-btn:hover {
+  transform: scale(1.1);
+  opacity: 0.95;
+}
+
+.btn-whatsapp { background-color: #25d366; }
+.btn-instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #df497 5%, #f58529 45%, #dd2a7b 60%, #8134af 90%); }
+.btn-facebook { background-color: #1877f2; }
+
+.qrcode-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 190px;
+  margin: 15px 0;
+}
+
+.qrcode-box img {
+  width: 180px;
+  height: 180px;
+  border: 1px solid #e2e8f0;
+  padding: 8px;
+  border-radius: 8px;
+  background: #fff;
+  object-fit: contain;
+}
+
+.token-input {
+  letter-spacing: 6px;
+  font-size: 20px !important;
+  text-align: center;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.mensagem-form {
+  display: none;
+  margin: 8px 0 12px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.mensagem-form.sucesso {
+  display: block;
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.mensagem-form.erro {
+  display: block;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.mensagem-form.carregando {
+  display: block;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.toast {
+  position: fixed;
+  top: 85px;
+  right: 25px;
+  min-width: 260px;
+  max-width: 350px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: 0.3s;
+  z-index: 9999;
+}
+
+.toast.mostrar {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.toast.sucesso { background: #16a34a; }
+.toast.erro { background: #dc2626; }
+.toast.info { background: #374151; }
+
+.password-requirements {
+  text-align: left;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 6px 0 12px 0;
+  font-size: 12px;
+}
+
+.password-requirements p {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.password-requirements ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.password-requirements li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
+}
+
+.password-requirements li .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.password-requirements li.valido {
+  color: #166534;
+  font-weight: 600;
+}
+
+.password-requirements li.valido .icon {
+  background: #22c55e;
 }
 </style>
 </head>
@@ -481,9 +638,19 @@ nav a:hover {
 
   <nav id="navLinks">
     <a href="#">Início</a>
-    <a href="#sobre">Sobre nós</a>
+    
+    <!-- Menu Sobre Nós em formato Dropdown (hover) -->
+    <div class="dropdown-sobre">
+      <a href="#">Sobre nós</a>
+      <div class="dropdown-sobre-content">
+        <h3>Live the Faith</h3>
+        <p>Bem-vindo à nossa marca, feita para quem deseja expressar sua crença, valores e identidade através do estilo e da moda diária.</p>
+        <p>Nossa missão é criar peças autênticas de alta qualidade que inspiram e conectam pessoas, unindo conforto, sofisticação e mensagens de fé marcantes.</p>
+      </div>
+    </div>
+
     <a href="#produtos">Produtos</a>
-    <a href="#">Contato</a>
+    <a href="#" onclick="abrirContato(event)">Contato</a>
     
     <div id="areaUsuario">
       <button class="btn-login" onclick="abrirLogin()">Login</button>
@@ -492,15 +659,31 @@ nav a:hover {
 </header>
 
 <section class="hero">
-  <h2>
-    Vista sua<br>
-    <span class="faith-text">Fé</span>
-  </h2>
+  <h2>Vista sua fé</h2>
 </section>
 
 <section id="produtos" class="products"></section>
 
-<section id="sobre" class=""></section>
+<!-- MODAL DE CONTATO COM ÍCONES PROFISSIONAIS -->
+<div id="contatoModal" class="modal">
+  <div class="login-box">
+    <span class="fechar" onclick="fecharContato()">X</span>
+    <h2>Fale Conosco</h2>
+    <p style="font-size: 13px; color: #666; margin-top: 10px;">Conecte-se conosco através das nossas redes oficiais:</p>
+    
+    <div class="social-icons-grid">
+      <a href="https://wa.me/5511999999999" target="_blank" class="social-icon-btn btn-whatsapp" title="WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+      </a>
+      <a href="https://instagram.com" target="_blank" class="social-icon-btn btn-instagram" title="Instagram">
+        <i class="fa-brands fa-instagram"></i>
+      </a>
+      <a href="https://facebook.com" target="_blank" class="social-icon-btn btn-facebook" title="Facebook">
+        <i class="fa-brands fa-facebook-f"></i>
+      </a>
+    </div>
+  </div>
+</div>
 
 <div id="loginModal" class="modal">
   <div class="login-box">
@@ -510,7 +693,30 @@ nav a:hover {
     <input id="senha" type="password" placeholder="senha">
     <p style="margin-bottom:10px; font-size:13px;">Não tem conta? <a href="#" onclick="abrirCadastro()" style="color:#facc15;">Cadastre-se</a></p>
     <p style="margin-bottom:10px; font-size:13px;">Esqueceu a senha? <a href="#" onclick="abrirRecuperarSenha()" style="color:#facc15;">Recuperar senha</a></p>
+    
+    <div id="loginMensagem" class="mensagem-form"></div>
+    
     <button onclick="simularLogin()">Entrar</button>
+  </div>
+</div>
+
+<div id="qrModal" class="modal">
+  <div class="login-box">
+    <span class="fechar" onclick="fecharQrModal()">X</span>
+    <h2>Escanear QR Code</h2>
+    <p style="font-size: 13px; color: #666; margin-top: 5px; line-height: 1.4;">
+      Escaneie o QR Code para obter o token de acesso de 6 dígitos:
+    </p>
+
+    <div class="qrcode-box">
+      <img id="imgQrCode" src="" alt="Carregando QR Code...">
+    </div>
+
+    <input id="codigoDigitado" class="token-input" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="off">
+    
+    <div id="qrMensagem" class="mensagem-form"></div>
+    
+    <button onclick="verificarCodigoToken()">Verificar e Entrar</button>
   </div>
 </div>
 
@@ -521,7 +727,21 @@ nav a:hover {
     <input id="nomeCad" placeholder="nome">
     <input id="telefoneCad" placeholder="telefone" maxlength="15">
     <input id="emailCad" placeholder="email">
-    <input id="senhaCad" type="password" placeholder="senha">
+    <input id="senhaCad" type="password" placeholder="senha" oninput="validarSenhaCadastramento(this.value)">
+    
+    <div class="password-requirements">
+      <p>Sua senha deve conter:</p>
+      <ul>
+        <li id="req-tam"><span class="icon">✓</span> No mínimo 8 caracteres</li>
+        <li id="req-min"><span class="icon">✓</span> Letra minúscula</li>
+        <li id="req-mai"><span class="icon">✓</span> Letra maiúscula</li>
+        <li id="req-num"><span class="icon">✓</span> Número</li>
+        <li id="req-esp"><span class="icon">✓</span> Caractere especial (Ex: !@#%$)</li>
+      </ul>
+    </div>
+
+    <div id="cadastroMensagem" class="mensagem-form"></div>
+    
     <button onclick="cadastrar()">Cadastrar</button>
   </div>
 </div>
@@ -532,6 +752,9 @@ nav a:hover {
     <h2>Trocar senha</h2>
     <input id="senhaAtual" type="password" placeholder="Senha atual">
     <input id="novaSenha" type="password" placeholder="Nova senha">
+    
+    <div id="trocarSenhaMensagem" class="mensagem-form"></div>
+    
     <button onclick="trocarSenha()">Atualizar senha</button>
   </div>
 </div>
@@ -542,15 +765,22 @@ nav a:hover {
     <h2>Recuperar senha</h2>
     <input id="emailRec" placeholder="Digite seu email">
     <input id="novaSenhaRec" type="password" placeholder="Nova senha">
+    
+    <div id="recuperarMensagem" class="mensagem-form"></div>
+    
     <button onclick="recuperarSenha()">Atualizar senha</button>
   </div>
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script>
+let dadosUsuarioTemporario = null;
+
 function criarCookie(nome, valor, dias) {
     const data = new Date();
     data.setTime(data.getTime() + (dias * 24 * 60 * 60 * 1000));
-    document.cookie = `${nome}=${valor}; expires=${data.toUTCString()}; path=/`;
+    document.cookie = `${nome}=${encodeURIComponent(valor)}; expires=${data.toUTCString()}; path=/`;
 }
 
 function lerCookie(nome) {
@@ -558,13 +788,54 @@ function lerCookie(nome) {
     const array = document.cookie.split(';');
     for(let i = 0; i < array.length; i++) {
         let c = array[i].trim();
-        if (c.indexOf(nomeIgual) == 0) return c.substring(nomeIgual.length, c.length);
+        if (c.indexOf(nomeIgual) == 0) {
+            return decodeURIComponent(c.substring(nomeIgual.length, c.length));
+        }
     }
     return null;
 }
 
+function mostrarMensagem(id, texto, tipo) {
+  const elemento = document.getElementById(id);
+  if (!elemento) return;
+  elemento.textContent = texto;
+  elemento.className = "mensagem-form " + tipo;
+}
+
+function limparMensagem(id) {
+  const elemento = document.getElementById(id);
+  if (!elemento) return;
+  elemento.textContent = "";
+  elemento.className = "mensagem-form";
+}
+
+let toastTimeout;
+function mostrarToast(texto, tipo = "info") {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+
+  clearTimeout(toastTimeout);
+  toast.textContent = texto;
+  toast.className = "toast mostrar " + tipo;
+
+  toastTimeout = setTimeout(() => {
+    toast.className = "toast";
+  }, 3000);
+}
+
 function toggleMenu() {
   document.getElementById("navLinks").classList.toggle("active");
+}
+
+/* FUNÇÕES DE ABERTURA DO MODAL DE CONTATO */
+function abrirContato(e) {
+  if(e) e.preventDefault();
+  limparBusca();
+  document.getElementById("contatoModal").style.display = "flex";
+}
+
+function fecharContato() {
+  document.getElementById("contatoModal").style.display = "none";
 }
 
 function filtrarProdutos() {
@@ -591,183 +862,340 @@ function limparBusca() {
 
 function limparFormularios(modalId) {
   const inputs = document.querySelectorAll(`#${modalId} input`);
-  inputs.forEach(input => {
-    input.value = "";
-  });
+  inputs.forEach(input => { input.value = ""; });
+  if (modalId === "cadastroModal") {
+    resetarChecklistSenha();
+  }
 }
 
 function abrirLogin(){ 
   limparBusca();
   limparFormularios("loginModal");
+  limparMensagem("loginMensagem");
   document.getElementById("loginModal").style.display = "flex"; 
 }
+
 function fecharLogin(){ 
   document.getElementById("loginModal").style.display = "none";
   limparFormularios("loginModal");
+  limparMensagem("loginMensagem");
+}
+
+function fecharQrModal() {
+  document.getElementById("qrModal").style.display = "none";
+  limparFormularios("qrModal");
+  limparMensagem("qrMensagem");
 }
 
 function abrirCadastro(){
   limparBusca();
   limparFormularios("cadastroModal");
+  limparMensagem("cadastroMensagem");
+  resetarChecklistSenha();
   document.getElementById("loginModal").style.display = "none";
   document.getElementById("cadastroModal").style.display = "flex";
 }
+
 function fecharCadastro(){ 
   document.getElementById("cadastroModal").style.display = "none";
   limparFormularios("cadastroModal");
-}
-
-function abrirTrocarSenhas(){ 
-  limparBusca();
-  limparFormularios("trocarSenhaModal");
-  document.getElementById("trocarSenhaModal").style.display = "flex"; 
-}
-function fecharTrocarSenha(){ 
-  document.getElementById("trocarSenhaModal").style.display = "none";
-  limparFormularios("trocarSenhaModal");
+  limparMensagem("cadastroMensagem");
+  resetarChecklistSenha();
 }
 
 function abrirRecuperarSenha(){
   limparBusca();
   limparFormularios("recuperarModal");
+  limparMensagem("recuperarMensagem");
   document.getElementById("loginModal").style.display = "none";
   document.getElementById("recuperarModal").style.display = "flex";
 }
+
 function fecharRecuperarSenha(){ 
   document.getElementById("recuperarModal").style.display = "none";
   limparFormularios("recuperarModal");
+  limparMensagem("recuperarMensagem");
 }
 
 document.getElementById('telefoneCad').addEventListener('input', (e) => {
     let target = e.target;
-    let valor = target.value;
-    valor = valor.replace(/\D/g, ""); 
-    if (valor.length > 11) {
-        valor = valor.slice(0, 11); 
-    }
+    let valor = target.value.replace(/\D/g, "");
+    if (valor.length > 11) valor = valor.slice(0, 11);
     if (valor.length > 0) {
         valor = "(" + valor;
-        if (valor.length > 3) {
-            valor = valor.slice(0, 3) + ") " + valor.slice(3);
-        }
+        if (valor.length > 3) valor = valor.slice(0, 3) + ") " + valor.slice(3);
         if (valor.length > 9) {
-            if (valor.length > 13) {
-                valor = valor.slice(0, 10) + "-" + valor.slice(10); 
-            } else {
-                valor = valor.slice(0, 9) + "-" + valor.slice(9);  
-            }
+            valor = (valor.length > 13) 
+              ? valor.slice(0, 10) + "-" + valor.slice(10) 
+              : valor.slice(0, 9) + "-" + valor.slice(9);
         }
     }
     target.value = valor;
 });
 
+function validarSenhaCadastramento(senha) {
+  const reqs = {
+    tam: senha.length >= 8,
+    min: /[a-z]/.test(senha),
+    mai: /[A-Z]/.test(senha),
+    num: /[0-9]/.test(senha),
+    esp: /[\W_]/.test(senha)
+  };
+
+  atualizarItemRequisito("req-tam", reqs.tam);
+  atualizarItemRequisito("req-min", reqs.min);
+  atualizarItemRequisito("req-mai", reqs.mai);
+  atualizarItemRequisito("req-num", reqs.num);
+  atualizarItemRequisito("req-esp", reqs.esp);
+
+  return reqs.tam && reqs.min && reqs.mai && reqs.num && reqs.esp;
+}
+
+function atualizarItemRequisito(idElemento, estaValido) {
+  const el = document.getElementById(idElemento);
+  if (!el) return;
+  if (estaValido) {
+    el.classList.add("valido");
+  } else {
+    el.classList.remove("valido");
+  }
+}
+
+function resetarChecklistSenha() {
+  const ids = ["req-tam", "req-min", "req-mai", "req-num", "req-esp"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("valido");
+  });
+}
+
+function simularLogin(){
+  const email = document.getElementById("email").value.trim();
+  const senha = document.getElementById("senha").value;
+
+  limparMensagem("loginMensagem");
+
+  if(!email || !senha) {
+    mostrarMensagem("loginMensagem", "Digite seu e-mail e sua senha.", "erro");
+    return;
+  }
+
+  mostrarMensagem("loginMensagem", "Entrando...", "carregando");
+
+  const dados = new URLSearchParams();
+  dados.append("email", email);
+  dados.append("senha", senha);
+
+  fetch("login.php", {
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: dados.toString()
+  })
+  .then(r => r.json())
+  .then(data => {
+    if(data.status === "ok"){
+      dadosUsuarioTemporario = data.usuario || data;
+      fecharLogin();
+      gerarQrCodeAcesso(email); 
+    } else {
+      let msg = "E-mail ou senha incorretos.";
+      if (data.code === 429) msg = "Muitas tentativas. Aguarde alguns minutos.";
+      mostrarMensagem("loginMensagem", msg, "erro");
+    }
+  })
+  .catch(err => {
+    mostrarMensagem("loginMensagem", "Não foi possível conectar ao servidor.", "erro");
+  });
+}
+
+function gerarQrCodeAcesso(emailUsuario) {
+  const imgElement = document.getElementById("imgQrCode");
+  imgElement.src = ""; 
+  document.getElementById("codigoDigitado").value = "";
+  limparMensagem("qrMensagem");
+
+  const dados = new URLSearchParams();
+  dados.append("email", emailUsuario);
+
+  fetch("gerar_qrcode.php", {
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: dados.toString()
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(res.status === "ok") {
+      imgElement.src = res.qr_code_url;
+      document.getElementById("qrModal").style.display = "flex";
+      document.getElementById("codigoDigitado").focus();
+    } else {
+      mostrarToast(res.mensagem || "Erro ao gerar QR Code de verificação.", "erro");
+    }
+  })
+  .catch(err => {
+    mostrarToast("Não foi possível gerar o QR Code de autenticação.", "erro");
+  });
+}
+
+function verificarCodigoToken() {
+  const codigo = document.getElementById("codigoDigitado").value.trim();
+
+  limparMensagem("qrMensagem");
+
+  if(!codigo || codigo.length < 6) {
+    mostrarMensagem("qrMensagem", "Por favor, digite o código de 6 dígitos.", "erro");
+    return;
+  }
+
+  mostrarMensagem("qrMensagem", "Validando código...", "carregando");
+
+  const dados = new URLSearchParams();
+  dados.append("codigo_digitado", codigo);
+
+  fetch("confirmar_api.php", {
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: dados.toString()
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(res.status === "ok") {
+      const usr = res.usuario || dadosUsuarioTemporario;
+
+      fecharQrModal();
+
+      if (usr && usr.nome) {
+        localStorage.setItem("usuarioId", usr.id);
+        localStorage.setItem("usuarioNome", usr.nome);
+        criarCookie("usuario_logado", usr.nome, 7);
+        criarCookie("usuario_id", usr.id, 7);
+
+        if(usr.admin == 1 || usr.admin == "1"){
+          localStorage.setItem("usuarioAdmin", "1");
+          criarCookie("usuario_admin", "1", 7);
+          window.location.href = "admin.html";
+          return;
+        }
+
+        localStorage.setItem("usuarioAdmin", "0");
+        criarCookie("usuario_admin", "0", 7);
+        location.reload();
+      }
+    } else {
+      mostrarMensagem("qrMensagem", res.mensagem || "Código incorreto ou expirado!", "erro");
+    }
+  })
+  .catch(err => {
+    mostrarMensagem("qrMensagem", "Erro ao conectar ao servidor.", "erro");
+  });
+}
+
 function cadastrar(){
-  const nome=document.getElementById("nomeCad").value;
-  const telefone=document.getElementById("telefoneCad").value;
-  const email=document.getElementById("emailCad").value;
-  const senha=document.getElementById("senhaCad").value;
+  const nome = document.getElementById("nomeCad").value.trim();
+  const telefone = document.getElementById("telefoneCad").value.trim();
+  const email = document.getElementById("emailCad").value.trim();
+  const senha = document.getElementById("senhaCad").value;
+
+  limparMensagem("cadastroMensagem");
+
+  if(!nome || !telefone || !email || !senha) {
+    mostrarMensagem("cadastroMensagem", "Preencha todos os campos.", "erro");
+    return;
+  }
+
+  if(!validarSenhaCadastramento(senha)) {
+    mostrarMensagem("cadastroMensagem", "A senha deve ter no mínimo 8 caracteres, contendo letras maiúsculas, minúsculas, números e caracteres especiais.", "erro");
+    return;
+  }
+
+  mostrarMensagem("cadastroMensagem", "Cadastrando...", "carregando");
+
+  const dados = new URLSearchParams();
+  dados.append("nome", nome);
+  dados.append("telefone", telefone);
+  dados.append("email", email);
+  dados.append("senha", senha);
 
   fetch("cadastrar.php",{
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:`nome=${nome}&telefone=${telefone}&email=${email}&senha=${senha}`
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: dados.toString()
   })
-  .then(r=>r.json())
-  .then(data=>{
-    if(data.status==="ok"){
-      alert("Cadastro realizado com sucesso!");
-      fecharCadastro();
-      abrirLogin();
-    }else{
-      alert(data.mensagem);
+  .then(r => r.json())
+  .then(data => {
+    if(data.status === "ok"){
+      mostrarMensagem("cadastroMensagem", "Cadastro realizado com sucesso!", "sucesso");
+      setTimeout(() => {
+        fecharCadastro();
+        abrirLogin();
+      }, 1500);
+    } else {
+      mostrarMensagem("cadastroMensagem", data.mensagem || "Não foi possível cadastrar.", "erro");
     }
   });
 }
 
 function trocarSenha(){
-  const senhaAtual=document.getElementById("senhaAtual").value;
-  const novaSenha=document.getElementById("novaSenha").value;
+  const senhaAtual = document.getElementById("senhaAtual").value;
+  const novaSenha = document.getElementById("novaSenha").value;
+
+  limparMensagem("trocarSenhaMensagem");
+
+  if(!senhaAtual || !novaSenha) {
+    mostrarMensagem("trocarSenhaMensagem", "Preencha todos os campos.", "erro");
+    return;
+  }
+
+  const dados = new URLSearchParams();
+  dados.append("senhaAtual", senhaAtual);
+  dados.append("novaSenha", novaSenha);
 
   fetch("trocar_senha.php",{
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:`senhaAtual=${senhaAtual}&novaSenha=${novaSenha}`
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: dados.toString()
   })
-  .then(r=>r.json())
-  .then(data=>{
-    if(data.status==="ok"){
-      alert("Senha atualizada com sucesso!");
-      fecharTrocarSenha();
-    }else{
-      alert(data.mensagem);
+  .then(r => r.json())
+  .then(data => {
+    if(data.status === "ok"){
+      mostrarMensagem("trocarSenhaMensagem", "Senha atualizada com sucesso!", "sucesso");
+      setTimeout(() => fecharTrocarSenha(), 1500);
+    } else {
+      mostrarMensagem("trocarSenhaMensagem", data.mensagem || "Erro ao atualizar.", "erro");
     }
   });
 }
 
 function recuperarSenha(){
-  const email=document.getElementById("emailRec").value;
-  const novaSenha=document.getElementById("novaSenhaRec").value;
+  const email = document.getElementById("emailRec").value.trim();
+  const novaSenha = document.getElementById("novaSenhaRec").value;
+
+  limparMensagem("recuperarMensagem");
+
+  if(!email || !novaSenha) {
+    mostrarMensagem("recuperarMensagem", "Preencha todos os campos.", "erro");
+    return;
+  }
+
+  const dados = new URLSearchParams();
+  dados.append("email", email);
+  dados.append("novaSenha", novaSenha);
 
   fetch("trocar_senha.php",{
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:`email=${email}&novaSenha=${novaSenha}`
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: dados.toString()
   })
-  .then(r=>r.json())
-  .then(data=>{
-    if(data.status==="ok"){
-      alert("Senha updated com sucesso!");
-      fecharRecuperarSenha();
-      abrirLogin();
-    }else{
-      alert(data.mensagem);
-    }
-  });
-}
-
-function simularLogin(){
-  const email=document.getElementById("email").value;
-  const senha=document.getElementById("senha").value;
-
-  fetch("login.php",{
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:`email=${email}&senha=${senha}`
-  })
-  .then(r=>r.json())
-  .then(data=>{
-    if(data.status==="ok"){
-      localStorage.setItem("usuarioId", data.id);
-      localStorage.setItem("usuarioNome", data.nome);
-      criarCookie("usuario_logado", data.nome, 7);
-      criarCookie("usuario_id", data.id, 7);
-
-      fecharLogin();
-
-      if(data.admin == 1 || data.admin == "1"){
-        localStorage.setItem("usuarioAdmin", "1");
-        criarCookie("usuario_admin", "1", 7);
-        window.location.href="admin.html";
-        return;
-      }
-
-      localStorage.setItem("usuarioAdmin", "0");
-      criarCookie("usuario_admin", "0", 7);
-
-      document.getElementById("areaUsuario").innerHTML = `
-        <div class="user-menu">
-          <div class="user-icon">
-            ${data.nome.charAt(0).toUpperCase()}
-          </div>
-          <div class="dropdown">
-            <a href="carrinho.html">🛒 Carrinho</a>
-            <a href="favoritos.html">❤️ Favoritos</a>
-            <a href="#" onclick="logout()">🚪 Sair</a>
-          </div>
-        </div>
-      `;
-    }else{
-      alert(data.mensagem);
+  .then(r => r.json())
+  .then(data => {
+    if(data.status === "ok"){
+      mostrarMensagem("recuperarMensagem", "Senha alterada com sucesso!", "sucesso");
+      setTimeout(() => {
+        fecharRecuperarSenha();
+        abrirLogin();
+      }, 1500);
+    } else {
+      mostrarMensagem("recuperarMensagem", data.mensagem || "Erro ao atualizar.", "erro");
     }
   });
 }
@@ -796,9 +1224,7 @@ window.onload=()=>{
       if(adminCookie === "1"){
           document.getElementById("areaUsuario").innerHTML = `
             <div class="user-menu">
-              <div class="user-icon">
-                ${userCookie.charAt(0).toUpperCase()}
-              </div>
+              <div class="user-icon">${userCookie.charAt(0).toUpperCase()}</div>
               <div class="dropdown">
                 <a href="admin.html">📦 Cadastrar Produtos</a>
                 <a href="#" onclick="logout()">🚪 Sair</a>
@@ -808,11 +1234,8 @@ window.onload=()=>{
       } else {
           document.getElementById("areaUsuario").innerHTML = `
             <div class="user-menu">
-              <div class="user-icon">
-                ${userCookie.charAt(0).toUpperCase()}
-              </div>
+              <div class="user-icon">${userCookie.charAt(0).toUpperCase()}</div>
               <div class="dropdown">
-                <a href="perfil.html">👤 Meu Perfil</a>
                 <a href="carrinho.html">🛒 Carrinho</a>
                 <a href="favoritos.html">❤️ Favoritos</a>
                 <a href="#" onclick="logout()">🚪 Sair</a>
@@ -851,7 +1274,8 @@ function carregarProdutos(){
       `;
     });
     document.getElementById("produtos").innerHTML=html;
-  });
+  })
+  .catch(err => console.log("Erro ao carregar produtos."));
 }
 
 function abrirProduto(produto){
@@ -876,31 +1300,25 @@ function alternarFavorito(idProduto) {
     const idUsuario = localStorage.getItem("usuarioId");
 
     if (!idUsuario) {
-        alert("Por favor, faça login para adicionar produtos aos seus favoritos!");
+        mostrarToast("Faça login para adicionar produtos aos favoritos.", "info");
         abrirLogin();
         return;
     }
+  
+    const dados = new URLSearchParams();
+    dados.append("id_usuario", idUsuario);
+    dados.append("id_produto", idProduto);
 
     fetch("favoritar.php", {
         method: "POST",
         headers: {"Content-Type": "application/x-www-form-urlencoded"},
-        body: `id_usuario=${idUsuario}&id_produto=${idProduto}`
+        body: dados.toString()
     })
     .then(r => r.json())
     .then(data => {
-        if (data.status === "ok") {
-            alert(data.mensagem); 
-        } else {
-            alert(data.mensagem || "Erro ao processar sua solicitação.");
-        }
-    })
-    .catch(err => {
-        console.error("Erro na requisição:", err);
-        alert("Não foi possível conectar ao servidor.");
+        mostrarToast(data.mensagem || "Favoritos atualizados!", "sucesso");
     });
 }
 </script>
 </body>
 </html>
-
-```
